@@ -54,31 +54,34 @@
 
 
 
-<meta name="description" content="大概一年前买了个域名和linode，在上面搭了个wordpress，但实在太懒，一直都没什么产出，文章少得可怜。
+<meta name="description" content="前言大概一年前买了个域名和linode，在上面搭了个wordpress，但实在太懒，一直都没什么产出，文章少得可怜。
 
 直到最近，猛然发现，作为一名程序员，坚持写博客实在有太多好处，不仅可以提高自己的逻辑表达能力，还能加深自己对知识的理解，
 把自己所掌握的东西分享出去，最重要一点就是能记录下自己的成长点滴
 
-因此，决定洗心革面，而今迈步从头越。">
+因此，决定洗心革面，而今迈步从头越。
+选型既然从头再来，那就不打算再使用wordpress">
 <meta property="og:type" content="article">
 <meta property="og:title" content="使用hexo建立个人博客">
 <meta property="og:url" content="http://cleverUtd.github.io/2015/12/01/使用hexo建立个人博客/index.html">
 <meta property="og:site_name" content="zclau">
-<meta property="og:description" content="大概一年前买了个域名和linode，在上面搭了个wordpress，但实在太懒，一直都没什么产出，文章少得可怜。
+<meta property="og:description" content="前言大概一年前买了个域名和linode，在上面搭了个wordpress，但实在太懒，一直都没什么产出，文章少得可怜。
 
 直到最近，猛然发现，作为一名程序员，坚持写博客实在有太多好处，不仅可以提高自己的逻辑表达能力，还能加深自己对知识的理解，
 把自己所掌握的东西分享出去，最重要一点就是能记录下自己的成长点滴
 
-因此，决定洗心革面，而今迈步从头越。">
-<meta property="og:updated_time" content="2015-12-01T16:55:43.000Z">
+因此，决定洗心革面，而今迈步从头越。
+选型既然从头再来，那就不打算再使用wordpress">
+<meta property="og:updated_time" content="2015-12-02T17:12:51.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用hexo建立个人博客">
-<meta name="twitter:description" content="大概一年前买了个域名和linode，在上面搭了个wordpress，但实在太懒，一直都没什么产出，文章少得可怜。
+<meta name="twitter:description" content="前言大概一年前买了个域名和linode，在上面搭了个wordpress，但实在太懒，一直都没什么产出，文章少得可怜。
 
 直到最近，猛然发现，作为一名程序员，坚持写博客实在有太多好处，不仅可以提高自己的逻辑表达能力，还能加深自己对知识的理解，
 把自己所掌握的东西分享出去，最重要一点就是能记录下自己的成长点滴
 
-因此，决定洗心革面，而今迈步从头越。">
+因此，决定洗心革面，而今迈步从头越。
+选型既然从头再来，那就不打算再使用wordpress">
 
 
 
@@ -306,13 +309,23 @@
       
 
       
-        <span itemprop="articleBody"><pre><code>大概一年前买了个域名和linode，在上面搭了个wordpress，但实在太懒，一直都没什么产出，文章少得可怜。
+        <span itemprop="articleBody"><h4 id="前言">前言</h4><pre><code>大概一年前买了个域名和linode，在上面搭了个wordpress，但实在太懒，一直都没什么产出，文章少得可怜。
 
 直到最近，猛然发现，作为一名程序员，坚持写博客实在有太多好处，不仅可以提高自己的逻辑表达能力，还能加深自己对知识的理解，
 把自己所掌握的东西分享出去，最重要一点就是能记录下自己的成长点滴
 
 因此，决定洗心革面，而今迈步从头越。
-</code></pre></span>
+</code></pre><h4 id="选型">选型</h4><pre><code>既然从头再来，那就不打算再使用wordpress了，何况wordpress对markdown写作的支持实在太差劲了，实在受不了。 
+
+这次我选择用hexo，相比较wordpress，有以下优点：
+
+<span class="number">1.</span> 逼格高，主题漂亮
+<span class="number">2.</span> 轻量级，wordpress太臃肿了
+<span class="number">3.</span> 配置灵活，自定化程度高，一键部署，生成纯静态文件，怎一个爽字了得
+</code></pre><h4 id="搭建步骤">搭建步骤</h4><p>因为网上已经有好多现成教程，这里就不重复写了。我是照着hexo的中文官网文档一步步搭建的<br><a href="https://hexo.io/zh-cn/docs/" target="_blank" rel="external">hexo 官方中文文档</a></p>
+<p>搭建好后，主题选择Next，主题配置过程参考 <a href="http://theme-next.iissnan.com/" target="_blank" rel="external">next使用文档</a></p>
+<h4 id="源文件同步">源文件同步</h4><p>经过上面步骤，博客已经搭建好，并且同步到github后就可以访问了。但是部署上去github的的其实都是经过<code>hexo generate</code>后生成的静态文件(public文件夹下)，而源文件一直都是保存在本地，那么问题来了，如果我换了台电脑，应该怎么办呢？<br>参考了网上各种方案，最后我选择在github上使用一个分支来维护，具体参考<a href="http://devtian.me/2015/03/17/blog-sync-solution/" target="_blank" rel="external">关于博客同步的解决办法</a></p>
+</span>
       
     </div>
 
@@ -470,7 +483,7 @@
               
             
             
-              <p class="post-toc-empty">此文章未包含目录</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#选型"><span class="nav-number">2.</span> <span class="nav-text">选型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#搭建步骤"><span class="nav-number">3.</span> <span class="nav-text">搭建步骤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#源文件同步"><span class="nav-number">4.</span> <span class="nav-text">源文件同步</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">
