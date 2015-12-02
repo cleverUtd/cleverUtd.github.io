@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Keep it simple,stupid  保持好奇心,勇于尝试新事物]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://cleverUtd.github.io/"/>
-  <updated>2015-12-02T17:12:51.000Z</updated>
+  <updated>2015-12-02T17:20:40.000Z</updated>
   <id>http://cleverUtd.github.io/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="http://cleverUtd.github.io/2015/12/01/%E4%BD%BF%E7%94%A8hexo%E5%BB%BA%E7%AB%8B%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/"/>
     <id>http://cleverUtd.github.io/2015/12/01/使用hexo建立个人博客/</id>
     <published>2015-11-30T16:56:09.000Z</published>
-    <updated>2015-12-02T17:12:51.000Z</updated>
+    <updated>2015-12-02T17:20:40.000Z</updated>
     <content type="html"><![CDATA[<h4 id="前言">前言</h4><pre><code>大概一年前买了个域名和linode，在上面搭了个wordpress，但实在太懒，一直都没什么产出，文章少得可怜。
 
 直到最近，猛然发现，作为一名程序员，坚持写博客实在有太多好处，不仅可以提高自己的逻辑表达能力，还能加深自己对知识的理解，
@@ -34,8 +34,10 @@
 <span class="number">2.</span> 轻量级，wordpress太臃肿了
 <span class="number">3.</span> 配置灵活，自定化程度高，一键部署，生成纯静态文件，怎一个爽字了得
 </code></pre><h4 id="搭建步骤">搭建步骤</h4><p>因为网上已经有好多现成教程，这里就不重复写了。我是照着hexo的中文官网文档一步步搭建的<br><a href="https://hexo.io/zh-cn/docs/" target="_blank" rel="external">hexo 官方中文文档</a></p>
-<p>搭建好后，主题选择Next，主题配置过程参考 <a href="http://theme-next.iissnan.com/" target="_blank" rel="external">next使用文档</a></p>
-<h4 id="源文件同步">源文件同步</h4><p>经过上面步骤，博客已经搭建好，并且同步到github后就可以访问了。但是部署上去github的的其实都是经过<code>hexo generate</code>后生成的静态文件(public文件夹下)，而源文件一直都是保存在本地，那么问题来了，如果我换了台电脑，应该怎么办呢？<br>参考了网上各种方案，最后我选择在github上使用一个分支来维护，具体参考<a href="http://devtian.me/2015/03/17/blog-sync-solution/" target="_blank" rel="external">关于博客同步的解决办法</a></p>
+<p>搭建好后，主题选择Next，主题配置过程参考<br><a href="http://theme-next.iissnan.com/" target="_blank" rel="external">next使用文档</a></p>
+<h4 id="源文件同步">源文件同步</h4><p>经过上面步骤，博客已经搭建好，并且同步到github后就可以访问了。但是部署上去github的其实都是经过<code>hexo generate</code>后生成的静态文件(public文件夹下)，而源文件一直都是保存在本地，那么问题来了，如果我换了台电脑，应该怎么办呢？</p>
+<p>参考了网上各种方案，最后我选择在github上使用一个分支来维护，具体参考<br><a href="http://devtian.me/2015/03/17/blog-sync-solution/" target="_blank" rel="external">关于博客同步的解决办法</a></p>
+<p>到此，博客就搭建完毕啦，个人感觉比wordpress的搭建简单方便多了。</p>
 ]]></content>
     <summary type="html">
     <![CDATA[<h4 id="前言">前言</h4><pre><code>大概一年前买了个域名和linode，在上面搭了个wordpress，但实在太懒，一直都没什么产出，文章少得可怜。
