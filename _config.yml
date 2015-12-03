@@ -1,4 +1,4 @@
-#Hexo Configuration
+#hexo Configuration
 ## Docs: http://hexo.io/docs/configuration.html
 ## Source: https://github.com/hexojs/hexo/
 
@@ -82,16 +82,16 @@ plugins:
 
 theme: next
 
-# Deployment
+#deployment
 ## Docs: http://hexo.io/docs/deployment.html
 deploy: 
-  type: git
-  repo: git@github.com:cleverUtd/cleverUtd.github.io.git
-  branch: master
-  #type: rsync
-  #host: 106.186.31.57 
-  #user: zclau
-  #root: /home/zclau/hexo
+  - type: git
+    repo: git@github.com:cleverUtd/cleverUtd.github.io.git
+    branch: master
+ # - type: rsync
+ #   host: zclau.com 
+ #   user: zclau
+ #   root: /home/zclau/blog
 
 #duoshuo
 duoshuo_shortname: zclau
