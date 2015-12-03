@@ -48,10 +48,10 @@ highlight:
 # Category & Tag
 default_category: uncategorized
 category_map:
-    # Web开发: webdev
-    # 数据库: database
-    # 系统架构: architecture
-    # 网络安全: netsecurity
+     Web开发: webdev
+     数据库: database
+     系统架构: architecture
+     网络安全: netsecurity
 tag_map:
 
 # Date / Time format
@@ -102,8 +102,6 @@ baidu_analytics: 345dc5e728ac6d5542c0144d4223d437
 # hexo sitemap网站地图
 sitemap:
     path: sitemap.xml
-baidusitemap:
-    path: baidusitemap.xml
 
 # swiftype search engine
 swiftype_key: q6y_7R8Q6yZHaz11LbGQ

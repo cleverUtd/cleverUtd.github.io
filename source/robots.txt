@@ -11,5 +11,4 @@ Disallow: /vendors/
 Disallow: /fancybox/
 
 Sitemap: http://cleverutd.github.io/sitemap.xml
-Sitemap: http://cleverutd.github.io/baidusitemap.xml
 
