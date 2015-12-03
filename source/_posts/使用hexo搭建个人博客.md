@@ -1,4 +1,4 @@
-title: 使用hexo建立个人博客
+title: 使用hexo搭建个人博客
 date: 2015-12-01 00:56:09
 tags: hexo
 categories: hexo
