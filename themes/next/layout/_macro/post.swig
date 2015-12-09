@@ -95,7 +95,10 @@
             &nbsp; | &nbsp;
             <div class="fb-like" data-layout="button_count" data-share="true"></div>
           {% endif %}
-
+        
+		{% if not is_index %}
+		    <span id="busuanzi_container_page_pv">  |  阅读量 <span id="busuanzi_value_page_pv"></span> 次</span>
+		{% endif %}
         </div>
       </header>
     {% endif %}

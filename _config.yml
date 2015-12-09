@@ -5,7 +5,7 @@
 # Site
 title: zclau
 subtitle: Keep it simple,stupid  
-description: 保持好奇心,勇于尝试新事物 记录成长中的点滴
+description: Keep it simple,stupid
 author: zclau
 language: zh-Hans
 timezone:
@@ -13,7 +13,7 @@ email: cleverutd@gmail.com
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://cleverUtd.github.io
+url: http://zclau.com
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -104,7 +104,7 @@ sitemap:
     path: sitemap.xml
 
 # swiftype search engine
-swiftype_key: q6y_7R8Q6yZHaz11LbGQ
+#swiftype_key: WGvTssMEM7NA3E1tbRdY
 
 # rss feed
 feed: 
