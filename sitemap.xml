@@ -2,17 +2,22 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://cleverUtd.github.io/2015/12/01/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</loc>
+    <loc>http://zclau.com/2015/12/14/hexo%E9%83%A8%E7%BD%B2%E5%9C%A8vps%E4%B8%8A/</loc>
+    <lastmod>2015-12-14T16:34:35.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://zclau.com/2015/12/01/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</loc>
     <lastmod>2015-12-03T07:02:30.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://cleverUtd.github.io/categories/index.html</loc>
+    <loc>http://zclau.com/categories/index.html</loc>
     <lastmod>2015-11-30T16:18:34.000Z</lastmod>
   </url>
   
   <url>
-    <loc>http://cleverUtd.github.io/tags/index.html</loc>
+    <loc>http://zclau.com/tags/index.html</loc>
     <lastmod>2015-11-30T16:15:54.000Z</lastmod>
   </url>
   

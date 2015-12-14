@@ -54,34 +54,22 @@
 
 
 
-<meta name="description" content="前言大概一年前买了个域名和linode，在上面搭了个wordpress，但实在太懒，一直都没什么产出，文章少得可怜。
-
-直到最近，猛然发现，作为一名程序员，坚持写博客实在有太多好处，不仅可以提高自己的逻辑表达能力，还能加深自己对知识的理解，
-把自己所掌握的东西分享出去，最重要一点就是能记录下自己的成长点滴
-
-因此，决定洗心革面，而今迈步从头越。
-选型既然从头再来，那就不打算再使用wordpress">
+<meta name="description" content="之前已经成功把hexo托管在了github上，并且可以访问。不过由于本身已经有个linode的vps，所以还是决定把hexo部署在自己的服务器上。
+部署过程其实也很简单，因为其实只要把生成的静态文件部署上去即可，完全不涉及后台的交互。所以我在服务器上利用nginx，配置指向存放博客文章的文件夹就搞掂了。
+首先我在服务器上的用户目录下先新建一个文件夹blog。然后就配置nginx,在nginx.co">
 <meta property="og:type" content="article">
-<meta property="og:title" content="使用hexo搭建个人博客">
-<meta property="og:url" content="http://zclau.com/2015/12/01/使用hexo搭建个人博客/index.html">
+<meta property="og:title" content="hexo部署在vps上">
+<meta property="og:url" content="http://zclau.com/2015/12/14/hexo部署在vps上/index.html">
 <meta property="og:site_name" content="zclau">
-<meta property="og:description" content="前言大概一年前买了个域名和linode，在上面搭了个wordpress，但实在太懒，一直都没什么产出，文章少得可怜。
-
-直到最近，猛然发现，作为一名程序员，坚持写博客实在有太多好处，不仅可以提高自己的逻辑表达能力，还能加深自己对知识的理解，
-把自己所掌握的东西分享出去，最重要一点就是能记录下自己的成长点滴
-
-因此，决定洗心革面，而今迈步从头越。
-选型既然从头再来，那就不打算再使用wordpress">
-<meta property="og:updated_time" content="2015-12-03T07:02:30.000Z">
+<meta property="og:description" content="之前已经成功把hexo托管在了github上，并且可以访问。不过由于本身已经有个linode的vps，所以还是决定把hexo部署在自己的服务器上。
+部署过程其实也很简单，因为其实只要把生成的静态文件部署上去即可，完全不涉及后台的交互。所以我在服务器上利用nginx，配置指向存放博客文章的文件夹就搞掂了。
+首先我在服务器上的用户目录下先新建一个文件夹blog。然后就配置nginx,在nginx.co">
+<meta property="og:updated_time" content="2015-12-14T16:34:35.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="使用hexo搭建个人博客">
-<meta name="twitter:description" content="前言大概一年前买了个域名和linode，在上面搭了个wordpress，但实在太懒，一直都没什么产出，文章少得可怜。
-
-直到最近，猛然发现，作为一名程序员，坚持写博客实在有太多好处，不仅可以提高自己的逻辑表达能力，还能加深自己对知识的理解，
-把自己所掌握的东西分享出去，最重要一点就是能记录下自己的成长点滴
-
-因此，决定洗心革面，而今迈步从头越。
-选型既然从头再来，那就不打算再使用wordpress">
+<meta name="twitter:title" content="hexo部署在vps上">
+<meta name="twitter:description" content="之前已经成功把hexo托管在了github上，并且可以访问。不过由于本身已经有个linode的vps，所以还是决定把hexo部署在自己的服务器上。
+部署过程其实也很简单，因为其实只要把生成的静态文件部署上去即可，完全不涉及后台的交互。所以我在服务器上利用nginx，配置指向存放博客文章的文件夹就搞掂了。
+首先我在服务器上的用户目录下先新建一个文件夹blog。然后就配置nginx,在nginx.co">
 
 
 
@@ -93,7 +81,7 @@
   };
 </script>
 
-  <title> 使用hexo搭建个人博客 | zclau </title>
+  <title> hexo部署在vps上 | zclau </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -233,7 +221,7 @@
             
             
               
-                使用hexo搭建个人博客
+                hexo部署在vps上
               
             
           </h1>
@@ -242,8 +230,8 @@
         <div class="post-meta">
           <span class="post-time">
             发表于
-            <time itemprop="dateCreated" datetime="2015-12-01T00:56:09+08:00" content="2015-12-01">
-              2015-12-01
+            <time itemprop="dateCreated" datetime="2015-12-14T21:11:37+08:00" content="2015-12-14">
+              2015-12-14
             </time>
           </span>
 
@@ -268,8 +256,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2015/12/01/使用hexo搭建个人博客/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/12/01/使用hexo搭建个人博客/" itemprop="commentsCount"></span>
+                <a href="/2015/12/14/hexo部署在vps上/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/12/14/hexo部署在vps上/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -291,24 +279,11 @@
       
 
       
-        <span itemprop="articleBody"><h4 id="前言">前言</h4><pre><code>大概一年前买了个域名和linode，在上面搭了个wordpress，但实在太懒，一直都没什么产出，文章少得可怜。
-
-直到最近，猛然发现，作为一名程序员，坚持写博客实在有太多好处，不仅可以提高自己的逻辑表达能力，还能加深自己对知识的理解，
-把自己所掌握的东西分享出去，最重要一点就是能记录下自己的成长点滴
-
-因此，决定洗心革面，而今迈步从头越。
-</code></pre><h4 id="选型">选型</h4><pre><code>既然从头再来，那就不打算再使用wordpress了，何况wordpress对markdown写作的支持实在太差劲了，实在受不了。 
-
-这次我选择用hexo，相比较wordpress，有以下优点：
-
-<span class="number">1.</span> 逼格高，主题漂亮
-<span class="number">2.</span> 轻量级，wordpress太臃肿了
-<span class="number">3.</span> 配置灵活，自定化程度高，一键部署，生成纯静态文件，怎一个爽字了得
-</code></pre><h4 id="搭建步骤">搭建步骤</h4><p>因为网上已经有好多现成教程，这里就不重复写了。我是照着hexo的中文官网文档一步步搭建的<br><a href="https://hexo.io/zh-cn/docs/" target="_blank" rel="external">hexo 官方中文文档</a></p>
-<p>搭建好后，主题选择Next，主题配置过程参考<br><a href="http://theme-next.iissnan.com/" target="_blank" rel="external">next使用文档</a></p>
-<h4 id="源文件同步">源文件同步</h4><p>经过上面步骤，博客已经搭建好，并且同步到github后就可以访问了。但是部署上去github的其实都是经过<code>hexo generate</code>后生成的静态文件(public文件夹下)，而源文件一直都是保存在本地，那么问题来了，如果我换了台电脑，应该怎么办呢？</p>
-<p>参考了网上各种方案，最后我选择在github上使用一个分支来维护，具体参考<br><a href="http://devtian.me/2015/03/17/blog-sync-solution/" target="_blank" rel="external">关于博客同步的解决办法</a></p>
-<p>到此，博客就搭建完毕啦，个人感觉比wordpress的搭建简单方便多了。</p>
+        <span itemprop="articleBody"><p>之前已经成功把hexo托管在了github上，并且可以访问。不过由于本身已经有个linode的vps，所以还是决定把hexo部署在自己的服务器上。</p>
+<p>部署过程其实也很简单，因为其实只要把生成的静态文件部署上去即可，完全不涉及后台的交互。所以我在服务器上利用nginx，配置指向存放博客文章的文件夹就搞掂了。</p>
+<p>首先我在服务器上的用户目录下先新建一个文件夹blog。<br>然后就配置nginx,在nginx.conf里加上这么一段：</p>
+<figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">        listen   <span class="number">80</span>;</span><br><span class="line">        server_name  zclau.com;</span><br><span class="line"></span><br><span class="line">        proxy_set_header Host <span class="variable">$http</span>_host;</span><br><span class="line">        proxy_set_header X-real-ip <span class="variable">$remote</span>_addr;</span><br><span class="line">        proxy_set_header X-Forwarded-For <span class="variable">$proxy</span>_add_x_forwarded_for;</span><br><span class="line"></span><br><span class="line">        location / &#123;</span><br><span class="line">            root /home/zclau/blog;</span><br><span class="line">            #index index.html</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这样当访问zclau.com时，请求都会转发到我的博客根目录/home/zclau/blog 这个文件夹下<br>然后就可以看到我的博客的首页了。</p>
 </span>
       
     </div>
@@ -326,13 +301,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2015/12/01/使用hexo搭建个人博客/" rel="next" title="使用hexo搭建个人博客">
+                <i class="fa fa-chevron-left"></i> 使用hexo搭建个人博客
+              </a>
+            
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2015/12/14/hexo部署在vps上/" rel="prev" title="hexo部署在vps上">
-                hexo部署在vps上 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -359,8 +334,8 @@
         
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2015/12/01/使用hexo搭建个人博客/"
-           data-title="使用hexo搭建个人博客" data-url="http://zclau.com/2015/12/01/使用hexo搭建个人博客/">
+      <div class="ds-thread" data-thread-key="2015/12/14/hexo部署在vps上/"
+           data-title="hexo部署在vps上" data-url="http://zclau.com/2015/12/14/hexo部署在vps上/">
       </div>
     
   </div>
@@ -481,7 +456,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#选型"><span class="nav-number">2.</span> <span class="nav-text">选型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#搭建步骤"><span class="nav-number">3.</span> <span class="nav-text">搭建步骤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#源文件同步"><span class="nav-number">4.</span> <span class="nav-text">源文件同步</span></a></li></ol></div>
+              <p class="post-toc-empty">此文章未包含目录</p>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">
