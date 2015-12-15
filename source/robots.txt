@@ -10,5 +10,5 @@ Disallow: /fonts/
 Disallow: /vendors/
 Disallow: /fancybox/
 
-Sitemap: http://cleverutd.github.io/sitemap.xml
+Sitemap: http://zclau.com/sitemap.xml
 
