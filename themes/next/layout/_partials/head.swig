@@ -1,4 +1,3 @@
-<meta name="google-site-verification" content="9SgGzqNCbpLi8hN3_GVeaDUH9pBks02Anz_Am4tQQu8" />
 <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
