@@ -105,7 +105,7 @@ deploy:
 duoshuo_shortname: zclau
 
 #baidu analytics
-baidu_analytics: 345dc5e728ac6d5542c0144d4223d437
+baidu_analytics: 67a0f42b403ccee34010e0409124f3d7 #345dc5e728ac6d5542c0144d4223d437
 
 # hexo sitemap网站地图
 sitemap:
