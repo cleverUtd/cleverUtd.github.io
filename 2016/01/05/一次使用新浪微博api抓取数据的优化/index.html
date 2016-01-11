@@ -35,7 +35,7 @@
 <link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="代码优化," />
 
 
 
@@ -53,43 +53,37 @@
 
 
 
-<meta name="description" content="#场景
-调用新浪微博 根据微博ID返回某条微博的表态列表 接口爬取点赞列表，并将每个点赞用户保存进db
+<meta name="description" content="场景调用新浪微博 根据微博ID返回某条微博的表态列表 接口爬取点赞列表，并将每个点赞用户保存进db
 api文档
-#实现流程
-
+实现流程
 爬取点赞列表
 爬取回来的json数据，解析出其中的attitudes数组，如果数组长度大于0，跳去步骤3；否则跳去步骤6
 遍历数组，获取对应的user字段(即点赞用户的信息)，构造成User的pojo，并添加进一个User的list里
 批量保存 user list 
-返">
+返回步骤1">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一次使用新浪微博api抓取数据的优化">
 <meta property="og:url" content="http://zclau.com/2016/01/05/一次使用新浪微博api抓取数据的优化/index.html">
 <meta property="og:site_name" content="zclau">
-<meta property="og:description" content="#场景
-调用新浪微博 根据微博ID返回某条微博的表态列表 接口爬取点赞列表，并将每个点赞用户保存进db
+<meta property="og:description" content="场景调用新浪微博 根据微博ID返回某条微博的表态列表 接口爬取点赞列表，并将每个点赞用户保存进db
 api文档
-#实现流程
-
+实现流程
 爬取点赞列表
 爬取回来的json数据，解析出其中的attitudes数组，如果数组长度大于0，跳去步骤3；否则跳去步骤6
 遍历数组，获取对应的user字段(即点赞用户的信息)，构造成User的pojo，并添加进一个User的list里
 批量保存 user list 
-返">
-<meta property="og:updated_time" content="2016-01-11T13:46:31.000Z">
+返回步骤1">
+<meta property="og:updated_time" content="2016-01-11T13:49:59.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一次使用新浪微博api抓取数据的优化">
-<meta name="twitter:description" content="#场景
-调用新浪微博 根据微博ID返回某条微博的表态列表 接口爬取点赞列表，并将每个点赞用户保存进db
+<meta name="twitter:description" content="场景调用新浪微博 根据微博ID返回某条微博的表态列表 接口爬取点赞列表，并将每个点赞用户保存进db
 api文档
-#实现流程
-
+实现流程
 爬取点赞列表
 爬取回来的json数据，解析出其中的attitudes数组，如果数组长度大于0，跳去步骤3；否则跳去步骤6
 遍历数组，获取对应的user字段(即点赞用户的信息)，构造成User的pojo，并添加进一个User的list里
 批量保存 user list 
-返">
+返回步骤1">
 
 
 
@@ -256,6 +250,21 @@ api文档
           </span>
 
           
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/代码优化/" itemprop="url" rel="index">
+                    <span itemprop="name">代码优化</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
 
           
             
@@ -284,11 +293,9 @@ api文档
       
 
       
-        <span itemprop="articleBody"><p>#场景</p>
-<p>调用新浪微博 根据微博ID返回某条微博的表态列表 接口爬取点赞列表，并将每个点赞用户保存进db</p>
+        <span itemprop="articleBody"><h1 id="场景">场景</h1><p>调用新浪微博 根据微博ID返回某条微博的表态列表 接口爬取点赞列表，并将每个点赞用户保存进db</p>
 <p><a href="http://open.weibo.com/wiki/2/attitudes/show" target="_blank" rel="external">api文档</a></p>
-<p>#实现流程</p>
-<ol>
+<h1 id="实现流程">实现流程</h1><ol>
 <li>爬取点赞列表</li>
 <li>爬取回来的json数据，解析出其中的attitudes数组，如果数组长度大于0，跳去步骤3；否则跳去步骤6</li>
 <li>遍历数组，获取对应的user字段(即点赞用户的信息)，构造成User的pojo，并添加进一个User的list里</li>
@@ -296,14 +303,12 @@ api文档
 <li>返回步骤1，爬取下一页数据</li>
 <li>退出方法</li>
 </ol>
-<p>#通用版</p>
-<p>核心代码： </p>
+<h1 id="通用版">通用版</h1><p>核心代码： </p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">fetchAttitudeList</span><span class="params">(String id, String accessToken, <span class="keyword">int</span> page, <span class="keyword">int</span> count)</span> </span>&#123;</span><br><span class="line">    Attitudes attitudes = <span class="keyword">new</span> Attitudes();</span><br><span class="line">    JSONObject jsonObject;</span><br><span class="line">    JSONObject attitudeJsonObject;</span><br><span class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 调用api获取点赞列表</span></span><br><span class="line">            jsonObject = attitudes.getAttitudes(accessToken, id, page, count);</span><br><span class="line">            JSONArray jsonArray = jsonObject.getJSONArray(<span class="string">"attitudes"</span>);</span><br><span class="line">            <span class="keyword">if</span> (jsonArray.length() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                List&lt;User&gt; users = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">                List&lt;AttitudesMapping&gt; attitudesMappings = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; jsonArray.length(); i++) &#123;</span><br><span class="line">                    attitudeJsonObject = jsonArray.getJSONObject(i);</span><br><span class="line">                    <span class="keyword">if</span> (attitudeJsonObject.has(<span class="string">"user"</span>)) &#123;</span><br><span class="line">                        <span class="comment">// 构造 wbUser</span></span><br><span class="line">                        User user = <span class="keyword">new</span> User(attitudeJsonObject.getJSONObject(<span class="string">"user"</span>));</span><br><span class="line">                        users.add(user);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                dataService.saveWbUsers(users);<span class="comment">//批量保存进db</span></span><br><span class="line">                users = <span class="keyword">null</span>;</span><br><span class="line">                attitudesMappings = <span class="keyword">null</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            page++;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>第一版的代码是最容易理解并且实现起来最简单，但是并不通用。因为所有事情都是在一条线程完成，这种执行的步骤是线性且阻塞的。</p>
 <p>如果在数据量较少的情况下，使用这种做法倒没有什么问题。但是我这次要爬的这条<a href="http://weibo.com/2082990561/D8SBU9K2z" target="_blank" rel="external">微博</a>，有11w+的赞。如果还是用这种做法的话，问题就显现出来了：<strong>太慢，效率太低了</strong>。 总共爬了560多页，全部完成后大概花了一个半小时，实在接受不了。</p>
 <p>必须改善优化一下，于是就决定引入线程去处理，尽可能使CPU都得到充分的利用。于是就有了第二个版本的代码</p>
-<p>#线程版</p>
-<p>对于线程的使用，交给jdk的Executor框架来控制处理。</p>
+<h1 id="线程版">线程版</h1><p>对于线程的使用，交给jdk的Executor框架来控制处理。</p>
 <p>这里的线程版本，开始想了两种方案</p>
 <ol>
 <li>上面实现流程的 步骤1至步骤4都放在处理线程中。这样主线程只负责页数的控制，然后处理线程负责爬取主线程提供过来的某一页的数据并保存</li>
@@ -317,13 +322,11 @@ api文档
 <p>再选取一条<a href="http://weibo.com/1563926367/D6ypd9KJw" target="_blank" rel="external">微博</a>测试,结果两种方法的耗时输出分别是：</p>
 <p>方案1： ===&gt; 129803。 方案2： ===&gt; 35306</p>
 <p>快了 <strong>72%</strong>， 用线程的优势体现的淋漓尽致</p>
-<p>#后续</p>
-<p>其实对于上述两种线程池的解决方案，如果要爬取的页数事先已经确定好(例如我只要爬前10页的数据)，这样方案1就不需要和子线程进行通信，只需要在主线程中的循环控制设置好条件  <code>while(page&lt;=10)</code>,然后每次循环体的执行都交给子线程处理即可。</p>
+<h1 id="后续">后续</h1><p>其实对于上述两种线程池的解决方案，如果要爬取的页数事先已经确定好(例如我只要爬前10页的数据)，这样方案1就不需要和子线程进行通信，只需要在主线程中的循环控制设置好条件  <code>while(page&lt;=10)</code>,然后每次循环体的执行都交给子线程处理即可。</p>
 <p>经过测试两种方案的耗时分别是：</p>
 <p>方案1：===&gt; 3778<br>方案2：===&gt; 12684</p>
 <p>方案1比方案2快了 <strong>70%</strong></p>
-<p>#总结</p>
-<ol>
+<h1 id="总结">总结</h1><ol>
 <li>对于耗时长且不需要等待有结果返回才能进行下一步的任务，考虑用线程，尽可能利用CPU资源</li>
 <li>对于线程的使用，尽量用jdk的Executor框架，里面提供各种丰富线程池实现可供调用</li>
 </ol>
@@ -333,6 +336,12 @@ api文档
     </div>
 
     <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/代码优化/" rel="tag">#代码优化</a>
+          
+        </div>
       
 
       
@@ -424,14 +433,14 @@ api文档
 
           <div class="site-state-item site-state-categories">
             <a href="/categories">
-              <span class="site-state-item-count">1</span>
+              <span class="site-state-item-count">2</span>
               <span class="site-state-item-name">分类</span>
               </a>
           </div>
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">1</span>
+              <span class="site-state-item-count">2</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>
@@ -494,7 +503,7 @@ api文档
               
             
             
-              <p class="post-toc-empty">此文章未包含目录</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#场景"><span class="nav-number">1.</span> <span class="nav-text">场景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实现流程"><span class="nav-number">2.</span> <span class="nav-text">实现流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#通用版"><span class="nav-number">3.</span> <span class="nav-text">通用版</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#线程版"><span class="nav-number">4.</span> <span class="nav-text">线程版</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#后续"><span class="nav-number">5.</span> <span class="nav-text">后续</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">
