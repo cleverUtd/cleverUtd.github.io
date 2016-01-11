@@ -53,15 +53,43 @@
 
 
 
-<meta name="description" content="Keep it simple,stupid">
-<meta property="og:type" content="website">
-<meta property="og:title" content="zclau">
-<meta property="og:url" content="http://zclau.com/index.html">
+<meta name="description" content="#场景
+调用新浪微博 根据微博ID返回某条微博的表态列表 接口爬取点赞列表，并将每个点赞用户保存进db
+api文档
+#实现流程
+
+爬取点赞列表
+爬取回来的json数据，解析出其中的attitudes数组，如果数组长度大于0，跳去步骤3；否则跳去步骤6
+遍历数组，获取对应的user字段(即点赞用户的信息)，构造成User的pojo，并添加进一个User的list里
+批量保存 user list 
+返">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一次使用新浪微博api抓取数据的优化">
+<meta property="og:url" content="http://zclau.com/2016/01/05/一次使用新浪微博api抓取数据的优化/index.html">
 <meta property="og:site_name" content="zclau">
-<meta property="og:description" content="Keep it simple,stupid">
+<meta property="og:description" content="#场景
+调用新浪微博 根据微博ID返回某条微博的表态列表 接口爬取点赞列表，并将每个点赞用户保存进db
+api文档
+#实现流程
+
+爬取点赞列表
+爬取回来的json数据，解析出其中的attitudes数组，如果数组长度大于0，跳去步骤3；否则跳去步骤6
+遍历数组，获取对应的user字段(即点赞用户的信息)，构造成User的pojo，并添加进一个User的list里
+批量保存 user list 
+返">
+<meta property="og:updated_time" content="2016-01-11T13:46:31.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="zclau">
-<meta name="twitter:description" content="Keep it simple,stupid">
+<meta name="twitter:title" content="一次使用新浪微博api抓取数据的优化">
+<meta name="twitter:description" content="#场景
+调用新浪微博 根据微博ID返回某条微博的表态列表 接口爬取点赞列表，并将每个点赞用户保存进db
+api文档
+#实现流程
+
+爬取点赞列表
+爬取回来的json数据，解析出其中的attitudes数组，如果数组长度大于0，跳去步骤3；否则跳去步骤6
+遍历数组，获取对应的user字段(即点赞用户的信息)，构造成User的pojo，并添加进一个User的list里
+批量保存 user list 
+返">
 
 
 
@@ -73,9 +101,7 @@
   };
 </script>
 
-  <title> 
-   Hexo, NexT - zclau - Keep it simple,stupid 
-</title>
+  <title> 一次使用新浪微博api抓取数据的优化 | zclau </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -106,9 +132,7 @@
 
 
 
-  <div class="container one-column 
-   page-home 
-">
+  <div class="container one-column page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -195,24 +219,9 @@
       <div class="main-inner">
         <div id="content" class="content">
           
-  <section id="posts" class="posts-expand">
 
+  <div id="posts" class="posts-expand">
     
-
-    
-    
-      
-      
-        
-        
-        
-      
-
-      
-    
-
-    
-      
 
   
   
@@ -232,10 +241,7 @@
             
             
               
-                
-                <a class="post-title-link" href="/2016/01/05/一次使用新浪微博api抓取数据的优化/" itemprop="url">
-                  一次使用新浪微博api抓取数据的优化
-                </a>
+                一次使用新浪微博api抓取数据的优化
               
             
           </h1>
@@ -265,6 +271,8 @@
           
         
 		
+		    <span id="busuanzi_container_page_pv">  |  阅读量 <span id="busuanzi_value_page_pv"></span> 次</span>
+		
         </div>
       </header>
     
@@ -276,10 +284,7 @@
       
 
       
-        
-          <span itemprop="articleBody">
-            
-              <p>#场景</p>
+        <span itemprop="articleBody"><p>#场景</p>
 <p>调用新浪微博 根据微博ID返回某条微博的表态列表 接口爬取点赞列表，并将每个点赞用户保存进db</p>
 <p><a href="http://open.weibo.com/wiki/2/attitudes/show" target="_blank" rel="external">api文档</a></p>
 <p>#实现流程</p>
@@ -323,10 +328,7 @@
 <li>对于线程的使用，尽量用jdk的Executor框架，里面提供各种丰富线程池实现可供调用</li>
 </ol>
 <p>完.</p>
-
-            
-          </span>
-        
+</span>
       
     </div>
 
@@ -334,249 +336,32 @@
       
 
       
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
+              <a href="/2015/12/14/hexo部署在vps上/" rel="next" title="hexo部署在vps上">
+                <i class="fa fa-chevron-left"></i> hexo部署在vps上
+              </a>
             
-              
-                
-                <a class="post-title-link" href="/2015/12/14/hexo部署在vps上/" itemprop="url">
-                  hexo部署在vps上
-                </a>
-              
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
             
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2015-12-14T21:11:37+08:00" content="2015-12-14">
-              2015-12-14
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp; 分类于
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/hexo/" itemprop="url" rel="index">
-                    <span itemprop="name">hexo</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2015/12/14/hexo部署在vps上/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/12/14/hexo部署在vps上/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-        
-		
+          </div>
         </div>
-      </header>
-    
-
-
-    <div class="post-body">
-
-      
       
 
       
-        
-          <span itemprop="articleBody">
-            
-              <p>之前已经成功把hexo托管在了github上，并且可以访问。不过由于本身已经有个linode的vps，所以还是决定把hexo部署在自己的服务器上。</p>
-<p>部署过程其实也很简单，因为其实只要把生成的静态文件部署上去即可，完全不涉及后台的交互。所以我在服务器上利用nginx，配置指向存放博客文章的文件夹就搞掂了。</p>
-<p>首先我在服务器上的用户目录下先新建一个文件夹blog。<br>然后就配置nginx,在nginx.conf里加上这么一段：</p>
-<figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">        listen   <span class="number">80</span>;</span><br><span class="line">        server_name  zclau.com;</span><br><span class="line"></span><br><span class="line">        proxy_set_header Host <span class="variable">$http</span>_host;</span><br><span class="line">        proxy_set_header X-real-ip <span class="variable">$remote</span>_addr;</span><br><span class="line">        proxy_set_header X-Forwarded-For <span class="variable">$proxy</span>_add_x_forwarded_for;</span><br><span class="line"></span><br><span class="line">        location / &#123;</span><br><span class="line">            root /home/zclau/blog;</span><br><span class="line">            #index index.html</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>这样当访问zclau.com时，请求都会转发到我的博客根目录/home/zclau/blog 这个文件夹下<br>然后就可以看到我的博客的首页了。</p>
-
-            
-          </span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
-    
-      
 
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2015/12/01/使用hexo搭建个人博客/" itemprop="url">
-                  使用hexo搭建个人博客
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2015-12-01T00:56:09+08:00" content="2015-12-01">
-              2015-12-01
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp; 分类于
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/hexo/" itemprop="url" rel="index">
-                    <span itemprop="name">hexo</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2015/12/01/使用hexo搭建个人博客/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/12/01/使用hexo搭建个人博客/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-        
-		
-        </div>
-      </header>
-    
-
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody">
-            
-              <h4 id="前言">前言</h4><pre><code>大概一年前买了个域名和linode，在上面搭了个wordpress，但实在太懒，一直都没什么产出，文章少得可怜。
-
-直到最近，猛然发现，作为一名程序员，坚持写博客实在有太多好处，不仅可以提高自己的逻辑表达能力，还能加深自己对知识的理解，
-把自己所掌握的东西分享出去，最重要一点就是能记录下自己的成长点滴
-
-因此，决定洗心革面，而今迈步从头越。
-</code></pre><h4 id="选型">选型</h4><pre><code>既然从头再来，那就不打算再使用wordpress了，何况wordpress对markdown写作的支持实在太差劲了，实在受不了。 
-
-这次我选择用hexo，相比较wordpress，有以下优点：
-
-<span class="number">1.</span> 逼格高，主题漂亮
-<span class="number">2.</span> 轻量级，wordpress太臃肿了
-<span class="number">3.</span> 配置灵活，自定化程度高，一键部署，生成纯静态文件，怎一个爽字了得
-</code></pre><h4 id="搭建步骤">搭建步骤</h4><p>因为网上已经有好多现成教程，这里就不重复写了。我是照着hexo的中文官网文档一步步搭建的<br><a href="https://hexo.io/zh-cn/docs/" target="_blank" rel="external">hexo 官方中文文档</a></p>
-<p>搭建好后，主题选择Next，主题配置过程参考<br><a href="http://theme-next.iissnan.com/" target="_blank" rel="external">next使用文档</a></p>
-<h4 id="源文件同步">源文件同步</h4><p>经过上面步骤，博客已经搭建好，并且同步到github后就可以访问了。但是部署上去github的其实都是经过<code>hexo generate</code>后生成的静态文件(public文件夹下)，而源文件一直都是保存在本地，那么问题来了，如果我换了台电脑，应该怎么办呢？</p>
-<p>参考了网上各种方案，最后我选择在github上使用一个分支来维护，具体参考<br><a href="http://devtian.me/2015/03/17/blog-sync-solution/" target="_blank" rel="external">关于博客同步的解决办法</a></p>
-<p>到此，博客就搭建完毕啦，个人感觉比wordpress的搭建简单方便多了。</p>
-
-            
-          </span>
-        
+    <div class="post-spread">
       
     </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-
-  </section>
-
-  
+  </div>
 
 
         </div>
@@ -585,6 +370,14 @@
 
 
         
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/01/05/一次使用新浪微博api抓取数据的优化/"
+           data-title="一次使用新浪微博api抓取数据的优化" data-url="http://zclau.com/2016/01/05/一次使用新浪微博api抓取数据的优化/">
+      </div>
+    
+  </div>
+
 
       </div>
 
@@ -605,8 +398,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" src="/images/avatar.png" alt="zclau" itemprop="image"/>
           <p class="site-author-name" itemprop="name">zclau</p>
@@ -682,6 +484,23 @@
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
       
 
     </div>
@@ -771,6 +590,167 @@
   <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
 
   
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
 
   <script type="text/javascript" src="/js/bootstrap.js"></script>
 

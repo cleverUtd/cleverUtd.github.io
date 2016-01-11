@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Keep it simple,stupid]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://zclau.com/"/>
-  <updated>2015-12-14T16:34:35.000Z</updated>
+  <updated>2016-01-11T13:46:31.000Z</updated>
   <id>http://zclau.com/</id>
   
   <author>
@@ -15,11 +15,70 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title><![CDATA[一次使用新浪微博api抓取数据的优化]]></title>
+    <link href="http://zclau.com/2016/01/05/%E4%B8%80%E6%AC%A1%E4%BD%BF%E7%94%A8%E6%96%B0%E6%B5%AA%E5%BE%AE%E5%8D%9Aapi%E6%8A%93%E5%8F%96%E6%95%B0%E6%8D%AE%E7%9A%84%E4%BC%98%E5%8C%96/"/>
+    <id>http://zclau.com/2016/01/05/一次使用新浪微博api抓取数据的优化/</id>
+    <published>2016-01-05T09:23:25.000Z</published>
+    <updated>2016-01-11T13:46:31.000Z</updated>
+    <content type="html"><![CDATA[<p>#场景</p>
+<p>调用新浪微博 根据微博ID返回某条微博的表态列表 接口爬取点赞列表，并将每个点赞用户保存进db</p>
+<p><a href="http://open.weibo.com/wiki/2/attitudes/show" target="_blank" rel="external">api文档</a></p>
+<p>#实现流程</p>
+<ol>
+<li>爬取点赞列表</li>
+<li>爬取回来的json数据，解析出其中的attitudes数组，如果数组长度大于0，跳去步骤3；否则跳去步骤6</li>
+<li>遍历数组，获取对应的user字段(即点赞用户的信息)，构造成User的pojo，并添加进一个User的list里</li>
+<li>批量保存 user list </li>
+<li>返回步骤1，爬取下一页数据</li>
+<li>退出方法</li>
+</ol>
+<p>#通用版</p>
+<p>核心代码： </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">fetchAttitudeList</span><span class="params">(String id, String accessToken, <span class="keyword">int</span> page, <span class="keyword">int</span> count)</span> </span>&#123;</span><br><span class="line">    Attitudes attitudes = <span class="keyword">new</span> Attitudes();</span><br><span class="line">    JSONObject jsonObject;</span><br><span class="line">    JSONObject attitudeJsonObject;</span><br><span class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 调用api获取点赞列表</span></span><br><span class="line">            jsonObject = attitudes.getAttitudes(accessToken, id, page, count);</span><br><span class="line">            JSONArray jsonArray = jsonObject.getJSONArray(<span class="string">"attitudes"</span>);</span><br><span class="line">            <span class="keyword">if</span> (jsonArray.length() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                List&lt;User&gt; users = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">                List&lt;AttitudesMapping&gt; attitudesMappings = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; jsonArray.length(); i++) &#123;</span><br><span class="line">                    attitudeJsonObject = jsonArray.getJSONObject(i);</span><br><span class="line">                    <span class="keyword">if</span> (attitudeJsonObject.has(<span class="string">"user"</span>)) &#123;</span><br><span class="line">                        <span class="comment">// 构造 wbUser</span></span><br><span class="line">                        User user = <span class="keyword">new</span> User(attitudeJsonObject.getJSONObject(<span class="string">"user"</span>));</span><br><span class="line">                        users.add(user);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                dataService.saveWbUsers(users);<span class="comment">//批量保存进db</span></span><br><span class="line">                users = <span class="keyword">null</span>;</span><br><span class="line">                attitudesMappings = <span class="keyword">null</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            page++;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第一版的代码是最容易理解并且实现起来最简单，但是并不通用。因为所有事情都是在一条线程完成，这种执行的步骤是线性且阻塞的。</p>
+<p>如果在数据量较少的情况下，使用这种做法倒没有什么问题。但是我这次要爬的这条<a href="http://weibo.com/2082990561/D8SBU9K2z" target="_blank" rel="external">微博</a>，有11w+的赞。如果还是用这种做法的话，问题就显现出来了：<strong>太慢，效率太低了</strong>。 总共爬了560多页，全部完成后大概花了一个半小时，实在接受不了。</p>
+<p>必须改善优化一下，于是就决定引入线程去处理，尽可能使CPU都得到充分的利用。于是就有了第二个版本的代码</p>
+<p>#线程版</p>
+<p>对于线程的使用，交给jdk的Executor框架来控制处理。</p>
+<p>这里的线程版本，开始想了两种方案</p>
+<ol>
+<li>上面实现流程的 步骤1至步骤4都放在处理线程中。这样主线程只负责页数的控制，然后处理线程负责爬取主线程提供过来的某一页的数据并保存</li>
+<li>步骤1,2 在主线程， 步骤3,4在处理线程。这样就是主线程负责爬取每一页的数据，然后数据解析以及保存交给处理线程。</li>
+</ol>
+<p>对于方案1，难点在于，主线程不知道数据总共有多少页，因此不知道何时才能结束。这就需要主线程和处理线程之间的通信或者说是合作，才能控制好整个流程。</p>
+<p>相比之下，方法2就不存在这个问题了，处理起来简单一些。所以最后我采取了方法2的做法。</p>
+<p>核心代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">fetchAttitudeListAsynProcess</span><span class="params">(String id, String accessToken, <span class="keyword">int</span> page, <span class="keyword">int</span> count)</span> </span>&#123;</span><br><span class="line">    Attitudes attitudes = <span class="keyword">new</span> Attitudes();</span><br><span class="line">    JSONObject jsonObject;</span><br><span class="line">    <span class="comment">//定义一个有10个线程的线程池</span></span><br><span class="line">    ExecutorService executor = Executors.newFixedThreadPool(<span class="number">10</span>);</span><br><span class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 调用api获取点赞列表</span></span><br><span class="line">            jsonObject = attitudes.getAttitudes(accessToken, id, page, count);</span><br><span class="line">            JSONArray jsonArray = jsonObject.getJSONArray(<span class="string">"attitudes"</span>);</span><br><span class="line">            <span class="keyword">if</span> (jsonArray.length() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="comment">//定义一个runnable</span></span><br><span class="line">                RunnableProcessData runnableProcessData = <span class="keyword">new</span> RunnableProcessData(id, jsonObject, page);</span><br><span class="line">                <span class="comment">//把数据处理的过程交给线程池异步处理</span></span><br><span class="line">                executor.execute(runnableProcessData);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            page++;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (WeiboException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (JSONException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RunnableProcessData</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String id;</span><br><span class="line">    <span class="keyword">private</span> JSONObject jsonObject;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> page;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RunnableProcessData</span><span class="params">(String id, JSONObject jsonObject, <span class="keyword">int</span> page)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">        <span class="keyword">this</span>.jsonObject = jsonObject;</span><br><span class="line">        <span class="keyword">this</span>.page = page;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        JSONArray jsonArray;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            jsonArray = jsonObject.getJSONArray(<span class="string">"attitudes"</span>);</span><br><span class="line">            JSONObject attitudeJsonObject;</span><br><span class="line">            List&lt;User&gt; users = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">            List&lt;AttitudesMapping&gt; attitudesMappings = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; jsonArray.length(); i++) &#123;</span><br><span class="line">                attitudeJsonObject = jsonArray.getJSONObject(i);</span><br><span class="line">                <span class="keyword">if</span> (attitudeJsonObject.has(<span class="string">"user"</span>)) &#123;</span><br><span class="line">                    <span class="comment">// 构造 wbUser</span></span><br><span class="line">                    User user = <span class="keyword">new</span> User(attitudeJsonObject.getJSONObject(<span class="string">"user"</span>));</span><br><span class="line">                    users.add(user);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            dataService.saveWbUsers(users);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (JSONException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (WeiboException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (ParseException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>换成了方案2之后，时间快了好几倍，由于之前没有记录下具体的耗时，之前11w+的数据大概是90mins完成的，现在只需大概20mins左右就搞掂了，快了将近75%。</p>
+<p>再选取一条<a href="http://weibo.com/1563926367/D6ypd9KJw" target="_blank" rel="external">微博</a>测试,结果两种方法的耗时输出分别是：</p>
+<p>方案1： ===&gt; 129803。 方案2： ===&gt; 35306</p>
+<p>快了 <strong>72%</strong>， 用线程的优势体现的淋漓尽致</p>
+<p>#后续</p>
+<p>其实对于上述两种线程池的解决方案，如果要爬取的页数事先已经确定好(例如我只要爬前10页的数据)，这样方案1就不需要和子线程进行通信，只需要在主线程中的循环控制设置好条件  <code>while(page&lt;=10)</code>,然后每次循环体的执行都交给子线程处理即可。</p>
+<p>经过测试两种方案的耗时分别是：</p>
+<p>方案1：===&gt; 3778<br>方案2：===&gt; 12684</p>
+<p>方案1比方案2快了 <strong>70%</strong></p>
+<p>#总结</p>
+<ol>
+<li>对于耗时长且不需要等待有结果返回才能进行下一步的任务，考虑用线程，尽可能利用CPU资源</li>
+<li>对于线程的使用，尽量用jdk的Executor框架，里面提供各种丰富线程池实现可供调用</li>
+</ol>
+<p>完.</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>#场景</p>
+<p>调用新浪微博 根据微博ID返回某条微博的表态列表 接口爬取点赞列表，并将每个点赞用户保存进db</p>
+<p><a href="http://open.weibo.com/wiki/2/attitudes/show" target="_blank" r]]>
+    </summary>
+    
+  </entry>
+  
+  <entry>
     <title><![CDATA[hexo部署在vps上]]></title>
     <link href="http://zclau.com/2015/12/14/hexo%E9%83%A8%E7%BD%B2%E5%9C%A8vps%E4%B8%8A/"/>
     <id>http://zclau.com/2015/12/14/hexo部署在vps上/</id>
     <published>2015-12-14T13:11:37.000Z</published>
-    <updated>2015-12-14T16:34:35.000Z</updated>
+    <updated>2015-12-14T16:40:43.000Z</updated>
     <content type="html"><![CDATA[<p>之前已经成功把hexo托管在了github上，并且可以访问。不过由于本身已经有个linode的vps，所以还是决定把hexo部署在自己的服务器上。</p>
 <p>部署过程其实也很简单，因为其实只要把生成的静态文件部署上去即可，完全不涉及后台的交互。所以我在服务器上利用nginx，配置指向存放博客文章的文件夹就搞掂了。</p>
 <p>首先我在服务器上的用户目录下先新建一个文件夹blog。<br>然后就配置nginx,在nginx.conf里加上这么一段：</p>
