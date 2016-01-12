@@ -1,7 +1,11 @@
 title: 一次使用新浪微博api抓取数据的优化
 date: 2016-01-05 17:23:25
-categories: 代码优化
-tags: 代码优化
+categories: 
+- 代码优化
+- Java
+tags: 
+- 代码优化
+- 多线程
 ---
 
 # 场景
