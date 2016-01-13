@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Keep it simple,stupid]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://zclau.com/"/>
-  <updated>2016-01-12T12:48:53.000Z</updated>
+  <updated>2016-01-13T13:50:12.000Z</updated>
   <id>http://zclau.com/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="http://zclau.com/2016/01/05/%E4%B8%80%E6%AC%A1%E4%BD%BF%E7%94%A8%E6%96%B0%E6%B5%AA%E5%BE%AE%E5%8D%9Aapi%E6%8A%93%E5%8F%96%E6%95%B0%E6%8D%AE%E7%9A%84%E4%BC%98%E5%8C%96/"/>
     <id>http://zclau.com/2016/01/05/一次使用新浪微博api抓取数据的优化/</id>
     <published>2016-01-05T09:23:25.000Z</published>
-    <updated>2016-01-12T12:48:53.000Z</updated>
+    <updated>2016-01-13T13:50:12.000Z</updated>
     <content type="html"><![CDATA[<h1 id="场景">场景</h1><p>调用新浪微博 根据微博ID返回某条微博的表态列表 接口爬取点赞列表，并将每个点赞用户保存进db</p>
 <p><a href="http://open.weibo.com/wiki/2/attitudes/show" target="_blank" rel="external">api文档</a></p>
 <h1 id="实现流程">实现流程</h1><ol>
@@ -56,6 +56,7 @@
 <h1 id="总结">总结</h1><ol>
 <li>对于耗时长且不需要等待有结果返回才能进行下一步的任务，考虑用线程，尽可能利用CPU资源</li>
 <li>对于线程的使用，尽量用jdk的Executor框架，里面提供各种丰富线程池实现可供调用</li>
+<li>以上代码仅仅是示例代码，如果要用在生产上还需要有好多地方细究下去，例如应该使用哪种Executor的具体实现好；线程池大小应该设置成多少才会达到效率最高；executor应该交给spring管理等等</li>
 </ol>
 <p>完.</p>
 ]]></content>
