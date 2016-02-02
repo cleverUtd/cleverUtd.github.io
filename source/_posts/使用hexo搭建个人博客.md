@@ -41,6 +41,26 @@ categories: hexo
 到此，博客就搭建完毕啦，个人感觉比wordpress的搭建简单方便多了。
 
 
+---
+
+-----------最强分割线------------
+### 02/02/2016:
+
+运行 $ hexo server 命令有时会返回这样的错误：
+```
+Error: watch ENOSPC ...
+```
+
+可以用过运行 $ npm dedupe 来解决，如果不起作用的话，可以尝试在 Linux 终端中运行下列命令：
+```
+$ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+```
+这将会提高你能监视的文件数量。
+
+
+
+
+
 
 
 
