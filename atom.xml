@@ -1,147 +1,191 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title><![CDATA[zclau]]></title>
-  <subtitle><![CDATA[Keep it simple,stupid]]></subtitle>
+  <title>zclau</title>
+  <subtitle>Keep it simple,stupid</subtitle>
   <link href="/atom.xml" rel="self"/>
+  
   <link href="http://zclau.com/"/>
-  <updated>2016-01-13T13:53:39.000Z</updated>
+  <updated>2016-02-10T04:00:50.000Z</updated>
   <id>http://zclau.com/</id>
   
   <author>
-    <name><![CDATA[zclau]]></name>
-    <email><![CDATA[cleverutd@gmail.com]]></email>
+    <name>zclau</name>
+    <email>cleverutd@gmail.com</email>
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title><![CDATA[一次使用新浪微博api抓取数据的优化]]></title>
+    <title>linux核心命令</title>
+    <link href="http://zclau.com/2016/02/02/linux%E6%A0%B8%E5%BF%83%E5%91%BD%E4%BB%A4/"/>
+    <id>http://zclau.com/2016/02/02/linux核心命令/</id>
+    <published>2016-02-02T03:15:04.000Z</published>
+    <updated>2016-02-10T04:00:50.000Z</updated>
+    
+    <content type="html">&lt;p&gt;&lt;img src=&quot;http://7xp2k4.com1.z0.glb.clouddn.com/command.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;img src=&quot;http://7xp2k4.com1.z0.glb.clouddn.com/command.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+    
+    </summary>
+    
+      <category term="Linux/Unix" scheme="http://zclau.com/categories/Linux-Unix/"/>
+    
+    
+      <category term="Linux/Unix" scheme="http://zclau.com/tags/Linux-Unix/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>一次使用新浪微博api抓取数据的优化</title>
     <link href="http://zclau.com/2016/01/05/%E4%B8%80%E6%AC%A1%E4%BD%BF%E7%94%A8%E6%96%B0%E6%B5%AA%E5%BE%AE%E5%8D%9Aapi%E6%8A%93%E5%8F%96%E6%95%B0%E6%8D%AE%E7%9A%84%E4%BC%98%E5%8C%96/"/>
     <id>http://zclau.com/2016/01/05/一次使用新浪微博api抓取数据的优化/</id>
     <published>2016-01-05T09:23:25.000Z</published>
     <updated>2016-01-13T13:53:39.000Z</updated>
-    <content type="html"><![CDATA[<h1 id="场景">场景</h1><p>调用新浪微博 根据微博ID返回某条微博的表态列表 接口爬取点赞列表，并将每个点赞用户保存进db</p>
-<p><a href="http://open.weibo.com/wiki/2/attitudes/show" target="_blank" rel="external">api文档</a></p>
-<h1 id="实现流程">实现流程</h1><ol>
-<li>爬取点赞列表</li>
-<li>爬取回来的json数据，解析出其中的attitudes数组，如果数组长度大于0，跳去步骤3；否则跳去步骤6</li>
-<li>遍历数组，获取对应的user字段(即点赞用户的信息)，构造成User的pojo，并添加进一个User的list里</li>
-<li>批量保存 user list </li>
-<li>返回步骤1，爬取下一页数据</li>
-<li>退出方法</li>
-</ol>
-<a id="more"></a>
-<h1 id="通用版">通用版</h1><p>核心代码： </p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">fetchAttitudeList</span><span class="params">(String id, String accessToken, <span class="keyword">int</span> page, <span class="keyword">int</span> count)</span> </span>&#123;</span><br><span class="line">    Attitudes attitudes = <span class="keyword">new</span> Attitudes();</span><br><span class="line">    JSONObject jsonObject;</span><br><span class="line">    JSONObject attitudeJsonObject;</span><br><span class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 调用api获取点赞列表</span></span><br><span class="line">            jsonObject = attitudes.getAttitudes(accessToken, id, page, count);</span><br><span class="line">            JSONArray jsonArray = jsonObject.getJSONArray(<span class="string">"attitudes"</span>);</span><br><span class="line">            <span class="keyword">if</span> (jsonArray.length() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                List&lt;User&gt; users = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">                List&lt;AttitudesMapping&gt; attitudesMappings = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; jsonArray.length(); i++) &#123;</span><br><span class="line">                    attitudeJsonObject = jsonArray.getJSONObject(i);</span><br><span class="line">                    <span class="keyword">if</span> (attitudeJsonObject.has(<span class="string">"user"</span>)) &#123;</span><br><span class="line">                        <span class="comment">// 构造 wbUser</span></span><br><span class="line">                        User user = <span class="keyword">new</span> User(attitudeJsonObject.getJSONObject(<span class="string">"user"</span>));</span><br><span class="line">                        users.add(user);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                dataService.saveWbUsers(users);<span class="comment">//批量保存进db</span></span><br><span class="line">                users = <span class="keyword">null</span>;</span><br><span class="line">                attitudesMappings = <span class="keyword">null</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            page++;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>第一版的代码是最容易理解并且实现起来最简单，但是并不通用。因为所有事情都是在一条线程完成，这种执行的步骤是线性且阻塞的。</p>
-<p>如果在数据量较少的情况下，使用这种做法倒没有什么问题。但是我这次要爬的这条<a href="http://weibo.com/2082990561/D8SBU9K2z" target="_blank" rel="external">微博</a>，有11w+的赞。如果还是用这种做法的话，问题就显现出来了：<strong>太慢，效率太低了</strong>。 总共爬了560多页，全部完成后大概花了一个半小时，实在接受不了。</p>
-<p>必须改善优化一下，于是就决定引入线程去处理，尽可能使CPU都得到充分的利用。于是就有了第二个版本的代码</p>
-<h1 id="线程版">线程版</h1><p>对于线程的使用，交给jdk的Executor框架来控制处理。</p>
-<p>这里的线程版本，开始想了两种方案</p>
-<ol>
-<li>上面实现流程的 步骤1至步骤4都放在处理线程中。这样主线程只负责页数的控制，然后处理线程负责爬取主线程提供过来的某一页的数据并保存</li>
-<li>步骤1,2 在主线程， 步骤3,4在处理线程。这样就是主线程负责爬取每一页的数据，然后数据解析以及保存交给处理线程。</li>
-</ol>
-<p>对于方案1，难点在于，主线程不知道数据总共有多少页，因此不知道何时才能结束。这就需要主线程和处理线程之间的通信或者说是合作，才能控制好整个流程。</p>
-<p>相比之下，方法2就不存在这个问题了，处理起来简单一些。所以最后我采取了方法2的做法。</p>
-<p>核心代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">fetchAttitudeListAsynProcess</span><span class="params">(String id, String accessToken, <span class="keyword">int</span> page, <span class="keyword">int</span> count)</span> </span>&#123;</span><br><span class="line">    Attitudes attitudes = <span class="keyword">new</span> Attitudes();</span><br><span class="line">    JSONObject jsonObject;</span><br><span class="line">    <span class="comment">//定义一个有10个线程的线程池</span></span><br><span class="line">    ExecutorService executor = Executors.newFixedThreadPool(<span class="number">10</span>);</span><br><span class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 调用api获取点赞列表</span></span><br><span class="line">            jsonObject = attitudes.getAttitudes(accessToken, id, page, count);</span><br><span class="line">            JSONArray jsonArray = jsonObject.getJSONArray(<span class="string">"attitudes"</span>);</span><br><span class="line">            <span class="keyword">if</span> (jsonArray.length() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="comment">//定义一个runnable</span></span><br><span class="line">                RunnableProcessData runnableProcessData = <span class="keyword">new</span> RunnableProcessData(id, jsonObject, page);</span><br><span class="line">                <span class="comment">//把数据处理的过程交给线程池异步处理</span></span><br><span class="line">                executor.execute(runnableProcessData);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            page++;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (WeiboException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (JSONException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RunnableProcessData</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String id;</span><br><span class="line">    <span class="keyword">private</span> JSONObject jsonObject;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> page;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RunnableProcessData</span><span class="params">(String id, JSONObject jsonObject, <span class="keyword">int</span> page)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">        <span class="keyword">this</span>.jsonObject = jsonObject;</span><br><span class="line">        <span class="keyword">this</span>.page = page;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        JSONArray jsonArray;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            jsonArray = jsonObject.getJSONArray(<span class="string">"attitudes"</span>);</span><br><span class="line">            JSONObject attitudeJsonObject;</span><br><span class="line">            List&lt;User&gt; users = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">            List&lt;AttitudesMapping&gt; attitudesMappings = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; jsonArray.length(); i++) &#123;</span><br><span class="line">                attitudeJsonObject = jsonArray.getJSONObject(i);</span><br><span class="line">                <span class="keyword">if</span> (attitudeJsonObject.has(<span class="string">"user"</span>)) &#123;</span><br><span class="line">                    <span class="comment">// 构造 wbUser</span></span><br><span class="line">                    User user = <span class="keyword">new</span> User(attitudeJsonObject.getJSONObject(<span class="string">"user"</span>));</span><br><span class="line">                    users.add(user);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            dataService.saveWbUsers(users);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (JSONException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (WeiboException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (ParseException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>换成了方案2之后，时间快了好几倍，由于之前没有记录下具体的耗时，之前11w+的数据大概是90mins完成的，现在只需大概20mins左右就搞掂了，快了将近75%。</p>
-<p>再选取一条<a href="http://weibo.com/1563926367/D6ypd9KJw" target="_blank" rel="external">微博</a>测试,结果两种方法的耗时输出分别是：</p>
-<p>方案1： ===&gt; 129803。 方案2： ===&gt; 35306</p>
-<p>快了 <strong>72%</strong>， 用线程的优势体现的淋漓尽致</p>
-<h1 id="后续">后续</h1><p>其实对于上述两种线程池的解决方案，如果要爬取的页数事先已经确定好(例如我只要爬前10页的数据)，这样方案1就不需要和子线程进行通信，只需要在主线程中的循环控制设置好条件  <code>while(page&lt;=10)</code>,然后每次循环体的执行都交给子线程处理即可。</p>
-<p>经过测试两种方案的耗时分别是：</p>
-<p>方案1：===&gt; 3778<br>方案2：===&gt; 12684</p>
-<p>方案1比方案2快了 <strong>70%</strong></p>
-<h1 id="总结">总结</h1><ol>
-<li>对于耗时长且不需要等待有结果返回才能进行下一步的任务，考虑用线程，尽可能利用CPU资源</li>
-<li>对于线程的使用，尽量用jdk的Executor框架，里面提供各种丰富线程池实现可供调用</li>
-<li>以上代码仅仅是示例代码，如果要用在生产上还需要有好多地方细究下去，例如应该使用哪种Executor的具体实现好；线程池大小应该设置成多少才会达到效率最高；executor应该交给spring管理等等</li>
-</ol>
-<p>完.</p>
-]]></content>
+    
+    <content type="html">&lt;h1 id=&quot;场景&quot;&gt;场景&lt;/h1&gt;&lt;p&gt;调用新浪微博 根据微博ID返回某条微博的表态列表 接口爬取点赞列表，并将每个点赞用户保存进db&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://open.weibo.com/wiki/2/attitudes/show&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;api文档&lt;/a&gt;&lt;/p&gt;
+&lt;h1 id=&quot;实现流程&quot;&gt;实现流程&lt;/h1&gt;&lt;ol&gt;
+&lt;li&gt;爬取点赞列表&lt;/li&gt;
+&lt;li&gt;爬取回来的json数据，解析出其中的attitudes数组，如果数组长度大于0，跳去步骤3；否则跳去步骤6&lt;/li&gt;
+&lt;li&gt;遍历数组，获取对应的user字段(即点赞用户的信息)，构造成User的pojo，并添加进一个User的list里&lt;/li&gt;
+&lt;li&gt;批量保存 user list &lt;/li&gt;
+&lt;li&gt;返回步骤1，爬取下一页数据&lt;/li&gt;
+&lt;li&gt;退出方法&lt;/li&gt;
+&lt;/ol&gt;
+&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+&lt;h1 id=&quot;通用版&quot;&gt;通用版&lt;/h1&gt;&lt;p&gt;核心代码： &lt;/p&gt;
+&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;32&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;fetchAttitudeList&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(String id, String accessToken, &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; page, &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; count)&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    Attitudes attitudes = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; Attitudes();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    JSONObject jsonObject;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    JSONObject attitudeJsonObject;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;while&lt;/span&gt; (&lt;span class=&quot;keyword&quot;&gt;true&lt;/span&gt;) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;try&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;comment&quot;&gt;// 调用api获取点赞列表&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            jsonObject = attitudes.getAttitudes(accessToken, id, page, count);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            JSONArray jsonArray = jsonObject.getJSONArray(&lt;span class=&quot;string&quot;&gt;&quot;attitudes&quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (jsonArray.length() &amp;gt; &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                List&amp;lt;User&amp;gt; users = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; ArrayList&amp;lt;&amp;gt;();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                List&amp;lt;AttitudesMapping&amp;gt; attitudesMappings = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; ArrayList&amp;lt;&amp;gt;();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; (&lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; i = &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;; i &amp;lt; jsonArray.length(); i++) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                    attitudeJsonObject = jsonArray.getJSONObject(i);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (attitudeJsonObject.has(&lt;span class=&quot;string&quot;&gt;&quot;user&quot;&lt;/span&gt;)) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                        &lt;span class=&quot;comment&quot;&gt;// 构造 wbUser&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                        User user = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; User(attitudeJsonObject.getJSONObject(&lt;span class=&quot;string&quot;&gt;&quot;user&quot;&lt;/span&gt;));&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                        users.add(user);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                dataService.saveWbUsers(users);&lt;span class=&quot;comment&quot;&gt;//批量保存进db&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                users = &lt;span class=&quot;keyword&quot;&gt;null&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                attitudesMappings = &lt;span class=&quot;keyword&quot;&gt;null&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &amp;#125; &lt;span class=&quot;keyword&quot;&gt;else&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                &lt;span class=&quot;keyword&quot;&gt;break&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            page++;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125; &lt;span class=&quot;keyword&quot;&gt;catch&lt;/span&gt; (Exception e) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            e.printStackTrace();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125; &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125; &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;第一版的代码是最容易理解并且实现起来最简单，但是并不通用。因为所有事情都是在一条线程完成，这种执行的步骤是线性且阻塞的。&lt;/p&gt;
+&lt;p&gt;如果在数据量较少的情况下，使用这种做法倒没有什么问题。但是我这次要爬的这条&lt;a href=&quot;http://weibo.com/2082990561/D8SBU9K2z&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;微博&lt;/a&gt;，有11w+的赞。如果还是用这种做法的话，问题就显现出来了：&lt;strong&gt;太慢，效率太低了&lt;/strong&gt;。 总共爬了560多页，全部完成后大概花了一个半小时，实在接受不了。&lt;/p&gt;
+&lt;p&gt;必须改善优化一下，于是就决定引入线程去处理，尽可能使CPU都得到充分的利用。于是就有了第二个版本的代码&lt;/p&gt;
+&lt;h1 id=&quot;线程版&quot;&gt;线程版&lt;/h1&gt;&lt;p&gt;对于线程的使用，交给jdk的Executor框架来控制处理。&lt;/p&gt;
+&lt;p&gt;这里的线程版本，开始想了两种方案&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;上面实现流程的 步骤1至步骤4都放在处理线程中。这样主线程只负责页数的控制，然后处理线程负责爬取主线程提供过来的某一页的数据并保存&lt;/li&gt;
+&lt;li&gt;步骤1,2 在主线程， 步骤3,4在处理线程。这样就是主线程负责爬取每一页的数据，然后数据解析以及保存交给处理线程。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;对于方案1，难点在于，主线程不知道数据总共有多少页，因此不知道何时才能结束。这就需要主线程和处理线程之间的通信或者说是合作，才能控制好整个流程。&lt;/p&gt;
+&lt;p&gt;相比之下，方法2就不存在这个问题了，处理起来简单一些。所以最后我采取了方法2的做法。&lt;/p&gt;
+&lt;p&gt;核心代码：&lt;/p&gt;
+&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;33&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;34&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;35&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;36&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;37&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;38&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;39&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;40&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;41&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;42&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;43&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;44&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;45&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;46&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;47&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;48&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;49&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;50&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;51&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;52&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;53&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;54&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;55&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;56&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;57&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;58&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;59&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;60&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;61&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;62&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;63&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;fetchAttitudeListAsynProcess&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(String id, String accessToken, &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; page, &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; count)&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    Attitudes attitudes = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; Attitudes();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    JSONObject jsonObject;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;//定义一个有10个线程的线程池&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ExecutorService executor = Executors.newFixedThreadPool(&lt;span class=&quot;number&quot;&gt;10&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;while&lt;/span&gt; (&lt;span class=&quot;keyword&quot;&gt;true&lt;/span&gt;) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;try&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;comment&quot;&gt;// 调用api获取点赞列表&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            jsonObject = attitudes.getAttitudes(accessToken, id, page, count);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            JSONArray jsonArray = jsonObject.getJSONArray(&lt;span class=&quot;string&quot;&gt;&quot;attitudes&quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (jsonArray.length() &amp;gt; &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                &lt;span class=&quot;comment&quot;&gt;//定义一个runnable&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                RunnableProcessData runnableProcessData = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; RunnableProcessData(id, jsonObject, page);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                &lt;span class=&quot;comment&quot;&gt;//把数据处理的过程交给线程池异步处理&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                executor.execute(runnableProcessData);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &amp;#125; &lt;span class=&quot;keyword&quot;&gt;else&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                &lt;span class=&quot;keyword&quot;&gt;break&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            page++;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125; &lt;span class=&quot;keyword&quot;&gt;catch&lt;/span&gt; (WeiboException e) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            e.printStackTrace();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125; &lt;span class=&quot;keyword&quot;&gt;catch&lt;/span&gt; (JSONException e) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            e.printStackTrace();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;RunnableProcessData&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;Runnable&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; String id;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; JSONObject jsonObject;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; page;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;RunnableProcessData&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(String id, JSONObject jsonObject, &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; page)&lt;/span&gt;&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt;.id = id;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt;.jsonObject = jsonObject;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt;.page = page;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;annotation&quot;&gt;@Override&lt;/span&gt; &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        JSONArray jsonArray;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;try&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            jsonArray = jsonObject.getJSONArray(&lt;span class=&quot;string&quot;&gt;&quot;attitudes&quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            JSONObject attitudeJsonObject;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            List&amp;lt;User&amp;gt; users = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; ArrayList&amp;lt;&amp;gt;();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            List&amp;lt;AttitudesMapping&amp;gt; attitudesMappings = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; ArrayList&amp;lt;&amp;gt;();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; (&lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; i = &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;; i &amp;lt; jsonArray.length(); i++) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                attitudeJsonObject = jsonArray.getJSONObject(i);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (attitudeJsonObject.has(&lt;span class=&quot;string&quot;&gt;&quot;user&quot;&lt;/span&gt;)) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                    &lt;span class=&quot;comment&quot;&gt;// 构造 wbUser&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                    User user = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; User(attitudeJsonObject.getJSONObject(&lt;span class=&quot;string&quot;&gt;&quot;user&quot;&lt;/span&gt;));&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                    users.add(user);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            dataService.saveWbUsers(users);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125; &lt;span class=&quot;keyword&quot;&gt;catch&lt;/span&gt; (JSONException e) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            e.printStackTrace();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125; &lt;span class=&quot;keyword&quot;&gt;catch&lt;/span&gt; (WeiboException e) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            e.printStackTrace();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125; &lt;span class=&quot;keyword&quot;&gt;catch&lt;/span&gt; (ParseException e) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            e.printStackTrace();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;换成了方案2之后，时间快了好几倍，由于之前没有记录下具体的耗时，之前11w+的数据大概是90mins完成的，现在只需大概20mins左右就搞掂了，快了将近75%。&lt;/p&gt;
+&lt;p&gt;再选取一条&lt;a href=&quot;http://weibo.com/1563926367/D6ypd9KJw&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;微博&lt;/a&gt;测试,结果两种方法的耗时输出分别是：&lt;/p&gt;
+&lt;p&gt;方案1： ===&amp;gt; 129803。 方案2： ===&amp;gt; 35306&lt;/p&gt;
+&lt;p&gt;快了 &lt;strong&gt;72%&lt;/strong&gt;， 用线程的优势体现的淋漓尽致&lt;/p&gt;
+&lt;h1 id=&quot;后续&quot;&gt;后续&lt;/h1&gt;&lt;p&gt;其实对于上述两种线程池的解决方案，如果要爬取的页数事先已经确定好(例如我只要爬前10页的数据)，这样方案1就不需要和子线程进行通信，只需要在主线程中的循环控制设置好条件  &lt;code&gt;while(page&amp;lt;=10)&lt;/code&gt;,然后每次循环体的执行都交给子线程处理即可。&lt;/p&gt;
+&lt;p&gt;经过测试两种方案的耗时分别是：&lt;/p&gt;
+&lt;p&gt;方案1：===&amp;gt; 3778&lt;br&gt;方案2：===&amp;gt; 12684&lt;/p&gt;
+&lt;p&gt;方案1比方案2快了 &lt;strong&gt;70%&lt;/strong&gt;&lt;/p&gt;
+&lt;h1 id=&quot;总结&quot;&gt;总结&lt;/h1&gt;&lt;ol&gt;
+&lt;li&gt;对于耗时长且不需要等待有结果返回才能进行下一步的任务，考虑用线程，尽可能利用CPU资源&lt;/li&gt;
+&lt;li&gt;对于线程的使用，尽量用jdk的Executor框架，里面提供各种丰富线程池实现可供调用&lt;/li&gt;
+&lt;li&gt;以上代码仅仅是示例代码，如果要用在生产上还需要有好多地方细究下去，例如应该使用哪种Executor的具体实现好；线程池大小应该设置成多少才会达到效率最高；executor应该交给spring管理等等&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;完.&lt;/p&gt;
+</content>
+    
     <summary type="html">
-    <![CDATA[<h1 id="场景">场景</h1><p>调用新浪微博 根据微博ID返回某条微博的表态列表 接口爬取点赞列表，并将每个点赞用户保存进db</p>
-<p><a href="http://open.weibo.com/wiki/2/attitudes/show">api文档</a></p>
-<h1 id="实现流程">实现流程</h1><ol>
-<li>爬取点赞列表</li>
-<li>爬取回来的json数据，解析出其中的attitudes数组，如果数组长度大于0，跳去步骤3；否则跳去步骤6</li>
-<li>遍历数组，获取对应的user字段(即点赞用户的信息)，构造成User的pojo，并添加进一个User的list里</li>
-<li>批量保存 user list </li>
-<li>返回步骤1，爬取下一页数据</li>
-<li>退出方法</li>
-</ol>]]>
+    
+      &lt;h1 id=&quot;场景&quot;&gt;场景&lt;/h1&gt;&lt;p&gt;调用新浪微博 根据微博ID返回某条微博的表态列表 接口爬取点赞列表，并将每个点赞用户保存进db&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://open.weibo.com/wiki/2/attitudes/show&quot;&gt;api文档&lt;/a&gt;&lt;/p&gt;
+&lt;h1 id=&quot;实现流程&quot;&gt;实现流程&lt;/h1&gt;&lt;ol&gt;
+&lt;li&gt;爬取点赞列表&lt;/li&gt;
+&lt;li&gt;爬取回来的json数据，解析出其中的attitudes数组，如果数组长度大于0，跳去步骤3；否则跳去步骤6&lt;/li&gt;
+&lt;li&gt;遍历数组，获取对应的user字段(即点赞用户的信息)，构造成User的pojo，并添加进一个User的list里&lt;/li&gt;
+&lt;li&gt;批量保存 user list &lt;/li&gt;
+&lt;li&gt;返回步骤1，爬取下一页数据&lt;/li&gt;
+&lt;li&gt;退出方法&lt;/li&gt;
+&lt;/ol&gt;
     
     </summary>
-    
-      <category term="代码优化" scheme="http://zclau.com/tags/%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96/"/>
-    
-      <category term="多线程" scheme="http://zclau.com/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"/>
     
       <category term="代码优化" scheme="http://zclau.com/categories/%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96/"/>
     
       <category term="Java" scheme="http://zclau.com/categories/%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96/Java/"/>
     
+    
+      <category term="代码优化" scheme="http://zclau.com/tags/%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="多线程" scheme="http://zclau.com/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"/>
+    
   </entry>
   
   <entry>
-    <title><![CDATA[hexo部署在vps上]]></title>
+    <title>hexo部署在vps上</title>
     <link href="http://zclau.com/2015/12/14/hexo%E9%83%A8%E7%BD%B2%E5%9C%A8vps%E4%B8%8A/"/>
     <id>http://zclau.com/2015/12/14/hexo部署在vps上/</id>
     <published>2015-12-14T13:11:37.000Z</published>
     <updated>2015-12-14T16:40:43.000Z</updated>
-    <content type="html"><![CDATA[<p>之前已经成功把hexo托管在了github上，并且可以访问。不过由于本身已经有个linode的vps，所以还是决定把hexo部署在自己的服务器上。</p>
-<p>部署过程其实也很简单，因为其实只要把生成的静态文件部署上去即可，完全不涉及后台的交互。所以我在服务器上利用nginx，配置指向存放博客文章的文件夹就搞掂了。</p>
-<p>首先我在服务器上的用户目录下先新建一个文件夹blog。<br>然后就配置nginx,在nginx.conf里加上这么一段：</p>
-<figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">        listen   <span class="number">80</span>;</span><br><span class="line">        server_name  zclau.com;</span><br><span class="line"></span><br><span class="line">        proxy_set_header Host <span class="variable">$http</span>_host;</span><br><span class="line">        proxy_set_header X-real-ip <span class="variable">$remote</span>_addr;</span><br><span class="line">        proxy_set_header X-Forwarded-For <span class="variable">$proxy</span>_add_x_forwarded_for;</span><br><span class="line"></span><br><span class="line">        location / &#123;</span><br><span class="line">            root /home/zclau/blog;</span><br><span class="line">            #index index.html</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>这样当访问zclau.com时，请求都会转发到我的博客根目录/home/zclau/blog 这个文件夹下<br>然后就可以看到我的博客的首页了。</p>
-]]></content>
+    
+    <content type="html">&lt;p&gt;之前已经成功把hexo托管在了github上，并且可以访问。不过由于本身已经有个linode的vps，所以还是决定把hexo部署在自己的服务器上。&lt;/p&gt;
+&lt;p&gt;部署过程其实也很简单，因为其实只要把生成的静态文件部署上去即可，完全不涉及后台的交互。所以我在服务器上利用nginx，配置指向存放博客文章的文件夹就搞掂了。&lt;/p&gt;
+&lt;p&gt;首先我在服务器上的用户目录下先新建一个文件夹blog。&lt;br&gt;然后就配置nginx,在nginx.conf里加上这么一段：&lt;/p&gt;
+&lt;figure class=&quot;highlight xquery&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;server &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        listen   &lt;span class=&quot;number&quot;&gt;80&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        server_name  zclau.com;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        proxy_set_header Host &lt;span class=&quot;variable&quot;&gt;$http&lt;/span&gt;_host;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        proxy_set_header X-real-ip &lt;span class=&quot;variable&quot;&gt;$remote&lt;/span&gt;_addr;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        proxy_set_header X-Forwarded-For &lt;span class=&quot;variable&quot;&gt;$proxy&lt;/span&gt;_add_x_forwarded_for;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        location / &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            root /home/zclau/blog;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            #index index.html&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;这样当访问zclau.com时，请求都会转发到我的博客根目录/home/zclau/blog 这个文件夹下&lt;br&gt;然后就可以看到我的博客的首页了。&lt;/p&gt;
+</content>
+    
     <summary type="html">
-    <![CDATA[<p>之前已经成功把hexo托管在了github上，并且可以访问。不过由于本身已经有个linode的vps，所以还是决定把hexo部署在自己的服务器上。</p>
-<p>部署过程其实也很简单，因为其实只要把生成的静态文件部署上去即可，完全不涉及后台的交互。所以我在服务器上利用ngi]]>
+    
+      &lt;p&gt;之前已经成功把hexo托管在了github上，并且可以访问。不过由于本身已经有个linode的vps，所以还是决定把hexo部署在自己的服务器上。&lt;/p&gt;
+&lt;p&gt;部署过程其实也很简单，因为其实只要把生成的静态文件部署上去即可，完全不涉及后台的交互。所以我在服务器上利用ngi
+    
     </summary>
     
-      <category term="hexo" scheme="http://zclau.com/tags/hexo/"/>
-    
       <category term="hexo" scheme="http://zclau.com/categories/hexo/"/>
+    
+    
+      <category term="hexo" scheme="http://zclau.com/tags/hexo/"/>
     
   </entry>
   
   <entry>
-    <title><![CDATA[使用hexo搭建个人博客]]></title>
+    <title>使用hexo搭建个人博客</title>
     <link href="http://zclau.com/2015/12/01/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/"/>
     <id>http://zclau.com/2015/12/01/使用hexo搭建个人博客/</id>
     <published>2015-11-30T16:56:09.000Z</published>
-    <updated>2015-12-03T07:02:30.000Z</updated>
-    <content type="html"><![CDATA[<h4 id="前言">前言</h4><pre><code>大概一年前买了个域名和linode，在上面搭了个wordpress，但实在太懒，一直都没什么产出，文章少得可怜。
+    <updated>2016-02-10T04:00:50.000Z</updated>
+    
+    <content type="html">&lt;h4 id=&quot;前言&quot;&gt;前言&lt;/h4&gt;&lt;pre&gt;&lt;code&gt;大概一年前买了个域名和linode，在上面搭了个wordpress，但实在太懒，一直都没什么产出，文章少得可怜。
 
 直到最近，猛然发现，作为一名程序员，坚持写博客实在有太多好处，不仅可以提高自己的逻辑表达能力，还能加深自己对知识的理解，
 把自己所掌握的东西分享出去，最重要一点就是能记录下自己的成长点滴
 
 因此，决定洗心革面，而今迈步从头越。
-</code></pre><h4 id="选型">选型</h4><pre><code>既然从头再来，那就不打算再使用wordpress了，何况wordpress对markdown写作的支持实在太差劲了，实在受不了。 
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&quot;选型&quot;&gt;选型&lt;/h4&gt;&lt;pre&gt;&lt;code&gt;既然从头再来，那就不打算再使用wordpress了，何况wordpress对markdown写作的支持实在太差劲了，实在受不了。 
 
 这次我选择用hexo，相比较wordpress，有以下优点：
 
-<span class="number">1.</span> 逼格高，主题漂亮
-<span class="number">2.</span> 轻量级，wordpress太臃肿了
-<span class="number">3.</span> 配置灵活，自定化程度高，一键部署，生成纯静态文件，怎一个爽字了得
-</code></pre><h4 id="搭建步骤">搭建步骤</h4><p>因为网上已经有好多现成教程，这里就不重复写了。我是照着hexo的中文官网文档一步步搭建的<br><a href="https://hexo.io/zh-cn/docs/" target="_blank" rel="external">hexo 官方中文文档</a></p>
-<p>搭建好后，主题选择Next，主题配置过程参考<br><a href="http://theme-next.iissnan.com/" target="_blank" rel="external">next使用文档</a></p>
-<h4 id="源文件同步">源文件同步</h4><p>经过上面步骤，博客已经搭建好，并且同步到github后就可以访问了。但是部署上去github的其实都是经过<code>hexo generate</code>后生成的静态文件(public文件夹下)，而源文件一直都是保存在本地，那么问题来了，如果我换了台电脑，应该怎么办呢？</p>
-<p>参考了网上各种方案，最后我选择在github上使用一个分支来维护，具体参考<br><a href="http://devtian.me/2015/03/17/blog-sync-solution/" target="_blank" rel="external">关于博客同步的解决办法</a></p>
-<p>到此，博客就搭建完毕啦，个人感觉比wordpress的搭建简单方便多了。</p>
-]]></content>
+&lt;span class=&quot;number&quot;&gt;1.&lt;/span&gt; 逼格高，主题漂亮
+&lt;span class=&quot;number&quot;&gt;2.&lt;/span&gt; 轻量级，wordpress太臃肿了
+&lt;span class=&quot;number&quot;&gt;3.&lt;/span&gt; 配置灵活，自定化程度高，一键部署，生成纯静态文件，怎一个爽字了得
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&quot;搭建步骤&quot;&gt;搭建步骤&lt;/h4&gt;&lt;p&gt;因为网上已经有好多现成教程，这里就不重复写了。我是照着hexo的中文官网文档一步步搭建的&lt;br&gt;&lt;a href=&quot;https://hexo.io/zh-cn/docs/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;hexo 官方中文文档&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;搭建好后，主题选择Next，主题配置过程参考&lt;br&gt;&lt;a href=&quot;http://theme-next.iissnan.com/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;next使用文档&lt;/a&gt;&lt;/p&gt;
+&lt;h4 id=&quot;源文件同步&quot;&gt;源文件同步&lt;/h4&gt;&lt;p&gt;经过上面步骤，博客已经搭建好，并且同步到github后就可以访问了。但是部署上去github的其实都是经过&lt;code&gt;hexo generate&lt;/code&gt;后生成的静态文件(public文件夹下)，而源文件一直都是保存在本地，那么问题来了，如果我换了台电脑，应该怎么办呢？&lt;/p&gt;
+&lt;p&gt;参考了网上各种方案，最后我选择在github上使用一个分支来维护，具体参考&lt;br&gt;&lt;a href=&quot;http://devtian.me/2015/03/17/blog-sync-solution/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;关于博客同步的解决办法&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;到此，博客就搭建完毕啦，个人感觉比wordpress的搭建简单方便多了。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;———–最强分割线————&lt;/p&gt;
+&lt;h3 id=&quot;02/02/2016:&quot;&gt;02/02/2016:&lt;/h3&gt;&lt;p&gt;运行 $ hexo server 命令有时会返回这样的错误：&lt;br&gt;&lt;figure class=&quot;highlight http&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;attribute&quot;&gt;Error&lt;/span&gt;: &lt;span class=&quot;string&quot;&gt;watch ENOSPC ...&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;可以用过运行 $ npm dedupe 来解决，如果不起作用的话，可以尝试在 Linux 终端中运行下列命令：&lt;br&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;$ &lt;span class=&quot;built_in&quot;&gt;echo&lt;/span&gt; fs.inotify.max_user_watches=&lt;span class=&quot;number&quot;&gt;524288&lt;/span&gt; | sudo tee &lt;span class=&quot;operator&quot;&gt;-a&lt;/span&gt; /etc/sysctl.conf &amp;amp;&amp;amp; sudo sysctl -p&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;这将会提高你能监视的文件数量。&lt;/p&gt;
+</content>
+    
     <summary type="html">
-    <![CDATA[<h4 id="前言">前言</h4><pre><code>大概一年前买了个域名和linode，在上面搭了个wordpress，但实在太懒，一直都没什么产出，文章少得可怜。
+    
+      &lt;h4 id=&quot;前言&quot;&gt;前言&lt;/h4&gt;&lt;pre&gt;&lt;code&gt;大概一年前买了个域名和linode，在上面搭了个wordpress，但实在太懒，一直都没什么产出，文章少得可怜。
 
-直到最近，猛然发现，作为一名程序员，坚持写博客实在有太多好处，不仅可以提高自己的逻辑表达能力，还能加深自]]>
+直到最近，猛然发现，作为一名程序员，坚持写博客实在有太多好处，不仅可以提高自己的逻辑表达能力，还能加深自
+    
     </summary>
     
-      <category term="hexo" scheme="http://zclau.com/tags/hexo/"/>
-    
       <category term="hexo" scheme="http://zclau.com/categories/hexo/"/>
+    
+    
+      <category term="hexo" scheme="http://zclau.com/tags/hexo/"/>
     
   </entry>
   
