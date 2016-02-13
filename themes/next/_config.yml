@@ -3,10 +3,10 @@
 # ---------------------------------------------------------------
 
 # Place your favicon.ico to /source directory.
-favicon: /favicon.ico
+#favicon: /favicon.ico
 
 # Set default keywords (Use a comma to separate)
-keywords: "Hexo, NexT"
+keywords: "zclau "
 
 # Set rss to false to disable feed link.
 # Leave rss as empty to use site's feed link.
