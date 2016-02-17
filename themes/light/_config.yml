@@ -5,12 +5,12 @@ menu:
   #about: /about
 
 widgets:
-- recent_posts
+# - recent_posts
 #- search
-- archive
 - category
-- tag
-- weibo_show
+- archive
+# - tag
+- weibo
 
 
 excerpt_link: 阅读全文
@@ -31,3 +31,11 @@ baidu_analytics: true    #百度统计，天朝还是这个好使，没办法滴
 rss: /atom.xml
 
 comment_provider: #facebook
+
+
+# enable是否开启；height小挂件高度；url替换成自己的微博挂件地址，同步修改url中height的值
+weibo:
+  enable: true
+  height: 800
+  url: http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=800&fansRow=1&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=0&uid=1725565983&verifier=eb14beec&dpc=1
+
