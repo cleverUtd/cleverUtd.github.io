@@ -4,7 +4,7 @@ categories: Web开发
 tags: Shiro
 ---
 
-# 1. shiro核心概念
+# shiro核心概念
 
 ## Subject
 
@@ -29,7 +29,7 @@ tags: Shiro
 
 <!-- more -->
 
-# 2. maven配置依赖
+# maven配置依赖
 
 ```java
     <dependency>
@@ -52,9 +52,9 @@ tags: Shiro
 
 ${shiro.version}请自行替换成当前的最新版本
 
-# 3. 整合spring
+# 整合spring
 
-## 3.1 web.xml
+## web.xml
 
 增加filter和filter-mapping
 
@@ -76,7 +76,7 @@ ${shiro.version}请自行替换成当前的最新版本
 
 filter-name对应spring配置中定义的名字为“shiroFilter”的bean
 
-## 3.2 spring配置
+## spring配置
 
 新建spring-shiro.xml
 ```
@@ -130,7 +130,7 @@ shiro也有很多默认的filter，上面的anon和logout使用的就是shiro默
 
 配置好spring-shiro.xml，在spring.xml里import即可。
 
-# 4 自定义Realm
+# 自定义Realm
 
 新建MyRealm：
 ```
@@ -228,9 +228,9 @@ getAuthorizationInfo重写父类方法，此方法中，先通过redis查找用�
 
 doGetAuthorizationInfo 的中资源权限我使用URI:method("/user/create:post") 形式作为权限字符串
 
-# 5 权限校验
+# 权限校验
 
-## 5.1 数据库设计
+## 数据库设计
 
 角色表
 ```
@@ -293,7 +293,7 @@ CREATE TABLE `role_resources` (
 user和role是多对多关系，角色和资源也是多对多关系
 
 
-## 5.2 角色校验 
+## 角色校验 
 
 自定义RolesAuthorizationFilter
 ```
@@ -344,7 +344,7 @@ isAccessAllowed方法用于角色权限检测，因为父类的isAccessAllowed�
 
 onAccessDenied方法实现的是当权限不通过时，应该如何处理
 
-## 5.3 URL权限校验
+## URL权限校验
 
 自定义PermissionsAuthorizationFilter
 ```
@@ -387,9 +387,9 @@ public class MyURLPermissionFilter extends PermissionsAuthorizationFilter{
 
 到目前为止，已经完成shiro与spring整合，并且实现了角色和URL的权限管理了。
 
-# 6. 常见问题
+# 常见问题
 
-## 6.1 关于shiro session
+## 关于shiro session
 
 Shiro 中的 Session 不依赖 HTTP 环境。如果将 Shiro 部署在 web 应用程序中，那么这个 Session 就是基于HttpSession 的。在非 web 环境下使用，Shiro 则默认使用 EnterpriseSessionManagment
 
