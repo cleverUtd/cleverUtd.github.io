@@ -6,6 +6,7 @@ menu:
 widgets:
 - recent_posts
 #- search
+- archive
 - category
 - tag
 - weibo_show
