@@ -10,6 +10,7 @@ widgets:
 - category
 - archive
 # - tag
+- tagcloud
 - weibo
 
 
