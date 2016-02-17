@@ -1,6 +1,55 @@
 #header
   text-shadow 0 0 1px #fff
-  margin 50px auto
+  margin-bottom 25px
+
+  .header-div
+    a
+      font-family cursive
+      font-size 1.1em
+
+  .header-content
+    padding 2em 0.5em
+    .col-one
+      width 100%
+      img
+        border-radius 50%
+        height 5em
+        float left
+        margin 0 0.8em
+        transition height 0.3s, transform 1s
+        @media screen and (max-width: 320px)
+          text-align center
+        &:hover
+          height 7em
+          transform rotate(360deg)
+          -ms-transform rotate(360deg)  /* IE 9 */
+          -webkit-transform rotate(360deg) /* Safari and Chrome */
+          -o-transform rotate(360deg)    /* Opera */
+          -moz-transform rotate(360deg)    /* Firefox */
+
+    .col-two
+      margin-left -50%
+      img
+        height 5em
+        @media screen and (max-width: 600px)
+          display none
+
+  .header-nav
+    padding 0 0.5em
+    border-bottom 2px solid #eee
+
+  .header-nav a
+    display block
+    padding 10px 10px 10px 10px
+    float left
+    &:hover
+      font-size 1.5em
+      position relative
+      bottom 10px
+      padding-bottom 0
+    &:active
+      font-size 1.5em
+
   a
     color #999
     &:hover
@@ -20,9 +69,13 @@
   
   #main-nav
     font-family font-title
-    line-height 2.5em
+    line-height 1.1em
     ul
       list-style none
       li
         float left
-        margin-left 30px
+        padding 13px 15px
+        &:hover
+          background-color #EEE
+          color #999
+          font-style italic
