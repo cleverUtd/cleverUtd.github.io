@@ -1,7 +1,7 @@
 #header
   text-shadow 0 0 1px #fff
   margin-bottom 25px
-
+  
   .header-div
     a
       font-family cursive
@@ -39,7 +39,6 @@
     border-bottom 2px solid #eee
 
   .header-nav a
-    font-size 1.2em
     display block
     padding 10px 10px 10px 10px
     float left
@@ -53,7 +52,7 @@
 
   #main-nav
     font-family font-title
-    line-height 1.1em
+    font-size 1.1em
     ul
       list-style none
       li
@@ -63,7 +62,10 @@
           background-color #EEE
           color #999
           font-style italic
-
+    a[href="/index.html#categories"]
+      @media screen and (min-width: 901px)
+        display none
+    
   #sub-nav
     font-family font-title
     font-size 1.1em
@@ -80,7 +82,7 @@
     &:hover
       color color-link
       text-decoration none
-    
+
   h1
     font-weight normal
     font-size 2.5em
@@ -91,5 +93,3 @@
     font-size 0.9em
     line-height 1
     margin-top 10px
-  
-  
