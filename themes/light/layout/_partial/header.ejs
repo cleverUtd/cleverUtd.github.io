@@ -1,15 +1,14 @@
-<div class="header-content">
-	<div class="alignleft col-one">
+<div class= "header-content">
+	<div class = "alignleft col-one">
 		<% if (theme.avatar) { %>
 			<img src = "<%= theme.avatar %>">
 		<% } %>
 		<div class="header-div">
-			<h1><a href="<%- config.root %>"><%= config.title %></a></h1>
-  			<h2><a href="<%- config.root %>"><% if (config.subtitle){ %><%= config.subtitle %><% } %></a></h2>
+		    <h1><a href="<%- config.root %>"><%= config.title %></a></h1>
+		    <h2><a href="<%- config.root %>"><% if (config.subtitle){ %><%= config.subtitle %><% } %></a></h2>
 		</div>
 	</div>
-
-	<div class="alignright col-two">
+	<div class = "alignright col-two">
 		<% if (theme.ad){ %>
 			<img src = "<%= theme.ad %>">
 		<% } %>
@@ -17,7 +16,7 @@
 	<div class="clearfix"></div>
 </div>
 
-<div class="header-nav">
+<div class= "header-nav">
 	<div id="main-nav" class="alignleft">
 	    <% for (var i in theme.menu){ %>
 	      <a href="<%- theme.menu[i] %>"><%= i %></a>
@@ -30,4 +29,3 @@
 	</div>
 	<div class="clearfix"></div>
 </div>
-

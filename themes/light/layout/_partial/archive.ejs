@@ -7,17 +7,16 @@ if (page.archive){
   else title = __('archive_a');
 }
 %>
+
 <h2 class="archive-title<% if (page.tag){ %> tag<% } else if (page.category){ %> category<% } %>"><%= title %></h2>
 
 <% if (pagination == 2){ %>
   <% page.posts.each(function(item){ %>
     <%- partial('article', {item: item, index: true}) %>
   <% }); %>
-
-  <%- partial('pagination') %>
 <% } else { %>
   <div class="archive">
-    <% page.posts.each(function(item){ %>
+     <% page.posts.each(function(item){ %>
       <article class="<%= item.layout %>">
         <div class="post-content">
           <header>
@@ -32,9 +31,14 @@ if (page.archive){
             <% } else { %>
               <h1 class="title"><a href="<%- config.root %><%- item.path %>"><%= item.title %></a></h1>
             <% } %>
+<!--             <%- partial('post/tag', {item: item}) %> -->
           </header>
+          <div class='archive-tags'>
+            <%- partial('post/tag',{item: item}) %>
+          </div>
         </div>
       </article>
-    <% }); %>
+     <% }); %> 
   </div>
-<% } %>
+  <% } %>
+<%- partial('pagination') %>
