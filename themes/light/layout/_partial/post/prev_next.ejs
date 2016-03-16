@@ -1,10 +1,14 @@
 <% if (page.prev || page.next){ %>
 <div class="prev_next clearfix">
-  <% if (page.prev){ %>
-    <a href="<%- config.root %><%- page.prev.path %>" class="alignleft prev" title="<%= page.prev.title %>"><%= page.prev.title %></a>
-  <% } %>
-  <% if (page.next){ %>
-    <a href="<%- config.root %><%- page.next.path %>" class="alignright next" title="<%= page.next.title %>"><%= page.next.title %></a>
-  <% } %>
+<% if (page.next && page.next.title){ %>
+    <a align="left" href="<%- config.root %><%- page.next.path %>" class="article-nav-link-wrap">
+    上一篇 <%= page.next.title %>
+    </a>
+<% } %>
+<% if (page.prev && page.prev.title){ %>
+    <a align="right" href="<%- config.root %><%- page.prev.path %>" class="article-nav-link-wrap">
+     下一篇 <%= page.prev.title %> 
+    </a>
+<% } %>
 </div>
 <% } %>

@@ -294,3 +294,23 @@ article
         content '\f04b'
         top 1px
         left 3px
+    
+    .prev_next
+      margin 1em 0
+      clear both
+      overflow hidden
+      a
+        display block
+        float left
+        width 50%
+        background #fcfcfc
+        padding 0.4em 0
+        color #1ba1e2
+        transition background .45s color .45s
+        &:hover
+          color #fafafa
+          background #DDD
+        &.prev::before
+          padding-right 0.5em
+        &.next::before
+          padding-right 0.5em
