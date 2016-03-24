@@ -51,6 +51,8 @@ public class Test {
 下图是转换的时间不对：
 ![](http://7xp2k4.com1.z0.glb.clouddn.com/QQ20160322-0@2x.png)
 
+<!--more-->
+
 # 原因
 
 以前之所以忽略这个问题，一来对多线程没有很深入的理解；二是因为从这个类中完全看不出与线程安全有什么关系，因为SimpleDateFormat 实例变量已经是用final 修饰了，就一直以为是状态不变的了。
@@ -63,7 +65,7 @@ public class Test {
 
 # 解决方案
 
-## 1. 需要的时候创建局部变量
+## 需要的时候创建局部变量
 
 ```java
 public Date formatDate(Date d) {
@@ -72,7 +74,7 @@ public Date formatDate(Date d) {
 }
 ```
 
-## 2. 创建一个共享的SimpleDateFormat实例变量，但是在使用的时候，需要对这个变量进行同步
+## 创建一个共享的SimpleDateFormat实例变量，但是在使用的时候，需要对这个变量进行同步
 
 ```java
 private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -83,7 +85,7 @@ public Date formatDate(Date d) {
 }
 ```
 
-## 3. 使用ThreadLocal为每个线程都创建一个线程独享SimpleDateFormat变量
+## 使用ThreadLocal为每个线程都创建一个线程独享SimpleDateFormat变量
 
 ```java
 private ThreadLocal<SimpleDateFormat> tl = new ThreadLocal<SimpleDateFormat>();
