@@ -61,7 +61,21 @@ public class Test {
 
     " Date formats are not synchronized. It is recommended to create separate format instances for each thread. If multiple threads access a format concurrently, it must be synchronized externally."
 
-就是说。Date format不是同步的，建议每个线程都分别创建format实例变量；或者如果多个线共享一个format的话，必须保持在使用format时是同步的
+就是说。Date formats不是同步的，建议每个线程都分别创建format实例变量；或者如果多个线共享一个format的话，必须保持在使用format时是同步的
+
+而从源码入手分析原因，会发现在SimpleDateFormat类的parse()方法有这么一段注释
+
+```
+ This parsing operation uses the DateFormat#calendar
+ to produce a Date. All of the
+ calendar's date-time fields are Calendar#clear()
+ cleared before parsing, and the calendar's default
+ values of the date-time fields are used for any missing
+ date-time information.
+```
+大概意思就是parse()方法使用calendar来生成返回的Date实例，而每次parse之前，都会先把calendar里的相关属性清除掉。
+问题是这个calendar是个全局变量，也就是线程共享的。因此就会出现一个线程刚把calendar设置好，另一个线程把它给清空了，
+这时第一个线程再parse的话就会有问题了。
 
 # 解决方案
 
