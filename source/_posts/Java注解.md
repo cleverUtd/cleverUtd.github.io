@@ -20,11 +20,13 @@ tags: core Java
 
 3. @SuppressWarnings: 关闭特定的警告信息
 
+<!-- more -->
+
 ## 2. 元注解
 
 负责注解其他注解
 
-1. @Retention:注释使用级别
+1. @Retention:注解使用级别
 
 参数
     
@@ -32,7 +34,7 @@ tags: core Java
     CLASS: 注释在class文件中可用，但会被JVM丢弃
     RUNTIME: JVM会在运行时保留注释，因此可以通过反射机制读取注释的信息
 
-2. @Target: 表示该注释可以用于什么地方
+2. @Target: 表示该注解可以用于什么地方
 
 参数
 
