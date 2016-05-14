@@ -596,8 +596,7 @@ article footer .prev_next a {
   display: block;
   float: left;
   width: 50%;
-  background: #dbdbdb;
-  text-align: center;
+  background: #fcfcfc;
   padding: 0.4em 0;
   color: #1ba1e2;
   -webkit-transition: background 0.45s color 0.45s;
@@ -608,14 +607,12 @@ article footer .prev_next a {
 }
 article footer .prev_next a:hover {
   color: #fafafa;
-  background: #717171;
+  background: #ddd;
 }
 article footer .prev_next a.prev::before {
-  content: "上一篇：";
   padding-right: 0.5em;
 }
 article footer .prev_next a.next::before {
-  content: "下一篇：";
   padding-right: 0.5em;
 }
 #comment {
@@ -1049,16 +1046,13 @@ pre .deletion {
   background: #eee;
   padding: 1em;
   position: relative;
-  left: 2em;
 }
 .toc-article .toc-title {
   padding-bottom: 0.8em;
   font-weight: bold;
 }
 #toc {
-  line-height: 1.1em;
   font-size: 0.8em;
-  float: right;
 }
 #toc .toc {
   padding: 0;

@@ -4,7 +4,7 @@
 <meta name="google-site-verification" content="WpUzmCbPHTwSIrecMhBOVSvuOi8CiNrJNabR2s1RV8I" />
   <meta charset="utf-8">
   
-  <title>Java Coder</title>
+  <title>Coding</title>
   <meta name="author" content="zclau">
   
   <meta name="description" content="Keep it simple,stupid">
@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-  <meta property="og:site_name" content="Java Coder"/>
+  <meta property="og:site_name" content="Coding"/>
 
   
     <meta property="og:image" content="undefined"/>
@@ -24,7 +24,7 @@
 
   <!-- <link href="/favicon.png" rel="icon"> -->
   <link href="/avatar.ico" rel="icon" type="image/x-ico">
-  <link rel="alternate" href="/atom.xml" title="Java Coder" type="application/atom+xml">
+  <link rel="alternate" href="/atom.xml" title="Coding" type="application/atom+xml">
   <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
   <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
  
@@ -37,7 +37,7 @@
 			<img src = "/avatar.png">
 		
 		<div class="header-div">
-		    <h1><a href="/">Java Coder</a></h1>
+		    <h1><a href="/">Coding</a></h1>
 		    <h2><a href="/">Keep it simple,stupid</a></h2>
 		</div>
 	</div>
@@ -67,6 +67,104 @@
   
       <div id="content" class="inner">
   		<div id="main-col" class="alignleft"><div id="wrapper">
+	
+    		<article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        
+        <time datetime="2016-04-03T13:35:41.000Z"><a href="/2016/04/03/Java注解/">2016-04-03</a></time>
+        
+  
+    <h1 class="title"><a href="/2016/04/03/Java注解/">Java注解</a></h1>
+  
+
+    </header>
+
+    <div class="entry">
+      
+        <h1 id="概念">概念</h1><p>注解就是代码的元数据，而元数据是一种描述数据的数据。</p>
+<h1 id="系统注解">系统注解</h1><p>分为标准注解和元注解</p>
+<h2 id="1-_标准注解">1. 标准注解</h2><ol>
+<li><p>@Override:保证编译时候Override函数的声明正确性</p>
+</li>
+<li><p>@Deprecated:对不应该在使用的方法添加注释</p>
+</li>
+<li><p>@SuppressWarnings: 关闭特定的警告信息</p>
+</li>
+</ol>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2016/04/03/Java注解/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2016/04/03/Java注解/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+      
+    </footer>
+  </div>
+</article>
+
+
+    	
+
+	
+    		<article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        
+        <time datetime="2016-03-22T15:07:16.000Z"><a href="/2016/03/22/Java-SimpleDateFormat的线程安全性问题/">2016-03-22</a></time>
+        
+  
+    <h1 class="title"><a href="/2016/03/22/Java-SimpleDateFormat的线程安全性问题/">Java SimpleDateFormat的线程安全性问题</a></h1>
+  
+
+    </header>
+
+    <div class="entry">
+      
+        <h1 id="问题：">问题：</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> SimpleDateFormat sdf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Task</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                System.out.println(sdf.parse(<span class="string">"2016-03-21 12:00:00"</span>).getTime());</span><br><span class="line">            &#125; <span class="keyword">catch</span> (ParseException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Task task = <span class="keyword">new</span> Task();</span><br><span class="line"></span><br><span class="line">        Thread t1 = <span class="keyword">new</span> Thread(task);</span><br><span class="line">        t1.start();</span><br><span class="line">        Thread t2 = <span class="keyword">new</span> Thread(task);</span><br><span class="line">        t2.start();</span><br><span class="line">        Thread t3 = <span class="keyword">new</span> Thread(task);</span><br><span class="line">        t3.start();</span><br><span class="line">        Thread t4 = <span class="keyword">new</span> Thread(task);</span><br><span class="line">        t4.start();</span><br><span class="line">        Thread t5 = <span class="keyword">new</span> Thread(task);</span><br><span class="line">        t5.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>平时经常都会用到SimpleDateFormat来对日期字符串进行解析和格式化。而且一般都是创建一个Util工具类，然后定义一个静态的SimpleDateFormat实例变量。需要格式化时就直接使用这个变量进行操作。</p>
+<p>在大多数正常的测试情况之下，出来的结果都是没问题的。然而，我最近在看《Java并发编程实践》的过程中才发现这样做并不是线程安全的，当在并发量较高的生产环境中，问题就出现了，会出现各种不同的错误，例如线程被挂死，转换的时间不正确。</p>
+<p>下图的输出结果是线程被挂死了：</p>
+<p><img src="http://7xp2k4.com1.z0.glb.clouddn.com/QQ20160322-1@2x.png" alt=""></p>
+<p>下图是转换的时间不对：<br><img src="http://7xp2k4.com1.z0.glb.clouddn.com/QQ20160322-0@2x.png" alt=""></p>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2016/03/22/Java-SimpleDateFormat的线程安全性问题/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2016/03/22/Java-SimpleDateFormat的线程安全性问题/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+      
+    </footer>
+  </div>
+</article>
+
+
+    	
+
 	
     		<article class="post">
   
@@ -138,6 +236,33 @@
 </div>
       
         <p><img src="http://7xp2k4.com1.z0.glb.clouddn.com/command.png" alt=""></p>
+<ol>
+<li>ltrace： 跟踪进程调用库函数的情况 </li>
+<li>perf：Linux kernel自带的系统性能优化工具</li>
+<li>strace：集诊断、调试、统计与一体的工具</li>
+<li>sysdig：用于系统级别的勘察和排障</li>
+<li>lsof：列出当前系统打开文件的工具</li>
+<li>ss：用来获取socket统计信息</li>
+<li>netstat：显示系统的网络情况</li>
+<li>mpstat：报告与CPU的一些统计信息.提供单个处理器或多个处理器相关数据</li>
+<li>top：实时显示系统中各个进程的资源占用状况</li>
+<li>pidstat：用于监控全部或指定进程占用系统资源的情况，如CPU，内存、设备IO、任务切换、线程等</li>
+<li>iptraf：IP网络监控工具。能用于监视IP网络的负载，能拦截网络上的报文，获取报文各个部分的信息</li>
+<li>iostat：I/O statistics（输入/输出统计）的缩写，用来动态监视系统的磁盘操作活动</li>
+<li>tcpdump：dump the traffic on a network，根据使用者的定义对网络上的数据包进行截获的包分析工具。可以将网络中传送的数据包的“头”完全截获下来提供分析</li>
+<li>vmstat：查看虚拟内存（Virtual Memory）使用状况的工具</li>
+<li>slabtop：显示了实时内核片缓存信息</li>
+<li>free：显示Linux系统中空闲的、已用的物理内存及swap内存,及被内核使用的buffer</li>
+<li>tiptop：和<code>top</code>类似</li>
+<li>iotop：监视磁盘I/O使用状况的 top 类工具，可监测到哪一个程序使用的磁盘IO的信息</li>
+<li>blktrace：针对Linux内核中块设备I/O层的跟踪工具，用来收集磁盘IO信息中当IO进行到块设备层（block层，所以叫blk trace）时的详细信息（如IO请求提交，入队，合并，完成等等一些列的信息）</li>
+<li>ip：用来显示或操纵Linux主机的路由、网络设备、策略路由和隧道</li>
+<li>ethtool：用于查询及设置网卡参数的命令</li>
+<li>dstat：是一个用来替换vmstat、iostat、netstat、nfsstat和ifstat这些命令的工具，是一个全能系统信息统计工具</li>
+<li>sar：对系统当前的状态进行取样，然后通过计算数据和比例来表达系统的当前运行状态</li>
+<li>lttng：用于跟踪 Linux 内核、应用程序以及库的系统软件包</li>
+<li>ftrace：帮助开发人员了解 Linux 内核的运行时行为，以便进行故障调试或性能分析</li>
+</ol>
 
       
     </div>
@@ -335,6 +460,10 @@
   <h3 class="title" id="categories">分类</h3>
 <!--   
 	
+		<li><a href="/categories/Java/">Java</a><small>2</small></li>
+	
+  
+	
 		<li><a href="/categories/Linux/">Linux</a><small>1</small></li>
 	
   
@@ -350,14 +479,14 @@
 		<li><a href="/categories/代码优化/">代码优化</a><small>1</small></li>
 	
    -->
-     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/webdev/">Web开发</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/代码优化/">代码优化</a><span class="category-list-count">1</span></li></ul> 
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/webdev/">Web开发</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/代码优化/">代码优化</a><span class="category-list-count">1</span></li></ul> 
 </div>
  
 
   
   <div class="widget tag">
     <h3 class="title">归档</h3>
-	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">2016年02月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">2016年01月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">2015年12月</a><span class="archive-list-count">2</span></li></ul>
+	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">2016年04月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">2016年03月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">2016年02月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">2016年01月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">2015年12月</a><span class="archive-list-count">2</span></li></ul>
   </div>
 
 
@@ -365,7 +494,7 @@
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/Linux命令/" style="font-size: 10px;">Linux命令</a> <a href="/tags/Shiro/" style="font-size: 10px;">Shiro</a> <a href="/tags/hexo/" style="font-size: 20px;">hexo</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a>
+    <a href="/tags/Linux命令/" style="font-size: 10px;">Linux命令</a> <a href="/tags/Shiro/" style="font-size: 10px;">Shiro</a> <a href="/tags/SimpleDateFormat/" style="font-size: 10px;">SimpleDateFormat</a> <a href="/tags/core-Java/" style="font-size: 10px;">core Java</a> <a href="/tags/hexo/" style="font-size: 20px;">hexo</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a>
   </div>
 </div>
 

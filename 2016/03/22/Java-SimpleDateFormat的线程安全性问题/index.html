@@ -1,0 +1,301 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta name="google-site-verification" content="WpUzmCbPHTwSIrecMhBOVSvuOi8CiNrJNabR2s1RV8I" />
+  <meta charset="utf-8">
+  
+  <title>Java SimpleDateFormat的线程安全性问题 | Coding</title>
+  <meta name="author" content="zclau">
+  
+  <meta name="description" content="Keep it simple,stupid">
+  
+  <!--  -->
+  
+<meta name="keywords" content="Java, Linux">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Java SimpleDateFormat的线程安全性问题"/>
+  <meta property="og:site_name" content="Coding"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <!-- <link href="/favicon.png" rel="icon"> -->
+  <link href="/avatar.ico" rel="icon" type="image/x-ico">
+  <link rel="alternate" href="/atom.xml" title="Coding" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+ 
+</head>
+
+<body>
+  <header id="header" class="inner"><div class= "header-content">
+	<div class = "alignleft col-one">
+		
+			<img src = "/avatar.png">
+		
+		<div class="header-div">
+		    <h1><a href="/">Coding</a></h1>
+		    <h2><a href="/">Keep it simple,stupid</a></h2>
+		</div>
+	</div>
+	<div class = "alignright col-two">
+		
+	</div>
+	<div class="clearfix"></div>
+</div>
+
+<div class= "header-nav">
+	<div id="main-nav" class="alignleft">
+	    
+	      <a href="/">首页</a>
+	    
+	      <a href="/archives">归档</a>
+	    
+	      <a href="/booklist">书单</a>
+	    
+	</div>
+	<div id="sub-nav" class="alignright">
+	    
+	      <a href="/atom.xml">订阅</a>
+	    
+	</div>
+	<div class="clearfix"></div>
+</div></header>
+  
+      <div id="content" class="inner">
+  		<div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        
+        <time datetime="2016-03-22T15:07:16.000Z"><a href="/2016/03/22/Java-SimpleDateFormat的线程安全性问题/">2016-03-22</a></time>
+        
+  
+    <h1 class="title">Java SimpleDateFormat的线程安全性问题</h1>
+  
+
+    </header>
+
+    <div class="entry">
+      
+        <div id="toc" class="toc-article">
+	<div class="toc-title">目录</div>
+	<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#问题："><span class="toc-number">1.</span> <span class="toc-text">问题：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#原因"><span class="toc-number">2.</span> <span class="toc-text">原因</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#解决方案"><span class="toc-number">3.</span> <span class="toc-text">解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#需要的时候创建局部变量"><span class="toc-number">3.1.</span> <span class="toc-text">需要的时候创建局部变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建一个共享的SimpleDateFormat实例变量，但是在使用的时候，需要对这个变量进行同步"><span class="toc-number">3.2.</span> <span class="toc-text">创建一个共享的SimpleDateFormat实例变量，但是在使用的时候，需要对这个变量进行同步</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用ThreadLocal为每个线程都创建一个线程独享SimpleDateFormat变量"><span class="toc-number">3.3.</span> <span class="toc-text">使用ThreadLocal为每个线程都创建一个线程独享SimpleDateFormat变量</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#性能对比"><span class="toc-number">4.</span> <span class="toc-text">性能对比</span></a></li></ol>
+</div>
+      
+        <h1 id="问题：">问题：</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> SimpleDateFormat sdf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Task</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                System.out.println(sdf.parse(<span class="string">"2016-03-21 12:00:00"</span>).getTime());</span><br><span class="line">            &#125; <span class="keyword">catch</span> (ParseException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Task task = <span class="keyword">new</span> Task();</span><br><span class="line"></span><br><span class="line">        Thread t1 = <span class="keyword">new</span> Thread(task);</span><br><span class="line">        t1.start();</span><br><span class="line">        Thread t2 = <span class="keyword">new</span> Thread(task);</span><br><span class="line">        t2.start();</span><br><span class="line">        Thread t3 = <span class="keyword">new</span> Thread(task);</span><br><span class="line">        t3.start();</span><br><span class="line">        Thread t4 = <span class="keyword">new</span> Thread(task);</span><br><span class="line">        t4.start();</span><br><span class="line">        Thread t5 = <span class="keyword">new</span> Thread(task);</span><br><span class="line">        t5.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>平时经常都会用到SimpleDateFormat来对日期字符串进行解析和格式化。而且一般都是创建一个Util工具类，然后定义一个静态的SimpleDateFormat实例变量。需要格式化时就直接使用这个变量进行操作。</p>
+<p>在大多数正常的测试情况之下，出来的结果都是没问题的。然而，我最近在看《Java并发编程实践》的过程中才发现这样做并不是线程安全的，当在并发量较高的生产环境中，问题就出现了，会出现各种不同的错误，例如线程被挂死，转换的时间不正确。</p>
+<p>下图的输出结果是线程被挂死了：</p>
+<p><img src="http://7xp2k4.com1.z0.glb.clouddn.com/QQ20160322-1@2x.png" alt=""></p>
+<p>下图是转换的时间不对：<br><img src="http://7xp2k4.com1.z0.glb.clouddn.com/QQ20160322-0@2x.png" alt=""></p>
+<a id="more"></a>
+<h1 id="原因">原因</h1><p>以前之所以忽略这个问题，一来对多线程没有很深入的理解；二是因为从这个类中完全看不出与线程安全有什么关系，因为SimpleDateFormat 实例变量已经是用final 修饰了，就一直以为是状态不变的了。</p>
+<p>而在jdk的官方文档里面，也有提到</p>
+<pre><code>" Date formats are not synchronized. It is recommended to <span class="operator"><span class="keyword">create</span> separate <span class="keyword">format</span> instances <span class="keyword">for</span> <span class="keyword">each</span> <span class="keyword">thread</span>. <span class="keyword">If</span> multiple threads <span class="keyword">access</span> a <span class="keyword">format</span> concurrently, it must be synchronized <span class="keyword">externally</span>.<span class="string">"</span></span>
+</code></pre><p>就是说。Date formats不是同步的，建议每个线程都分别创建format实例变量；或者如果多个线共享一个format的话，必须保持在使用format时是同步的</p>
+<p>而从源码入手分析原因，会发现在SimpleDateFormat类的parse()方法有这么一段注释</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">This parsing operation uses <span class="keyword">the</span> DateFormat<span class="comment">#calendar</span></span><br><span class="line"><span class="keyword">to</span> produce a Date. All <span class="keyword">of</span> <span class="keyword">the</span></span><br><span class="line">calendar's <span class="type">date</span>-<span class="property">time</span> fields are Calendar<span class="comment">#clear()</span></span><br><span class="line">cleared <span class="keyword">before</span> parsing, <span class="keyword">and</span> <span class="keyword">the</span> calendar's default</span><br><span class="line">values <span class="keyword">of</span> <span class="keyword">the</span> <span class="type">date</span>-<span class="property">time</span> fields are used <span class="keyword">for</span> any missing</span><br><span class="line"><span class="type">date</span>-<span class="property">time</span> information.</span><br></pre></td></tr></table></figure>
+<p>大概意思就是parse()方法使用calendar来生成返回的Date实例，而每次parse之前，都会先把calendar里的相关属性清除掉。<br>问题是这个calendar是个全局变量，也就是线程共享的。因此就会出现一个线程刚把calendar设置好，另一个线程把它给清空了，<br>这时第一个线程再parse的话就会有问题了。</p>
+<h1 id="解决方案">解决方案</h1><h2 id="需要的时候创建局部变量">需要的时候创建局部变量</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Date <span class="title">formatDate</span><span class="params">(Date d)</span> </span>&#123;</span><br><span class="line">    SimpleDateFormat sdf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd"</span>);</span><br><span class="line">    <span class="keyword">return</span> sdf.parse(d);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="创建一个共享的SimpleDateFormat实例变量，但是在使用的时候，需要对这个变量进行同步">创建一个共享的SimpleDateFormat实例变量，但是在使用的时候，需要对这个变量进行同步</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> SimpleDateFormat sdf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd"</span>);</span><br><span class="line"><span class="function"><span class="keyword">public</span> Date <span class="title">formatDate</span><span class="params">(Date d)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">synchronized</span>(sdf) &#123;</span><br><span class="line">        <span class="keyword">return</span> sdf.parse(d);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="使用ThreadLocal为每个线程都创建一个线程独享SimpleDateFormat变量">使用ThreadLocal为每个线程都创建一个线程独享SimpleDateFormat变量</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> ThreadLocal&lt;SimpleDateFormat&gt; tl = <span class="keyword">new</span> ThreadLocal&lt;SimpleDateFormat&gt;();</span><br><span class="line"><span class="function"><span class="keyword">public</span> Date <span class="title">formatDate</span><span class="params">(Date d)</span> </span>&#123;</span><br><span class="line">    SimpleDateFormat sdf = tl.get();</span><br><span class="line">    <span class="keyword">if</span>(sdf == <span class="keyword">null</span>) &#123;</span><br><span class="line">        sdf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd"</span>);</span><br><span class="line">        tl.set(sdf);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sdf.parse(d);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="性能对比">性能对比</h1><p>分别测试了一下上面三种方案，每种方案分别开了10000线程去进行时间格式化，记录下消耗的时间。测试代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> SimpleDateFormat sdf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span><br><span class="line">     * Option 1: Create local instances when required</span><br><span class="line">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Date <span class="title">parse1</span><span class="params">(String dateStr)</span> </span>&#123;</span><br><span class="line">        SimpleDateFormat sdf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd"</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> sdf.parse(dateStr);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (ParseException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span><br><span class="line">     * Option 2: Create an instance of SimpleDateFormat as a class variable but synchronize access to it.</span><br><span class="line">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Date <span class="title">parse2</span><span class="params">(String dateStr)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (sdf) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> sdf.parse(dateStr);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (ParseException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span><br><span class="line">     * Option 3: Create a ThreadLocal to store a different instance of SimpleDateFormat for each thread.</span><br><span class="line">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> ThreadLocal&lt;SimpleDateFormat&gt; tl = <span class="keyword">new</span> ThreadLocal&lt;SimpleDateFormat&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Date <span class="title">parse3</span><span class="params">(String dateStr)</span> </span>&#123;</span><br><span class="line">        SimpleDateFormat sdf = tl.get();</span><br><span class="line">        <span class="keyword">if</span> (sdf == <span class="keyword">null</span>) &#123;</span><br><span class="line">            sdf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-hh"</span>);</span><br><span class="line">            tl.set(sdf);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> sdf.parse(dateStr);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (ParseException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Task</span> <span class="keyword">implements</span> <span class="title">Callable</span>&lt;<span class="title">Date</span>&gt; </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> Date <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> parse1(<span class="string">"2016-03-21 12:00:00"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        ExecutorService executorService = Executors.newFixedThreadPool(<span class="number">50</span>);</span><br><span class="line">        List&lt;Future&lt;Date&gt;&gt; resultList = <span class="keyword">new</span> ArrayList&lt;Future&lt;Date&gt;&gt;();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">long</span> s = System.currentTimeMillis();</span><br><span class="line">        <span class="comment">//创建10000个任务并执行</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++) &#123;</span><br><span class="line">            <span class="comment">//使用ExecutorService执行Callable类型的任务，并将结果保存在future变量中</span></span><br><span class="line">            Future&lt;Date&gt; future = executorService.submit(<span class="keyword">new</span> Task());</span><br><span class="line">            <span class="comment">//将任务执行结果存储到List中</span></span><br><span class="line">            resultList.add(future);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//遍历任务的结果</span></span><br><span class="line">        <span class="keyword">for</span> (Future&lt;Date&gt; fs : resultList) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">while</span> (!fs.isDone())</span><br><span class="line">                    ;<span class="comment">//Future返回如果没有完成，则一直循环等待，直到Future返回完成</span></span><br><span class="line">                System.out.println(fs.get().getTime());     <span class="comment">//打印各个线程（任务）执行的结果</span></span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (ExecutionException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                <span class="comment">//启动一次顺序关闭，执行以前提交的任务，但不接受新任务</span></span><br><span class="line">                executorService.shutdown();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">long</span> e = System.currentTimeMillis();</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">"time elapse: "</span> + (e - s));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对于每种方案，我各执行了12次，然后去掉一个最高消耗，一个最低消耗，剩下的取平均值。测试结果如下：</p>
+<pre><code>方案<span class="number">1</span>： 平均 <span class="number">410</span>ms  
+
+方案<span class="number">2</span>： 平均 <span class="number">217</span>ms 
+
+方案<span class="number">3</span>： 平均 <span class="number">300</span>ms 
+</code></pre><p>从结果看出，方案1性能最差，因为每次都需要new一个format实例。不推荐使用</p>
+<p>方案2虽然看起来最优，但线程越来越多时，因为使用了同步块，当一个线程调用format的方法时，其余线程就会阻塞，性能会优一定影响。</p>
+<p>方案3，每个线程维护一个format实例，50个线程就有50个实例，对内存占用的消耗会比方案2要大，当影响不会太大，网上说法是：<br>对性能要求比较高的情况下，一般推荐使用这种方法</p>
+<p>综上所述，方案2和方案3都可以，至于具体使用哪一种，具体情况而定</p>
+
+      
+    </div>
+    <footer>
+<!--        -->
+        
+  
+  <div class="categories">
+    <a href="/categories/Java/">Java</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/tags/SimpleDateFormat/">SimpleDateFormat</a>
+  </div>
+
+        <div class = "counter">
+  <span id="busuanzi_container_page_pv" style="display:none">
+      总访问&nbsp<span id="busuanzi_value_page_pv"></span>&nbsp次
+  </span>
+</div>
+        
+  <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a title="分享到QQ空间" href="#" class="bds_qzone" data-cmd="qzone"></a><a title="分享到新浪微博" href="#" class="bds_tsina" data-cmd="tsina"></a><a title="分享到腾讯微博" href="#" class="bds_tqq" data-cmd="tqq"></a><a title="分享到人人网" href="#" class="bds_renren" data-cmd="renren"></a><a title="分享到微信" href="#" class="bds_weixin" data-cmd="weixin"></a></div>
+  <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+        
+<div class="prev_next clearfix">
+
+    <a align="left" href="/2016/02/16/Shiro与Spring集成实现权限管理/" class="article-nav-link-wrap">
+    上一篇 Shiro与Spring集成实现权限管理
+    </a>
+
+
+    <a align="right" href="/2016/04/03/Java注解/" class="article-nav-link-wrap">
+     下一篇 Java注解 
+    </a>
+
+</div>
+
+<!--        -->
+      <div class="clearfix"></div>
+      
+    </footer>
+  </div>
+</article>
+
+<section id="comment">
+<!--   <h1 class="title">留言</h1> -->
+
+
+    <!-- 多说评论框 start -->
+<div class="ds-thread" data-thread-key="2016/03/22/Java-SimpleDateFormat的线程安全性问题/" data-title="Java SimpleDateFormat的线程安全性问题" data-url="http://zclau.com/2016/03/22/Java-SimpleDateFormat的线程安全性问题/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"zclau"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+  
+</section>
+
+</div></div>
+  		<aside id="sidebar" class="alignright">
+  
+<div class="widget tag">
+  <h3 class="title" id="categories">分类</h3>
+<!--   
+	
+		<li><a href="/categories/Java/">Java</a><small>2</small></li>
+	
+  
+	
+		<li><a href="/categories/Linux/">Linux</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/webdev/">Web开发</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/hexo/">hexo</a><small>2</small></li>
+	
+  
+	
+		<li><a href="/categories/代码优化/">代码优化</a><small>1</small></li>
+	
+   -->
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/webdev/">Web开发</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/代码优化/">代码优化</a><span class="category-list-count">1</span></li></ul> 
+</div>
+ 
+
+  
+  <div class="widget tag">
+    <h3 class="title">归档</h3>
+	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">2016年04月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">2016年03月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">2016年02月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">2016年01月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">2015年12月</a><span class="archive-list-count">2</span></li></ul>
+  </div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/Linux命令/" style="font-size: 10px;">Linux命令</a> <a href="/tags/Shiro/" style="font-size: 10px;">Shiro</a> <a href="/tags/SimpleDateFormat/" style="font-size: 10px;">SimpleDateFormat</a> <a href="/tags/core-Java/" style="font-size: 10px;">core Java</a> <a href="/tags/hexo/" style="font-size: 20px;">hexo</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a>
+  </div>
+</div>
+
+
+  
+  <div class="widget">
+    <h3 class="title">我的微博</h3>
+      <ul class="weibo">
+	<iframe width="100%" height="800" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&amp;width=0&amp;height=800&amp;fansRow=1&amp;ptype=1&amp;speed=0&amp;skin=1&amp;isTitle=1&amp;noborder=1&amp;isWeibo=1&amp;isFans=0&amp;uid=1725565983&amp;verifier=eb14beec&amp;dpc=1"></iframe>
+      </ul>
+  </div>
+
+</aside>
+           <div class="clearfix"></div>
+      </div>
+  	
+   <footer id="footer" class="inner"><div class="alignleft">
+
+  &copy; 2016 zclau
+  
+</div>
+<div class="alignright">
+  Powered by zclau
+</div>
+
+<div class="visit">
+	本站总访问量<span id="busuanzi_value_site_pv"></span>次
+  </span>
+</div>
+
+<div class="clearfix"></div></footer>
+  <script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<!-- 添加『不蒜子』计数服务 -->
+<script async src="http://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?67a0f42b403ccee34010e0409124f3d7";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<div id="toTop">
+	<a href="#">▲</a>
+	<a href="#footer">▼</a>
+</div>
+
+<!-- 
+-->
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>
