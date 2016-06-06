@@ -3,7 +3,7 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Coding
+title: coding
 subtitle: Keep it simple,stupid
 description: Keep it simple,stupid
 author:  zclau
@@ -89,7 +89,7 @@ tag: 1
 plugins:
     - hexo-generator-sitemap
 
-theme:  light #next 
+theme: maupassant #next 
 
 #deployment
 ## Docs: http://hexo.io/docs/deployment.html
@@ -114,3 +114,5 @@ feed:
     type: atom
     path: atom.xml
     limit: 10
+
+mathjax: true

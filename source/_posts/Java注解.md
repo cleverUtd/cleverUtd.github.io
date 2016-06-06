@@ -26,37 +26,33 @@ tags: core Java
 
 负责注解其他注解
 
-1. @Retention:注解使用级别
+@Retention:注解使用级别
 
-参数
-    
-    SOURCE:注释将被编译器丢掉
-    CLASS: 注释在class文件中可用，但会被JVM丢弃
-    RUNTIME: JVM会在运行时保留注释，因此可以通过反射机制读取注释的信息
+- SOURCE:注释将被编译器丢掉
+- CLASS: 注释在class文件中可用，但会被JVM丢弃
+- RUNTIME: JVM会在运行时保留注释，因此可以通过反射机制读取注释的信息
 
-2. @Target: 表示该注解可以用于什么地方
+@Target: 表示该注解可以用于什么地方
 
-参数
+- CONSTRUCTOR: 构造器的声明
+- FIELD: 域声明(包括enum实例)
+- LOCAL_VARIABLE: 局部变量声明
+- METHOD:方法声明
+- PACKAGE:包声明
+- PARAMETER：参数声明
+- TYPE:类、接口(包括注解类型)或enum声明
 
-    CONSTRUCTOR: 构造器的声明
-    FIELD: 域声明(包括enum实例)
-    LOCAL_VARIABLE: 局部变量声明
-    METHOD:方法声明
-    PACKAGE:包声明
-    PARAMETER：参数声明
-    TYPE:类、接口(包括注解类型)或enum声明
+@Documented: 将注释包含在JavaDoc中
 
-3. @Documented: 将注释包含在JavaDoc中
-
-4. @Inherited:允许子类继承父类中的注解
+@Inherited:允许子类继承父类中的注解
 
 ## 注解元素数据类型
 
-    所有基本类型(int,float,boolean等)
-    String
-    enum
-    Annotation
-    以上类型的数组
+- 所有基本类型(int,float,boolean等)
+- String
+- enum
+- Annotation
+- 以上类型的数组
 
 # 自定义注解
 
