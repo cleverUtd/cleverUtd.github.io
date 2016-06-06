@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>Coding</title>
+  <title>coding</title>
   <subtitle>Keep it simple,stupid</subtitle>
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://zclau.com/"/>
-  <updated>2016-04-03T13:41:43.000Z</updated>
+  <updated>2016-06-06T16:03:38.000Z</updated>
   <id>http://zclau.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://zclau.com/2016/04/03/Java%E6%B3%A8%E8%A7%A3/"/>
     <id>http://zclau.com/2016/04/03/Java注解/</id>
     <published>2016-04-03T13:35:41.000Z</published>
-    <updated>2016-04-03T13:41:43.000Z</updated>
+    <updated>2016-06-06T16:03:38.000Z</updated>
     
     <content type="html">&lt;h1 id=&quot;概念&quot;&gt;概念&lt;/h1&gt;&lt;p&gt;注解就是代码的元数据，而元数据是一种描述数据的数据。&lt;/p&gt;
 &lt;h1 id=&quot;系统注解&quot;&gt;系统注解&lt;/h1&gt;&lt;p&gt;分为标准注解和元注解&lt;/p&gt;
@@ -34,36 +34,32 @@
 &lt;/ol&gt;
 &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
 &lt;h2 id=&quot;2-_元注解&quot;&gt;2. 元注解&lt;/h2&gt;&lt;p&gt;负责注解其他注解&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;@Retention:注解使用级别&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;参数&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;&lt;span class=&quot;keyword&quot;&gt;SOURCE&lt;/span&gt;:注释将被编译器丢掉
-&lt;span class=&quot;keyword&quot;&gt;CLASS&lt;/span&gt;: 注释在&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt;文件中可用，但会被JVM丢弃
-&lt;span class=&quot;keyword&quot;&gt;RUNTIME&lt;/span&gt;: JVM会在运行时保留注释，因此可以通过反射机制读取注释的信息
-&lt;/code&gt;&lt;/pre&gt;&lt;ol&gt;
-&lt;li&gt;@Target: 表示该注解可以用于什么地方&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;参数&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;CONSTRUCTOR&lt;/span&gt;:&lt;/span&gt; 构造器的声明
-FIELD: 域声明(包括&lt;span class=&quot;keyword&quot;&gt;enum&lt;/span&gt;实例)
-LOCAL_VARIABLE: 局部变量声明
-&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;METHOD&lt;/span&gt;:&lt;/span&gt;方法声明
-PACKAGE:包声明
-PARAMETER：参数声明
-&lt;span class=&quot;keyword&quot;&gt;TYPE&lt;/span&gt;:类、接口(包括注解类型)或&lt;span class=&quot;keyword&quot;&gt;enum&lt;/span&gt;声明
-&lt;/code&gt;&lt;/pre&gt;&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;@Documented: 将注释包含在JavaDoc中&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;@Inherited:允许子类继承父类中的注解&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2 id=&quot;注解元素数据类型&quot;&gt;注解元素数据类型&lt;/h2&gt;&lt;pre&gt;&lt;code&gt;所有基本类型(int,float,boolean等)
-&lt;span class=&quot;constant&quot;&gt;String&lt;/span&gt;
-&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;enum&lt;/span&gt;&lt;/span&gt;
-&lt;span class=&quot;constant&quot;&gt;Annotation&lt;/span&gt;
-以上类型的数组
-&lt;/code&gt;&lt;/pre&gt;&lt;h1 id=&quot;自定义注解&quot;&gt;自定义注解&lt;/h1&gt;&lt;p&gt;创建一个新的注解类型名为 `CustomAnnotationClass&lt;/p&gt;
+&lt;p&gt;@Retention:注解使用级别&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;SOURCE:注释将被编译器丢掉&lt;/li&gt;
+&lt;li&gt;CLASS: 注释在class文件中可用，但会被JVM丢弃&lt;/li&gt;
+&lt;li&gt;RUNTIME: JVM会在运行时保留注释，因此可以通过反射机制读取注释的信息&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;@Target: 表示该注解可以用于什么地方&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;CONSTRUCTOR: 构造器的声明&lt;/li&gt;
+&lt;li&gt;FIELD: 域声明(包括enum实例)&lt;/li&gt;
+&lt;li&gt;LOCAL_VARIABLE: 局部变量声明&lt;/li&gt;
+&lt;li&gt;METHOD:方法声明&lt;/li&gt;
+&lt;li&gt;PACKAGE:包声明&lt;/li&gt;
+&lt;li&gt;PARAMETER：参数声明&lt;/li&gt;
+&lt;li&gt;TYPE:类、接口(包括注解类型)或enum声明&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;@Documented: 将注释包含在JavaDoc中&lt;/p&gt;
+&lt;p&gt;@Inherited:允许子类继承父类中的注解&lt;/p&gt;
+&lt;h2 id=&quot;注解元素数据类型&quot;&gt;注解元素数据类型&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;所有基本类型(int,float,boolean等)&lt;/li&gt;
+&lt;li&gt;String&lt;/li&gt;
+&lt;li&gt;enum&lt;/li&gt;
+&lt;li&gt;Annotation&lt;/li&gt;
+&lt;li&gt;以上类型的数组&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&quot;自定义注解&quot;&gt;自定义注解&lt;/h1&gt;&lt;p&gt;创建一个新的注解类型名为 `CustomAnnotationClass&lt;/p&gt;
 &lt;figure class=&quot;highlight monkey&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; @&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;interface&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;CustomAnnotation&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;p&gt;定义属性，定义保留策略和目标&lt;/p&gt;
 &lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt; &lt;span class=&quot;annotation&quot;&gt;@Retention&lt;/span&gt;(RetentionPolicy.RUNTIME)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; &lt;span class=&quot;annotation&quot;&gt;@Target&lt;/span&gt;(ElementType.TYPE)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; &lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;annotation&quot;&gt;@interface&lt;/span&gt; CustomAnnotation &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
