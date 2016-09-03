@@ -20,7 +20,6 @@ toc: false
 
 [算法](http://item.jd.com/11098789.html)
 
-[计算机程序设计艺术 卷1 基本算法](http://item.jd.com/11848569.html)
 
 # 操作系统
 
