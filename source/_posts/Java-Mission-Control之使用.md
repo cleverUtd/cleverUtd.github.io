@@ -107,3 +107,9 @@ Hot classes：热点class统计，能看出哪个class最耗CPU
 
 要提高吞吐量，可以根据以上两点来做优化
 
+
+
+参考：
+
+[java-performance.info上的介绍文章](http://java-performance.info/oracle-java-mission-control-overview)
+[另一份Java应用调优指南之－工具篇](http://calvin1978.blogcn.com/articles/perf-tunning-2.html)
