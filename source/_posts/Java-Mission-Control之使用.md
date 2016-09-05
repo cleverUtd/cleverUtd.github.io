@@ -1,4 +1,4 @@
-title: Java Mission Control简介
+title: Java Mission Control之使用
 date: 2016-09-04 11:55:59
 categories: 
 - Java
@@ -7,7 +7,8 @@ tags:
 ---
 
 
-最近在把一个重构完的项目放到beta环境测试时，顺带实践了一下Java Mission Control(简称JMC)来分析jvm。第一次，发现确实好用，个人觉得作为要收费的JProfile的代替品已经足够用了。
+最近在把一个重构完的项目放到beta环境测试时，
+顺带实践了一下Java Mission Control(简称JMC)来分析jvm。发现确实好用，个人觉得作为要收费的JProfile的代替品已经足够用了。
 
 JMC可以看的东西太多，选一些自己觉得最有用的来总结一下：
 
@@ -40,7 +41,7 @@ File -> Connetct -> Create A New Connection， 填入上面JMX参数的host和po
 
 ### Action
 
-![Triggets](http://7xp2k4.com1.z0.glb.clouddn.com/Screenshot%20from%202016-09-05%2012:07:58.png)
+![Triggets](http://7xp2k4.com1.z0.glb.clouddn.com/jmc_triggers.png)
 
 可以选择各种Action，Condition设置条件，条件达到Action就会被触发。
 
