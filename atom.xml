@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://zclau.com/"/>
-  <updated>2016-09-05T12:18:52.000Z</updated>
+  <updated>2016-09-05T12:26:51.000Z</updated>
   <id>http://zclau.com/</id>
   
   <author>
@@ -16,13 +16,13 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>Java Mission Control简介</title>
+    <title>Java Mission Control之使用</title>
     <link href="http://zclau.com/2016/09/04/Java-Mission-Control%E4%B9%8B%E4%BD%BF%E7%94%A8/"/>
     <id>http://zclau.com/2016/09/04/Java-Mission-Control之使用/</id>
     <published>2016-09-04T03:55:59.000Z</published>
-    <updated>2016-09-05T12:18:52.000Z</updated>
+    <updated>2016-09-05T12:26:51.000Z</updated>
     
-    <content type="html">&lt;p&gt;最近在把一个重构完的项目放到beta环境测试时，顺带实践了一下Java Mission Control(简称JMC)来分析jvm。第一次，发现确实好用，个人觉得作为要收费的JProfile的代替品已经足够用了。&lt;/p&gt;
+    <content type="html">&lt;p&gt;最近在把一个重构完的项目放到beta环境测试时，&lt;br&gt;顺带实践了一下Java Mission Control(简称JMC)来分析jvm。发现确实好用，个人觉得作为要收费的JProfile的代替品已经足够用了。&lt;/p&gt;
 &lt;p&gt;JMC可以看的东西太多，选一些自己觉得最有用的来总结一下：&lt;/p&gt;
 &lt;h1 id=&quot;JMC&quot;&gt;JMC&lt;/h1&gt;&lt;p&gt;JDk7 7u40之后自带。主要有两种功能&lt;/p&gt;
 &lt;ul&gt;
@@ -33,7 +33,7 @@
 &lt;p&gt;File -&amp;gt; Connetct -&amp;gt; Create A New Connection， 填入上面JMX参数的host和port，服务器账号密码。&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;http://7xp2k4.com1.z0.glb.clouddn.com/jmc_main_monitoring.png&quot; alt=&quot;jmc_main_monitoring&quot;&gt;&lt;/p&gt;
 &lt;p&gt;通过“+”按需添加各种统计图表&lt;/p&gt;
-&lt;h3 id=&quot;Action&quot;&gt;Action&lt;/h3&gt;&lt;p&gt;&lt;img src=&quot;http://7xp2k4.com1.z0.glb.clouddn.com/Screenshot%20from%202016-09-05%2012:07:58.png&quot; alt=&quot;Triggets&quot;&gt;&lt;/p&gt;
+&lt;h3 id=&quot;Action&quot;&gt;Action&lt;/h3&gt;&lt;p&gt;&lt;img src=&quot;http://7xp2k4.com1.z0.glb.clouddn.com/jmc_triggers.png&quot; alt=&quot;Triggets&quot;&gt;&lt;/p&gt;
 &lt;p&gt;可以选择各种Action，Condition设置条件，条件达到Action就会被触发。&lt;/p&gt;
 &lt;p&gt;例如，你可以设置heap dump当接近memory limit；又或者在CPU高消耗期间触发 JFR recoding了解发生了什么鬼。&lt;/p&gt;
 &lt;p&gt;另外action也可以选择log或者发送邮件的方式&lt;/p&gt;
@@ -72,7 +72,7 @@
     
     <summary type="html">
     
-      &lt;p&gt;最近在把一个重构完的项目放到beta环境测试时，顺带实践了一下Java Mission Control(简称JMC)来分析jvm。第一次，发现确实好用，个人觉得作为要收费的JProfile的代替品已经足够用了。&lt;/p&gt;
+      &lt;p&gt;最近在把一个重构完的项目放到beta环境测试时，&lt;br&gt;顺带实践了一下Java Mission Control(简称JMC)来分析jvm。发现确实好用，个人觉得作为要收费的JProfile的代替品已经足够用了。&lt;/p&gt;
 &lt;p&gt;JMC可以看的东西太多，选一些自己觉得最有用的来
     
     </summary>
