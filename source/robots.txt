@@ -13,4 +13,5 @@ Disallow: /vendors/
 Disallow: /fancybox/
 
 Sitemap: http://zclau.com/sitemap.xml
+Sitemap: http://www.zclau.com/sitemap.xml
 
