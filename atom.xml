@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://zclau.com/"/>
-  <updated>2016-09-05T12:26:51.000Z</updated>
+  <updated>2016-09-18T17:30:12.000Z</updated>
   <id>http://zclau.com/</id>
   
   <author>
@@ -14,6 +14,58 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>RabbitMQ的Qos prefetch</title>
+    <link href="http://zclau.com/2016/09/15/RabbitMQ%E7%9A%84Qos-prefetch/"/>
+    <id>http://zclau.com/2016/09/15/RabbitMQ的Qos-prefetch/</id>
+    <published>2016-09-15T10:19:11.000Z</published>
+    <updated>2016-09-18T17:30:12.000Z</updated>
+    
+    <content type="html">&lt;p&gt;实际使用RabbitMQ过程中，如果完全不配置QoS，这样Rabbit会尽可能快速地发送队列中的所有消息到client端。因为consumer在本地缓存所有的message，从而极有可能导致OOM或者导致服务器内存不足影响其它进程的正常运行。&lt;br&gt;所以我们需要通过设置Qos的prefetch count来控制consumer的流量。同时设置得当也会提高consumer的吞吐量。&lt;/p&gt;
+&lt;h2 id=&quot;prefetch与消息投递&quot;&gt;prefetch与消息投递&lt;/h2&gt;&lt;p&gt;prefetch允许为每个consumer指定最大的unacked messages数目。简单来说就是用来指定一个consumer一次可以从Rabbit中获取多少条message并缓存在client中(RabbitMQ提供的各种语言的client library)。一旦缓冲区满了，Rabbit将会停止投递新的message到该consumer中直到它发出ack。&lt;/p&gt;
+&lt;p&gt;假设prefetch值设为10，共有两个consumer。意味着每个consumer每次会从queue中预抓取 10 条消息到本地缓存着等待消费。同时该channel的unacked数变为20。而Rabbit投递的顺序是，先为consumer1投递满10个message，再往consumer2投递10个message。如果这时有新message需要投递，先判断channel的unacked数是否等于20，如果是则不会将消息投递到consumer中，message继续呆在queue中。之后其中consumer对一条消息进行ack，unacked此时等于19，Rabbit就判断哪个consumer的unacked少于10，就投递到哪个consumer中。&lt;/p&gt;
+&lt;p&gt;总的来说，consumer负责不断处理消息，不断ack，然后只要unacked数少于prefetch * consumer数目，broker就不断将消息投递过去。&lt;/p&gt;
+&lt;h2 id=&quot;如何设置&quot;&gt;如何设置&lt;/h2&gt;&lt;p&gt;官方提供的java client可以通过channel来设置：&lt;br&gt;&lt;figure class=&quot;highlight dns&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;channel = connection.createChannel()&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;channel.basicQos(prefetch)&lt;span class=&quot;comment&quot;&gt;;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;spring-amqp的话可通过配置文件来配置&lt;br&gt;&lt;figure class=&quot;highlight nimrod&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&amp;lt;rabbit:listener-container connection-factory=&lt;span class=&quot;string&quot;&gt;&quot;connectionFactory&quot;&lt;/span&gt; concurrency=&lt;span class=&quot;string&quot;&gt;&quot;2&quot;&lt;/span&gt; prefetch=&lt;span class=&quot;string&quot;&gt;&quot;3&quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;lt;rabbit:listener &lt;span class=&quot;keyword&quot;&gt;ref&lt;/span&gt;=&lt;span class=&quot;string&quot;&gt;&quot;listener&quot;&lt;/span&gt; queue-names=&lt;span class=&quot;string&quot;&gt;&quot;remoting.queue&quot;&lt;/span&gt; /&amp;gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;lt;/rabbit:listener-container&amp;gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;这里需要注意的是，spring-amqp中的prefetch默认值是1。&lt;/p&gt;
+&lt;h2 id=&quot;客户端源码剖析&quot;&gt;客户端源码剖析&lt;/h2&gt;&lt;p&gt;官方Java客户端提供了DefaultConsumer和QueueingConsumer两种类来从queue中获取消息。 其中QueueingConsumer内部维护了一个阻塞队列BlockingQueue，此队列就是用来缓存从queue获取的message。当调用 &lt;code&gt;channel.basicConsume&lt;/code&gt;后，broker就会不断往consumer投递message，直到prefetch条。&lt;/p&gt;
+&lt;p&gt;初始化的时候，如果不指定BlockingQueue的长度，默认值会设为Integer.MAX_VALUE，所以这就解释了文章开头所说的如果不设置Qos的话为什么会有可能导致OOM，因为此时BlockingQueue会不断膨胀，消耗内存。所以设置了prefetch后，建议BlockingQueue的长度(capacity)也初始化为prefetch。&lt;/p&gt;
+&lt;p&gt;另外需要注意的是，在调用&lt;code&gt;channel.basicConsume&lt;/code&gt;之后，consumer是通过异步方式来抓取message的，通过debug可以发现BlockingQueue的size是在异步地不断增长直到prefetch。而客户端代码可以通过consumer.nextDelivery()或consumer.nextDelivery(long timeout)方法来获取message，其对应的就是BlockingQueue的take()和poll(long timeout)方法。&lt;/p&gt;
+&lt;p&gt;再来看看spring-amqp的comsumer，大致也一样。核心类BlockingQueueConsumer&lt;/p&gt;
+&lt;figure class=&quot;highlight lasso&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; class BlockingQueueConsumer &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; final BlockingQueue&amp;lt;Delivery&amp;gt; &lt;span class=&quot;built_in&quot;&gt;queue&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;//some code&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;attribute&quot;&gt;...&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; BlockingQueueConsumer(ConnectionFactory connectionFactory,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            MessagePropertiesConverter messagePropertiesConverter,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            ActiveObjectCounter&amp;lt;BlockingQueueConsumer&amp;gt; activeObjectCounter, AcknowledgeMode acknowledgeMode,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;built_in&quot;&gt;boolean&lt;/span&gt; transactional, int prefetchCount, &lt;span class=&quot;built_in&quot;&gt;boolean&lt;/span&gt; defaultRequeueRejected,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;built_in&quot;&gt;Map&lt;/span&gt;&amp;lt;&lt;span class=&quot;built_in&quot;&gt;String&lt;/span&gt;, Object&amp;gt; consumerArgs, &lt;span class=&quot;built_in&quot;&gt;boolean&lt;/span&gt; exclusive, &lt;span class=&quot;built_in&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;attribute&quot;&gt;...&lt;/span&gt; queues) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;comment&quot;&gt;//... some code&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        this&lt;span class=&quot;built_in&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;built_in&quot;&gt;queue&lt;/span&gt; = &lt;span class=&quot;literal&quot;&gt;new&lt;/span&gt; LinkedBlockingQueue&amp;lt;Delivery&amp;gt;(prefetchCount);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;BlockingQueueConsumer的构造函数清楚说明了每个消费者内部的队列大小就是prefetch的大小。而spring-amqp默认的prefetch是1。&lt;/p&gt;
+&lt;h2 id=&quot;吞吐量、延迟&quot;&gt;吞吐量、延迟&lt;/h2&gt;&lt;p&gt;prefetch并不是说设置得越大越好。过大可能导致consumer处理不过来，一直在本地缓存的BlockingQueue里呆太久，这样消息在客户端的延迟就大大增加；而对于多个consumer的情况，则会分配不均匀，导致有些consumer一直在忙，有些则非常空闲。&lt;/p&gt;
+&lt;p&gt;然而设置的过小，又会令到consumer不能充分工作，因为我们总想它100％的时间都是处于繁忙状态，而这时可能会在处理完一条消息后，BlockingQueue为空，因为新的消息还未来得及到达，所以consumer就处于空闲状态了。&lt;/p&gt;
+&lt;p&gt;prefetch应该设置多大，具体可参考这篇文章&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.rabbitmq.com/blog/2012/05/11/some-queuing-theory-throughput-latency-and-bandwidth/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Some queuing theory: throughput, latency and bandwidth&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;里面详细论述吞吐量与prefetch之间的关系。prefetch的设置与以下几点有关：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;客户端服务端之间网络传输时间&lt;/li&gt;
+&lt;li&gt;consumer消耗一条消息所执行的业务逻辑的耗时&lt;/li&gt;
+&lt;li&gt;网络状况&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;【完】&lt;/p&gt;
+&lt;p&gt;如有纰漏，欢迎指出&lt;/p&gt;
+&lt;p&gt;参考资料：&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://insidethecpu.com/2014/11/11/rabbitmq-qos-vs-competing-consumers/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;RabbitMQ QOS vs. Competing Consumers&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://yuanwhy.com/2016/09/10/rabbitmq-concurrency-prefetch/#&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;RabbitMQ消费者的几个参数&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://my.oschina.net/hncscwc/blog/195560&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;rabbitmq——prefetch count&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://stackoverflow.com/questions/21652517/amqp-acknowledgement-and-prefetching&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;AMQP: acknowledgement and prefetching&lt;/a&gt;&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;实际使用RabbitMQ过程中，如果完全不配置QoS，这样Rabbit会尽可能快速地发送队列中的所有消息到client端。因为consumer在本地缓存所有的message，从而极有可能导致OOM或者导致服务器内存不足影响其它进程的正常运行。&lt;br&gt;所以我们需要通过设置Qo
+    
+    </summary>
+    
+      <category term="消息队列" scheme="http://zclau.com/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/"/>
+    
+    
+      <category term="RabbitMQ" scheme="http://zclau.com/tags/RabbitMQ/"/>
+    
+  </entry>
   
   <entry>
     <title>Java Mission Control之使用</title>
