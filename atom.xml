@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://zclau.com/"/>
-  <updated>2016-09-18T17:30:12.000Z</updated>
+  <updated>2016-09-19T13:22:19.000Z</updated>
   <id>http://zclau.com/</id>
   
   <author>
@@ -16,13 +16,13 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>RabbitMQ的Qos prefetch</title>
+    <title>RabbitMQ之Qos prefetch</title>
     <link href="http://zclau.com/2016/09/15/RabbitMQ%E7%9A%84Qos-prefetch/"/>
     <id>http://zclau.com/2016/09/15/RabbitMQ的Qos-prefetch/</id>
     <published>2016-09-15T10:19:11.000Z</published>
-    <updated>2016-09-18T17:30:12.000Z</updated>
+    <updated>2016-09-19T13:22:19.000Z</updated>
     
-    <content type="html">&lt;p&gt;实际使用RabbitMQ过程中，如果完全不配置QoS，这样Rabbit会尽可能快速地发送队列中的所有消息到client端。因为consumer在本地缓存所有的message，从而极有可能导致OOM或者导致服务器内存不足影响其它进程的正常运行。&lt;br&gt;所以我们需要通过设置Qos的prefetch count来控制consumer的流量。同时设置得当也会提高consumer的吞吐量。&lt;/p&gt;
+    <content type="html">&lt;p&gt;实际使用RabbitMQ过程中，如果完全不配置QoS，这样Rabbit会尽可能快速地&lt;br&gt;发送队列中的所有消息到client端。因为consumer在本地缓存所有的message，&lt;br&gt;从而极有可能导致OOM或者导致服务器内存不足影响其它进程的正常运行。所以我们&lt;br&gt;需要通过设置Qos的prefetch count来控制consumer的流量。同时设置得当也会提高consumer的吞吐量。&lt;/p&gt;
 &lt;h2 id=&quot;prefetch与消息投递&quot;&gt;prefetch与消息投递&lt;/h2&gt;&lt;p&gt;prefetch允许为每个consumer指定最大的unacked messages数目。简单来说就是用来指定一个consumer一次可以从Rabbit中获取多少条message并缓存在client中(RabbitMQ提供的各种语言的client library)。一旦缓冲区满了，Rabbit将会停止投递新的message到该consumer中直到它发出ack。&lt;/p&gt;
 &lt;p&gt;假设prefetch值设为10，共有两个consumer。意味着每个consumer每次会从queue中预抓取 10 条消息到本地缓存着等待消费。同时该channel的unacked数变为20。而Rabbit投递的顺序是，先为consumer1投递满10个message，再往consumer2投递10个message。如果这时有新message需要投递，先判断channel的unacked数是否等于20，如果是则不会将消息投递到consumer中，message继续呆在queue中。之后其中consumer对一条消息进行ack，unacked此时等于19，Rabbit就判断哪个consumer的unacked少于10，就投递到哪个consumer中。&lt;/p&gt;
 &lt;p&gt;总的来说，consumer负责不断处理消息，不断ack，然后只要unacked数少于prefetch * consumer数目，broker就不断将消息投递过去。&lt;/p&gt;
@@ -56,7 +56,7 @@
     
     <summary type="html">
     
-      &lt;p&gt;实际使用RabbitMQ过程中，如果完全不配置QoS，这样Rabbit会尽可能快速地发送队列中的所有消息到client端。因为consumer在本地缓存所有的message，从而极有可能导致OOM或者导致服务器内存不足影响其它进程的正常运行。&lt;br&gt;所以我们需要通过设置Qo
+      &lt;p&gt;实际使用RabbitMQ过程中，如果完全不配置QoS，这样Rabbit会尽可能快速地&lt;br&gt;发送队列中的所有消息到client端。因为consumer在本地缓存所有的message，&lt;br&gt;从而极有可能导致OOM或者导致服务器内存不足影响其它进程的正常运行。所以我们&lt;br&gt;
     
     </summary>
     
