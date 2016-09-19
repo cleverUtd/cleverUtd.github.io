@@ -1,11 +1,13 @@
-title: 细说RabbitMQ Qos prefetch
+title: RabbitMQ之Qos prefetch
 date: 2016-09-15 18:19:11
 categories: 消息队列
 tags: RabbitMQ
 ---
 
-实际使用RabbitMQ过程中，如果完全不配置QoS，这样Rabbit会尽可能快速地发送队列中的所有消息到client端。因为consumer在本地缓存所有的message，从而极有可能导致OOM或者导致服务器内存不足影响其它进程的正常运行。
-所以我们需要通过设置Qos的prefetch count来控制consumer的流量。同时设置得当也会提高consumer的吞吐量。
+实际使用RabbitMQ过程中，如果完全不配置QoS，这样Rabbit会尽可能快速地
+发送队列中的所有消息到client端。因为consumer在本地缓存所有的message，
+从而极有可能导致OOM或者导致服务器内存不足影响其它进程的正常运行。所以我们
+需要通过设置Qos的prefetch count来控制consumer的流量。同时设置得当也会提高consumer的吞吐量。
 
 ## prefetch与消息投递
 
