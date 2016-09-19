@@ -1,4 +1,4 @@
-title: RabbitMQ的Qos prefetch
+title: 细说RabbitMQ Qos prefetch
 date: 2016-09-15 18:19:11
 categories: 消息队列
 tags: RabbitMQ
