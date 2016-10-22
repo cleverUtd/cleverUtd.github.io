@@ -96,7 +96,7 @@ prefetch应该设置多大，具体可参考这篇文章
 
 [RabbitMQ QOS vs. Competing Consumers](https://insidethecpu.com/2014/11/11/rabbitmq-qos-vs-competing-consumers/)
 
-[RabbitMQ消费者的几个参数](https://yuanwhy.com/2016/09/10/rabbitmq-concurrency-prefetch/#)
+[RabbitMQ消费者的几个参数](http://yuanwhy.com/2016/09/10/rabbitmq-concurrency-prefetch)
 
 [rabbitmq——prefetch count](https://my.oschina.net/hncscwc/blog/195560)
 
