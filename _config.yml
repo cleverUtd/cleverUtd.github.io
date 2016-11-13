@@ -7,7 +7,7 @@ title: zclau
 subtitle: Keep Calm And Coding
 description: Keep it simple,stupid
 author:  zclau
-language: zh-CN
+language: zh-Hans
 timezone:
 email: cleverutd@gmail.com
 keywords: Java, Linux
@@ -71,6 +71,8 @@ index_generator:
     per_page: 10
 archive_generator:
     per_page: 20
+    yearly: true
+    monthly: true
 tag_generator:
     per_page: 20
 
@@ -89,7 +91,8 @@ tag: 1
 plugins:
     - hexo-generator-sitemap
 
-theme: maupassant #next 
+theme: next 
+scheme: Pisces
 
 #deployment
 ## Docs: http://hexo.io/docs/deployment.html

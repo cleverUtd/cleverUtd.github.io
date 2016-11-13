@@ -3,6 +3,7 @@ date: 2016-02-16 18:25:17
 categories: Web开发
 tags: Shiro
 ---
+<!-- more -->
 
 # shiro核心概念
 
@@ -27,7 +28,7 @@ tags: Shiro
 
 [让Apache Shiro保护你的应用](http://www.infoq.com/cn/articles/apache-shiro)
 
-<!-- more -->
+
 
 # maven配置依赖
 

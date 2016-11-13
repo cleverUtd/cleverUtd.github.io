@@ -3,6 +3,7 @@ date: 2016-09-15 18:19:11
 categories: 消息队列
 tags: RabbitMQ
 ---
+<!-- more -->
 
 实际使用RabbitMQ过程中，如果完全不配置QoS，这样Rabbit会尽可能快速地
 发送队列中的所有消息到client端。因为consumer在本地缓存所有的message，
