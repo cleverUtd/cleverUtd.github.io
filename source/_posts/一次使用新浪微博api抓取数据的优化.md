@@ -12,6 +12,8 @@ tags:
 
 [api文档](http://open.weibo.com/wiki/2/attitudes/show)
 
+<!-- more -->
+
 # 实现流程
 
 1. 爬取点赞列表
@@ -20,8 +22,6 @@ tags:
 4. 批量保存 user list 
 5. 返回步骤1，爬取下一页数据
 6. 退出方法
-
-<!-- more -->
 
 # 通用版
 

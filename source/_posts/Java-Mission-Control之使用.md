@@ -6,12 +6,12 @@ tags:
 - Jvm
 ---
 
-
 最近在把一个重构完的项目放到beta环境测试时，
 顺带实践了一下Java Mission Control(简称JMC)来分析jvm。发现确实好用，个人觉得作为要收费的JProfile的代替品已经足够用了。
 
 JMC可以看的东西太多，选一些自己觉得最有用的来总结一下：
 
+<!-- more -->
 
 # JMC
 

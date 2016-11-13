@@ -3,7 +3,6 @@ date: 2016-02-16 18:25:17
 categories: Web开发
 tags: Shiro
 ---
-<!-- more -->
 
 # shiro核心概念
 
@@ -19,6 +18,7 @@ tags: Shiro
 
     相当于数据源。配置Shiro时，必须至少指定一个Realm。执行认证和授权时，shiro会从realms获取认证数据
 
+<!-- more -->
 
 关于shiro的教程这里就不详述了，可参考：
 
