@@ -227,7 +227,7 @@ excerpt_description: true
 # Please use <!-- more --> in the post to control excerpt accurately.
 auto_excerpt:
   enable: true
-  length: 0
+  length: 150
 
 
 # Wechat Subscriber
@@ -395,7 +395,7 @@ algolia_search:
 use_motion: false
 
 # Fancybox
-fancybox: false
+fancybox: true
 
 
 # Script Vendors.
