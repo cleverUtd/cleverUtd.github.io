@@ -94,6 +94,7 @@ plugins:
 theme: next 
 scheme: Pisces
 
+
 #deployment
 ## Docs: http://hexo.io/docs/deployment.html
 deploy: 
