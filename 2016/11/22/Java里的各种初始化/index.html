@@ -64,25 +64,25 @@
 
 
 
-<meta name="description" content="Java里有局部变量、实例变量、静态变量，不同变量的初始化行为以及初始化的顺序也不一样。下面来总结一下。
+<meta name="description" content="Java里有局部变量、实例变量、静态变量，它们的初始化表现也不尽相同。下面来总结一下。
 局部变量1234void f() &amp;#123;    int i;    i++; // Error -- i not initialized&amp;#125;
 局部变量应该是最简单的情景，在一个方法内定义一个变量，如果不为它赋予初始值，编译器则会报错。所以声明局部变量时必须同时赋予其初始值。
-实例">
+实例变量每一个实例变量">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java里的各种初始化">
 <meta property="og:url" content="http://zclau.com/2016/11/22/Java里的各种初始化/index.html">
 <meta property="og:site_name" content="zclau">
-<meta property="og:description" content="Java里有局部变量、实例变量、静态变量，不同变量的初始化行为以及初始化的顺序也不一样。下面来总结一下。
+<meta property="og:description" content="Java里有局部变量、实例变量、静态变量，它们的初始化表现也不尽相同。下面来总结一下。
 局部变量1234void f() &amp;#123;    int i;    i++; // Error -- i not initialized&amp;#125;
 局部变量应该是最简单的情景，在一个方法内定义一个变量，如果不为它赋予初始值，编译器则会报错。所以声明局部变量时必须同时赋予其初始值。
-实例">
-<meta property="og:updated_time" content="2016-11-24T14:18:13.000Z">
+实例变量每一个实例变量">
+<meta property="og:updated_time" content="2016-11-24T15:00:31.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java里的各种初始化">
-<meta name="twitter:description" content="Java里有局部变量、实例变量、静态变量，不同变量的初始化行为以及初始化的顺序也不一样。下面来总结一下。
+<meta name="twitter:description" content="Java里有局部变量、实例变量、静态变量，它们的初始化表现也不尽相同。下面来总结一下。
 局部变量1234void f() &amp;#123;    int i;    i++; // Error -- i not initialized&amp;#125;
 局部变量应该是最简单的情景，在一个方法内定义一个变量，如果不为它赋予初始值，编译器则会报错。所以声明局部变量时必须同时赋予其初始值。
-实例">
+实例变量每一个实例变量">
 
 
 
@@ -261,7 +261,7 @@
   <link itemprop="mainEntityOfPage" href="http://zclau.com/2016/11/22/Java里的各种初始化/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="zclau">
+    <meta itemprop="name" content="">
     <meta itemprop="description" content="">
     <meta itemprop="image" content="/images/avatar.png">
   </span>
@@ -303,7 +303,7 @@
             <span class="post-meta-item-icon">
               <i class="fa fa-calendar-check-o"></i>
             </span>
-            <time title="Дата обновления записи" itemprop="dateModified" datetime="2016-11-24T22:18:13+08:00">
+            <time title="Дата обновления записи" itemprop="dateModified" datetime="2016-11-24T23:00:31+08:00">
               2016-11-24
             </time>
             
@@ -366,7 +366,7 @@
       
 
       
-        <p>Java里有局部变量、实例变量、静态变量，不同变量的初始化行为以及初始化的顺序也不一样。下面来总结一下。</p>
+        <p>Java里有局部变量、实例变量、静态变量，它们的初始化表现也不尽相同。下面来总结一下。</p>
 <h1 id="局部变量">局部变量</h1><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    i++; <span class="comment">// Error -- i not initialized</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>局部变量应该是最简单的情景，在一个方法内定义一个变量，如果不为它赋予初始值，编译器则会报错。所以声明局部变量时必须同时赋予其初始值。</p>
 <h1 id="实例变量">实例变量</h1><p>每一个实例变量都会保证有一个初始值。</p>
@@ -517,9 +517,9 @@
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.png"
-               alt="zclau" />
-          <p class="site-author-name" itemprop="name">zclau</p>
-          <p class="site-description motion-element" itemprop="description">Keep Calm And Coding</p>
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+          <p class="site-description motion-element" itemprop="description">Just Do IT</p>
         </div>
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
@@ -628,7 +628,7 @@
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">zclau</span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
 </div>
 
 

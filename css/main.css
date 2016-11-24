@@ -1419,7 +1419,7 @@ pre .javascript .function {
   }
 }
 .post-more-link {
-  margin-top: 50px;
+  float: right;
 }
 .post-more-link .btn {
   color: #555;
@@ -1489,8 +1489,7 @@ pre .javascript .function {
 }
 .posts-expand .post-eof {
   display: block;
-  margin: 80px auto 60px;
-  width: 8%;
+  margin: 80px auto 40px;
   height: 1px;
   background: #ccc;
   text-align: center;
@@ -1679,7 +1678,7 @@ pre .javascript .function {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #53114d;
+  background: #591c85;
 }
 .links-of-blogroll {
   font-size: 13px;

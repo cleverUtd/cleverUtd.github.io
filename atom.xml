@@ -5,11 +5,11 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://zclau.com/"/>
-  <updated>2016-11-24T14:18:13.000Z</updated>
+  <updated>2016-11-24T15:00:31.000Z</updated>
   <id>http://zclau.com/</id>
   
   <author>
-    <name>zclau</name>
+    <name>John Doe</name>
     <email>cleverutd@gmail.com</email>
   </author>
   
@@ -20,9 +20,9 @@
     <link href="http://zclau.com/2016/11/22/Java%E9%87%8C%E7%9A%84%E5%90%84%E7%A7%8D%E5%88%9D%E5%A7%8B%E5%8C%96/"/>
     <id>http://zclau.com/2016/11/22/Java里的各种初始化/</id>
     <published>2016-11-22T15:45:09.000Z</published>
-    <updated>2016-11-24T14:18:13.000Z</updated>
+    <updated>2016-11-24T15:00:31.000Z</updated>
     
-    <content type="html">&lt;p&gt;Java里有局部变量、实例变量、静态变量，不同变量的初始化行为以及初始化的顺序也不一样。下面来总结一下。&lt;/p&gt;
+    <content type="html">&lt;p&gt;Java里有局部变量、实例变量、静态变量，它们的初始化表现也不尽相同。下面来总结一下。&lt;/p&gt;
 &lt;h1 id=&quot;局部变量&quot;&gt;局部变量&lt;/h1&gt;&lt;figure class=&quot;highlight cpp&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; i;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    i++; &lt;span class=&quot;comment&quot;&gt;// Error -- i not initialized&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;p&gt;局部变量应该是最简单的情景，在一个方法内定义一个变量，如果不为它赋予初始值，编译器则会报错。所以声明局部变量时必须同时赋予其初始值。&lt;/p&gt;
 &lt;h1 id=&quot;实例变量&quot;&gt;实例变量&lt;/h1&gt;&lt;p&gt;每一个实例变量都会保证有一个初始值。&lt;/p&gt;
@@ -50,8 +50,8 @@
     
     <summary type="html">
     
-      &lt;p&gt;Java里有局部变量、实例变量、静态变量，不同变量的初始化行为以及初始化的顺序也不一样。下面来总结一下。&lt;/p&gt;
-&lt;h1 id=&quot;局部变量&quot;&gt;局部变量&lt;/h1&gt;&lt;figure class=&quot;highlight cpp&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutte
+      &lt;p&gt;Java里有局部变量、实例变量、静态变量，它们的初始化表现也不尽相同。下面来总结一下。&lt;/p&gt;
+&lt;h1 id=&quot;局部变量&quot;&gt;局部变量&lt;/h1&gt;&lt;figure class=&quot;highlight cpp&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;
     
     </summary>
     
