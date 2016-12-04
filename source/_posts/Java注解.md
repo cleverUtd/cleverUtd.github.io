@@ -1,7 +1,7 @@
 title: Java注解
 date: 2016-04-03 21:35:41
 categories: Java
-tags: core Java
+tags: Core Java
 ---
 
 # 概念

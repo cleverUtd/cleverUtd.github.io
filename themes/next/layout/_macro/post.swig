@@ -71,12 +71,6 @@
 
             &nbsp;|&nbsp;
 
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-check-o"></i>
-            </span>
-            <time title="{{ __('post.modified') }}" itemprop="dateModified" datetime="{{ moment(post.updated).format() }}">
-              {{ date(post.updated, config.date_format) }}
-            </time>
             
           </span>
 
