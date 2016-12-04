@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://zclau.com/"/>
-  <updated>2016-11-24T15:00:31.000Z</updated>
+  <updated>2016-12-04T16:04:05.000Z</updated>
   <id>http://zclau.com/</id>
   
   <author>
@@ -14,6 +14,72 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Java里的String</title>
+    <link href="http://zclau.com/2016/12/01/Java%E9%87%8C%E7%9A%84String/"/>
+    <id>http://zclau.com/2016/12/01/Java里的String/</id>
+    <published>2016-12-01T13:15:10.000Z</published>
+    <updated>2016-12-04T16:04:05.000Z</updated>
+    
+    <content type="html">&lt;p&gt;字符串操作是最常见的操作。在Java中，往往使用String类来进行各种字符串操作。&lt;br&gt;而对于String这个类，其实隐含不少特性。对此，自己最近梳理了一遍。&lt;/p&gt;
+&lt;h1 id=&quot;字符串创建&quot;&gt;字符串创建&lt;/h1&gt;&lt;p&gt;常用方式主要两种：&lt;/p&gt;
+&lt;figure class=&quot;highlight stylus&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;String &lt;span class=&quot;tag&quot;&gt;a&lt;/span&gt; = &lt;span class=&quot;string&quot;&gt;&quot;123&quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;和&lt;/p&gt;
+&lt;figure class=&quot;highlight dart&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;String&lt;/span&gt; b = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;String&lt;/span&gt;(&lt;span class=&quot;string&quot;&gt;&quot;123&quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;第一种方式，”123“直接存储在常量池；第二种方式实际创建了两个对象，第一个对象是”123“字符串在常量池中，第二个对象是在java堆中的String对象。&lt;/p&gt;
+&lt;h1 id=&quot;不可变&quot;&gt;不可变&lt;/h1&gt;&lt;p&gt;翻看jdk源码，java.lang.String的定义是这样的：&lt;/p&gt;
+&lt;figure class=&quot;highlight zephir&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;String&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;java&lt;/span&gt;.&lt;span class=&quot;title&quot;&gt;io&lt;/span&gt;.&lt;span class=&quot;title&quot;&gt;Serializable&lt;/span&gt;, &lt;span class=&quot;title&quot;&gt;Comparable&lt;/span&gt;&amp;lt;&lt;span class=&quot;title&quot;&gt;String&lt;/span&gt;&amp;gt;, &lt;span class=&quot;title&quot;&gt;CharSequence&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;/** The value is used for character storage. */&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;char&lt;/span&gt; value[];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;/** Cache the hash code for the string */&lt;/span&gt;  &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; hash; &lt;span class=&quot;comment&quot;&gt;// Default to 0  &lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ...&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ...&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;以上代码在jdk7，8都是一致的。&lt;/p&gt;
+&lt;p&gt;String类用final修饰，从java的final关键字语法所代表的含义来看，说明String不可继承。&lt;/p&gt;
+&lt;p&gt;其次，String的底层其实用了一个final类型的char数组来存储，说明该字段一旦创建后就不能改变。&lt;/p&gt;
+&lt;p&gt;其中有个很容易引起迷惑的地方，必须要弄清楚：String对象本质是引用，我们所说的不可变是指引用指向的对象内容不可变，&lt;br&gt;并不是引用不可变。而String类中涉及修改的方法（substring、replace、toLowerCase等）都是创建一个&lt;br&gt;新的字符串，并把这个它重新赋给引用。这就说明引用是重新指向了一个新的的字符串，但原来的字符串依旧存在内存里。&lt;/p&gt;
+&lt;p&gt;虽然说String不可变，但也不是绝对不可变，可以通过反射机制进行修改。然而大多情况不需要也没必要用到反射，这里就不详细讨论了&lt;/p&gt;
+&lt;p&gt;具体可参考(Java中的String为什么是不可变的？ – String源码分析)[&lt;a href=&quot;http://blog.csdn.net/zhangjg_blog/article/details/18319521&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://blog.csdn.net/zhangjg_blog/article/details/18319521&lt;/a&gt;]&lt;br&gt;里面阐述比价详细了。&lt;/p&gt;
+&lt;h1 id=&quot;字符串‘+’操作&quot;&gt;字符串‘+’操作&lt;/h1&gt;&lt;p&gt;以前的文章中很多都说字符串‘+’操作会导致性能低效，要用StringBuilder或StringBuffer。但其实现在的JVM已经优化得足够强大，&lt;/p&gt;
+&lt;p&gt;例如以下代码&lt;br&gt;&lt;figure class=&quot;highlight typescript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; StringTest&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;void&lt;/span&gt; main(&lt;span class=&quot;built_in&quot;&gt;String&lt;/span&gt;[] args) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;String&lt;/span&gt; a = &lt;span class=&quot;string&quot;&gt;&quot;hello&quot;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;String&lt;/span&gt; b = &lt;span class=&quot;string&quot;&gt;&quot;abc&quot;&lt;/span&gt; + &lt;span class=&quot;string&quot;&gt;&quot;def&quot;&lt;/span&gt; + &lt;span class=&quot;number&quot;&gt;47&lt;/span&gt; + a;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;通过 javap -c 反编译出来的字节码如下：&lt;/p&gt;
+&lt;figure class=&quot;highlight cpp&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(java.lang.String[])&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    Code:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;: ldc           &lt;span class=&quot;preprocessor&quot;&gt;#&lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;                  &lt;span class=&quot;comment&quot;&gt;// String hello&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;: astore_1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;: &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt;           &lt;span class=&quot;preprocessor&quot;&gt;#&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;                  &lt;span class=&quot;comment&quot;&gt;// class java/lang/StringBuilder&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;number&quot;&gt;6&lt;/span&gt;: dup&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;number&quot;&gt;7&lt;/span&gt;: invokespecial &lt;span class=&quot;preprocessor&quot;&gt;#&lt;span class=&quot;number&quot;&gt;4&lt;/span&gt;                  &lt;span class=&quot;comment&quot;&gt;// Method java/lang/StringBuilder.&quot;&amp;lt;init&amp;gt;&quot;:()V&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &lt;span class=&quot;number&quot;&gt;10&lt;/span&gt;: ldc           &lt;span class=&quot;preprocessor&quot;&gt;#&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;                  &lt;span class=&quot;comment&quot;&gt;// String abcdef47&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &lt;span class=&quot;number&quot;&gt;12&lt;/span&gt;: invokevirtual &lt;span class=&quot;preprocessor&quot;&gt;#&lt;span class=&quot;number&quot;&gt;6&lt;/span&gt;                  &lt;span class=&quot;comment&quot;&gt;// Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &lt;span class=&quot;number&quot;&gt;15&lt;/span&gt;: aload_1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &lt;span class=&quot;number&quot;&gt;16&lt;/span&gt;: invokevirtual &lt;span class=&quot;preprocessor&quot;&gt;#&lt;span class=&quot;number&quot;&gt;6&lt;/span&gt;                  &lt;span class=&quot;comment&quot;&gt;// Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &lt;span class=&quot;number&quot;&gt;19&lt;/span&gt;: invokevirtual &lt;span class=&quot;preprocessor&quot;&gt;#&lt;span class=&quot;number&quot;&gt;7&lt;/span&gt;                  &lt;span class=&quot;comment&quot;&gt;// Method java/lang/StringBuilder.toString:()Ljava/lang/String;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &lt;span class=&quot;number&quot;&gt;22&lt;/span&gt;: astore_2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &lt;span class=&quot;number&quot;&gt;23&lt;/span&gt;: &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;我们可以看到，字符串的‘+’操作其实在实际执行过程中，就是一个StringBuilder的append操作。&lt;/p&gt;
+&lt;p&gt;再看这段代码：&lt;/p&gt;
+&lt;figure class=&quot;highlight cpp&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; StringTest&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(String[] args)&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        String a = &lt;span class=&quot;string&quot;&gt;&quot;&quot;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; (&lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; i=&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;;i&amp;lt;&lt;span class=&quot;number&quot;&gt;10&lt;/span&gt;;i++) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            a = a + i;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;对应的字节码：&lt;/p&gt;
+&lt;figure class=&quot;highlight cpp&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(java.lang.String[])&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    Code:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;: ldc           &lt;span class=&quot;preprocessor&quot;&gt;#&lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;                  &lt;span class=&quot;comment&quot;&gt;// String&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;: astore_1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;: iconst_0&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;number&quot;&gt;4&lt;/span&gt;: istore_2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;: iload_2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;number&quot;&gt;6&lt;/span&gt;: bipush        &lt;span class=&quot;number&quot;&gt;10&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;number&quot;&gt;8&lt;/span&gt;: if_icmpge     &lt;span class=&quot;number&quot;&gt;36&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &lt;span class=&quot;number&quot;&gt;11&lt;/span&gt;: &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt;           &lt;span class=&quot;preprocessor&quot;&gt;#&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;                  &lt;span class=&quot;comment&quot;&gt;// class java/lang/StringBuilder&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &lt;span class=&quot;number&quot;&gt;14&lt;/span&gt;: dup&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &lt;span class=&quot;number&quot;&gt;15&lt;/span&gt;: invokespecial &lt;span class=&quot;preprocessor&quot;&gt;#&lt;span class=&quot;number&quot;&gt;4&lt;/span&gt;                  &lt;span class=&quot;comment&quot;&gt;// Method java/lang/StringBuilder.&quot;&amp;lt;init&amp;gt;&quot;:()V&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &lt;span class=&quot;number&quot;&gt;18&lt;/span&gt;: aload_1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &lt;span class=&quot;number&quot;&gt;19&lt;/span&gt;: invokevirtual &lt;span class=&quot;preprocessor&quot;&gt;#&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;                  &lt;span class=&quot;comment&quot;&gt;// Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &lt;span class=&quot;number&quot;&gt;22&lt;/span&gt;: iload_2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &lt;span class=&quot;number&quot;&gt;23&lt;/span&gt;: invokevirtual &lt;span class=&quot;preprocessor&quot;&gt;#&lt;span class=&quot;number&quot;&gt;6&lt;/span&gt;                  &lt;span class=&quot;comment&quot;&gt;// Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &lt;span class=&quot;number&quot;&gt;26&lt;/span&gt;: invokevirtual &lt;span class=&quot;preprocessor&quot;&gt;#&lt;span class=&quot;number&quot;&gt;7&lt;/span&gt;                  &lt;span class=&quot;comment&quot;&gt;// Method java/lang/StringBuilder.toString:()Ljava/lang/String;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &lt;span class=&quot;number&quot;&gt;29&lt;/span&gt;: astore_1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &lt;span class=&quot;number&quot;&gt;30&lt;/span&gt;: iinc          &lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &lt;span class=&quot;number&quot;&gt;33&lt;/span&gt;: &lt;span class=&quot;keyword&quot;&gt;goto&lt;/span&gt;          &lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &lt;span class=&quot;number&quot;&gt;36&lt;/span&gt;: &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;对于循环内的字符串拼接，虽然还是转化为StringBuilder，但是情况有点不同，留意8：和 33：之间的代码就是每一次循环所执行的操作，可以看到每一次&lt;br&gt;的循环都创建了一个新的StringBuilder对象。&lt;/p&gt;
+&lt;p&gt;所以总结来说，对于普通的一次性的‘+’操作，可以放心使用；但循环下的‘+’，因为每一次都要new 一个StringBuilder而导致性能降低，因此还是&lt;br&gt;先自己定义一个StringBuilder，然后每次循环通过append操作来完成&lt;/p&gt;
+&lt;h1 id=&quot;字符串常量池&quot;&gt;字符串常量池&lt;/h1&gt;&lt;p&gt;JVM为了提高性能和减少内存开销，在实例化字符串常量的时候进行了一些优化。&lt;br&gt;为了减少在JVM中创建的字符串的数量，字符串类维护了一个字符串池，每当创建字符串常量时，JVM会首先检查字符串常量池。&lt;br&gt;如果字符串已经存在池中，就返回池中的实例引用。如果字符串不在池中，就会实例化一个字符串并放到池中&lt;/p&gt;
+&lt;p&gt;在JDK6中，字符串常量池在永久代分配内存；而JDK7开始，常量池已经在Java堆上分配内存。&lt;/p&gt;
+&lt;p&gt;而字符串常量池本质是个固定容量的HashMap。 Java7和8可以通过 -XX:StringTableSize 设置其map size。&lt;br&gt;在Java6到Java7u40之前-XX:StringTableSize的默认大小是1009；7u40之后扩大到60013。&lt;/p&gt;
+&lt;p&gt;-XX:+PrintStringTableStatistics 会在程序终止时打印字符串常量池的使用情况&lt;/p&gt;
+&lt;h1 id=&quot;String-intern&quot;&gt;String.intern&lt;/h1&gt;&lt;p&gt;String.intern是把双刃剑，用时需谨慎，切记切记！！！&lt;/p&gt;
+&lt;p&gt;String.intern()是一个Native方法，底层调用C++的 StringTable::intern 方法。&lt;/p&gt;
+&lt;p&gt;源码注释：当调用 intern 方法时，如果常量池中已经存在该字符串，则返回池中的字符串；否则将此字符串添加到常量池中，并返回字符串的引用。&lt;br&gt;在这里jdk6和jdk7表现有点区别：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;jdk6会直接生成一个新的字符串对象到常量池中，并返回该对象引用&lt;/li&gt;
+&lt;li&gt;jdk7因为常量池不在Perm区，不需要重新生成对象，而是直接存储堆中的引用&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;关于stirng.intern的更深入分析可看&lt;br&gt;&lt;a href=&quot;http://tech.meituan.com/in_depth_understanding_string_intern.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;深入解析String#intern&lt;/a&gt;&lt;br&gt;以及&lt;br&gt;详细可看白衣大神的&lt;a href=&quot;http://calvin1978.blogcn.com/articles/string-intern.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;String.intern() 祛魅&lt;/a&gt;&lt;/p&gt;
+&lt;h1 id=&quot;substring()&quot;&gt;substring()&lt;/h1&gt;&lt;p&gt;jdk6与jdk7中的实现方式不一样。&lt;/p&gt;
+&lt;p&gt;jdk6调用substring()虽然会创建一个新的字符串对象，但里面的char[] 仍然指向原来的那个，&lt;br&gt;因此对一个很长很长的字符串进行截取后，可能导致内存泄露。&lt;/p&gt;
+&lt;p&gt;jdk7中substring()方法在堆中真正的创建了一个新的数组,原字符数组没有被引用后就被GC回收了.因此避免了上述问题.&lt;/p&gt;
+&lt;p&gt;如有纰漏，敬请指出~&lt;/p&gt;
+&lt;p&gt;参考：&lt;br&gt;&lt;a href=&quot;http://java-performance.info/string-intern-in-java-6-7-8/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;String.intern in Java 6, 7 and 8 – string pooling&lt;/a&gt;&lt;br&gt;&lt;a href=&quot;http://www.importnew.com/7418.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;JDK6和JDK7中的substring()方法&lt;/a&gt;&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;字符串操作是最常见的操作。在Java中，往往使用String类来进行各种字符串操作。&lt;br&gt;而对于String这个类，其实隐含不少特性。对此，自己最近梳理了一遍。&lt;/p&gt;
+&lt;h1 id=&quot;字符串创建&quot;&gt;字符串创建&lt;/h1&gt;&lt;p&gt;常用方式主要两种：&lt;/p&gt;
+&lt;figure c
+    
+    </summary>
+    
+      <category term="Java" scheme="http://zclau.com/categories/Java/"/>
+    
+    
+      <category term="Core Java" scheme="http://zclau.com/tags/Core-Java/"/>
+    
+  </entry>
   
   <entry>
     <title>Java里的各种初始化</title>
@@ -190,7 +256,7 @@
     <link href="http://zclau.com/2016/04/03/Java%E6%B3%A8%E8%A7%A3/"/>
     <id>http://zclau.com/2016/04/03/Java注解/</id>
     <published>2016-04-03T13:35:41.000Z</published>
-    <updated>2016-06-06T16:03:38.000Z</updated>
+    <updated>2016-12-01T13:15:52.000Z</updated>
     
     <content type="html">&lt;h1 id=&quot;概念&quot;&gt;概念&lt;/h1&gt;&lt;p&gt;注解就是代码的元数据，而元数据是一种描述数据的数据。&lt;/p&gt;
 &lt;h1 id=&quot;系统注解&quot;&gt;系统注解&lt;/h1&gt;&lt;p&gt;分为标准注解和元注解&lt;/p&gt;
@@ -265,7 +331,7 @@
       <category term="Java" scheme="http://zclau.com/categories/Java/"/>
     
     
-      <category term="core Java" scheme="http://zclau.com/tags/core-Java/"/>
+      <category term="Core Java" scheme="http://zclau.com/tags/Core-Java/"/>
     
   </entry>
   
@@ -519,53 +585,6 @@
     
       &lt;p&gt;之前已经成功把hexo托管在了github上，并且可以访问。不过由于本身已经有个linode的vps，所以还是决定把hexo部署在自己的服务器上。&lt;/p&gt;
 &lt;p&gt;部署过程其实也很简单，因为其实只要把生成的静态文件部署上去即可，完全不涉及后台的交互。所以我在服务器上利用ngi
-    
-    </summary>
-    
-      <category term="hexo" scheme="http://zclau.com/categories/hexo/"/>
-    
-    
-      <category term="hexo" scheme="http://zclau.com/tags/hexo/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>使用hexo搭建个人博客</title>
-    <link href="http://zclau.com/2015/12/01/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/"/>
-    <id>http://zclau.com/2015/12/01/使用hexo搭建个人博客/</id>
-    <published>2015-11-30T16:56:09.000Z</published>
-    <updated>2016-02-10T04:00:50.000Z</updated>
-    
-    <content type="html">&lt;h4 id=&quot;前言&quot;&gt;前言&lt;/h4&gt;&lt;pre&gt;&lt;code&gt;大概一年前买了个域名和linode，在上面搭了个wordpress，但实在太懒，一直都没什么产出，文章少得可怜。
-
-直到最近，猛然发现，作为一名程序员，坚持写博客实在有太多好处，不仅可以提高自己的逻辑表达能力，还能加深自己对知识的理解，
-把自己所掌握的东西分享出去，最重要一点就是能记录下自己的成长点滴
-
-因此，决定洗心革面，而今迈步从头越。
-&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&quot;选型&quot;&gt;选型&lt;/h4&gt;&lt;pre&gt;&lt;code&gt;既然从头再来，那就不打算再使用wordpress了，何况wordpress对markdown写作的支持实在太差劲了，实在受不了。 
-
-这次我选择用hexo，相比较wordpress，有以下优点：
-
-&lt;span class=&quot;number&quot;&gt;1.&lt;/span&gt; 逼格高，主题漂亮
-&lt;span class=&quot;number&quot;&gt;2.&lt;/span&gt; 轻量级，wordpress太臃肿了
-&lt;span class=&quot;number&quot;&gt;3.&lt;/span&gt; 配置灵活，自定化程度高，一键部署，生成纯静态文件，怎一个爽字了得
-&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&quot;搭建步骤&quot;&gt;搭建步骤&lt;/h4&gt;&lt;p&gt;因为网上已经有好多现成教程，这里就不重复写了。我是照着hexo的中文官网文档一步步搭建的&lt;br&gt;&lt;a href=&quot;https://hexo.io/zh-cn/docs/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;hexo 官方中文文档&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;搭建好后，主题选择Next，主题配置过程参考&lt;br&gt;&lt;a href=&quot;http://theme-next.iissnan.com/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;next使用文档&lt;/a&gt;&lt;/p&gt;
-&lt;h4 id=&quot;源文件同步&quot;&gt;源文件同步&lt;/h4&gt;&lt;p&gt;经过上面步骤，博客已经搭建好，并且同步到github后就可以访问了。但是部署上去github的其实都是经过&lt;code&gt;hexo generate&lt;/code&gt;后生成的静态文件(public文件夹下)，而源文件一直都是保存在本地，那么问题来了，如果我换了台电脑，应该怎么办呢？&lt;/p&gt;
-&lt;p&gt;参考了网上各种方案，最后我选择在github上使用一个分支来维护，具体参考&lt;br&gt;&lt;a href=&quot;http://devtian.me/2015/03/17/blog-sync-solution/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;关于博客同步的解决办法&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;到此，博客就搭建完毕啦，个人感觉比wordpress的搭建简单方便多了。&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;———–最强分割线————&lt;/p&gt;
-&lt;h3 id=&quot;02/02/2016:&quot;&gt;02/02/2016:&lt;/h3&gt;&lt;p&gt;运行 $ hexo server 命令有时会返回这样的错误：&lt;br&gt;&lt;figure class=&quot;highlight http&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;attribute&quot;&gt;Error&lt;/span&gt;: &lt;span class=&quot;string&quot;&gt;watch ENOSPC ...&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
-&lt;p&gt;可以用过运行 $ npm dedupe 来解决，如果不起作用的话，可以尝试在 Linux 终端中运行下列命令：&lt;br&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;$ &lt;span class=&quot;built_in&quot;&gt;echo&lt;/span&gt; fs.inotify.max_user_watches=&lt;span class=&quot;number&quot;&gt;524288&lt;/span&gt; | sudo tee &lt;span class=&quot;operator&quot;&gt;-a&lt;/span&gt; /etc/sysctl.conf &amp;amp;&amp;amp; sudo sysctl -p&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
-&lt;p&gt;这将会提高你能监视的文件数量。&lt;/p&gt;
-</content>
-    
-    <summary type="html">
-    
-      &lt;h4 id=&quot;前言&quot;&gt;前言&lt;/h4&gt;&lt;pre&gt;&lt;code&gt;大概一年前买了个域名和linode，在上面搭了个wordpress，但实在太懒，一直都没什么产出，文章少得可怜。
-
-直到最近，猛然发现，作为一名程序员，坚持写博客实在有太多好处，不仅可以提高自己的逻辑表达能力，还能加深自
     
     </summary>
     
