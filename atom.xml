@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://zclau.com/"/>
-  <updated>2016-12-04T16:04:05.000Z</updated>
+  <updated>2016-12-04T16:06:11.000Z</updated>
   <id>http://zclau.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://zclau.com/2016/12/01/Java%E9%87%8C%E7%9A%84String/"/>
     <id>http://zclau.com/2016/12/01/Java里的String/</id>
     <published>2016-12-01T13:15:10.000Z</published>
-    <updated>2016-12-04T16:04:05.000Z</updated>
+    <updated>2016-12-04T16:06:11.000Z</updated>
     
     <content type="html">&lt;p&gt;字符串操作是最常见的操作。在Java中，往往使用String类来进行各种字符串操作。&lt;br&gt;而对于String这个类，其实隐含不少特性。对此，自己最近梳理了一遍。&lt;/p&gt;
 &lt;h1 id=&quot;字符串创建&quot;&gt;字符串创建&lt;/h1&gt;&lt;p&gt;常用方式主要两种：&lt;/p&gt;
@@ -35,7 +35,7 @@
 &lt;p&gt;其次，String的底层其实用了一个final类型的char数组来存储，说明该字段一旦创建后就不能改变。&lt;/p&gt;
 &lt;p&gt;其中有个很容易引起迷惑的地方，必须要弄清楚：String对象本质是引用，我们所说的不可变是指引用指向的对象内容不可变，&lt;br&gt;并不是引用不可变。而String类中涉及修改的方法（substring、replace、toLowerCase等）都是创建一个&lt;br&gt;新的字符串，并把这个它重新赋给引用。这就说明引用是重新指向了一个新的的字符串，但原来的字符串依旧存在内存里。&lt;/p&gt;
 &lt;p&gt;虽然说String不可变，但也不是绝对不可变，可以通过反射机制进行修改。然而大多情况不需要也没必要用到反射，这里就不详细讨论了&lt;/p&gt;
-&lt;p&gt;具体可参考(Java中的String为什么是不可变的？ – String源码分析)[&lt;a href=&quot;http://blog.csdn.net/zhangjg_blog/article/details/18319521&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://blog.csdn.net/zhangjg_blog/article/details/18319521&lt;/a&gt;]&lt;br&gt;里面阐述比价详细了。&lt;/p&gt;
+&lt;p&gt;具体可参考&lt;a href=&quot;http://blog.csdn.net/zhangjg_blog/article/details/18319521&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Java中的String为什么是不可变的？ – String源码分析&lt;/a&gt;&lt;br&gt;里面阐述比价详细了。&lt;/p&gt;
 &lt;h1 id=&quot;字符串‘+’操作&quot;&gt;字符串‘+’操作&lt;/h1&gt;&lt;p&gt;以前的文章中很多都说字符串‘+’操作会导致性能低效，要用StringBuilder或StringBuffer。但其实现在的JVM已经优化得足够强大，&lt;/p&gt;
 &lt;p&gt;例如以下代码&lt;br&gt;&lt;figure class=&quot;highlight typescript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; StringTest&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;void&lt;/span&gt; main(&lt;span class=&quot;built_in&quot;&gt;String&lt;/span&gt;[] args) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;String&lt;/span&gt; a = &lt;span class=&quot;string&quot;&gt;&quot;hello&quot;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;String&lt;/span&gt; b = &lt;span class=&quot;string&quot;&gt;&quot;abc&quot;&lt;/span&gt; + &lt;span class=&quot;string&quot;&gt;&quot;def&quot;&lt;/span&gt; + &lt;span class=&quot;number&quot;&gt;47&lt;/span&gt; + a;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
 &lt;p&gt;通过 javap -c 反编译出来的字节码如下：&lt;/p&gt;

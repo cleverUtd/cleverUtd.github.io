@@ -80,7 +80,7 @@
 和
 1String b = new String(&quot;123&quot;);
 第一种方式，”123“直接存储在常量池；第二种方式实际创建了两个对象，第一个对象是”123“字符串在常量池中，第">
-<meta property="og:updated_time" content="2016-12-04T16:04:05.000Z">
+<meta property="og:updated_time" content="2016-12-04T16:06:11.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java里的String">
 <meta name="twitter:description" content="字符串操作是最常见的操作。在Java中，往往使用String类来进行各种字符串操作。而对于String这个类，其实隐含不少特性。对此，自己最近梳理了一遍。
@@ -379,7 +379,7 @@
 <p>其次，String的底层其实用了一个final类型的char数组来存储，说明该字段一旦创建后就不能改变。</p>
 <p>其中有个很容易引起迷惑的地方，必须要弄清楚：String对象本质是引用，我们所说的不可变是指引用指向的对象内容不可变，<br>并不是引用不可变。而String类中涉及修改的方法（substring、replace、toLowerCase等）都是创建一个<br>新的字符串，并把这个它重新赋给引用。这就说明引用是重新指向了一个新的的字符串，但原来的字符串依旧存在内存里。</p>
 <p>虽然说String不可变，但也不是绝对不可变，可以通过反射机制进行修改。然而大多情况不需要也没必要用到反射，这里就不详细讨论了</p>
-<p>具体可参考(Java中的String为什么是不可变的？ – String源码分析)[<a href="http://blog.csdn.net/zhangjg_blog/article/details/18319521" target="_blank" rel="external">http://blog.csdn.net/zhangjg_blog/article/details/18319521</a>]<br>里面阐述比价详细了。</p>
+<p>具体可参考<a href="http://blog.csdn.net/zhangjg_blog/article/details/18319521" target="_blank" rel="external">Java中的String为什么是不可变的？ – String源码分析</a><br>里面阐述比价详细了。</p>
 <h1 id="字符串‘+’操作">字符串‘+’操作</h1><p>以前的文章中很多都说字符串‘+’操作会导致性能低效，要用StringBuilder或StringBuffer。但其实现在的JVM已经优化得足够强大，</p>
 <p>例如以下代码<br><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> StringTest&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">void</span> main(<span class="built_in">String</span>[] args) &#123;</span><br><span class="line">        <span class="built_in">String</span> a = <span class="string">"hello"</span>;</span><br><span class="line">        <span class="built_in">String</span> b = <span class="string">"abc"</span> + <span class="string">"def"</span> + <span class="number">47</span> + a;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
 <p>通过 javap -c 反编译出来的字节码如下：</p>
