@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://zclau.com/"/>
-  <updated>2016-12-04T16:10:55.000Z</updated>
+  <updated>2016-12-16T08:57:21.000Z</updated>
   <id>http://zclau.com/</id>
   
   <author>
@@ -16,11 +16,11 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>Java里的String</title>
+    <title>Java基础：String使用</title>
     <link href="http://zclau.com/2016/12/01/Java%E9%87%8C%E7%9A%84String/"/>
     <id>http://zclau.com/2016/12/01/Java里的String/</id>
     <published>2016-12-01T13:15:10.000Z</published>
-    <updated>2016-12-04T16:10:55.000Z</updated>
+    <updated>2016-12-16T08:57:21.000Z</updated>
     
     <content type="html">&lt;p&gt;字符串操作是最常见的操作。在Java中，往往使用String类来进行各种字符串操作。&lt;br&gt;而对于String这个类，其实隐含不少特性。对此，自己最近梳理了一遍。&lt;/p&gt;
 &lt;h1 id=&quot;字符串创建&quot;&gt;字符串创建&lt;/h1&gt;&lt;p&gt;常用方式主要两种：&lt;/p&gt;
@@ -82,11 +82,11 @@
   </entry>
   
   <entry>
-    <title>Java里的各种初始化</title>
+    <title>Java基础：初始化</title>
     <link href="http://zclau.com/2016/11/22/Java%E9%87%8C%E7%9A%84%E5%90%84%E7%A7%8D%E5%88%9D%E5%A7%8B%E5%8C%96/"/>
     <id>http://zclau.com/2016/11/22/Java里的各种初始化/</id>
     <published>2016-11-22T15:45:09.000Z</published>
-    <updated>2016-11-24T15:00:31.000Z</updated>
+    <updated>2016-12-16T08:57:49.000Z</updated>
     
     <content type="html">&lt;p&gt;Java里有局部变量、实例变量、静态变量，它们的初始化表现也不尽相同。下面来总结一下。&lt;/p&gt;
 &lt;h1 id=&quot;局部变量&quot;&gt;局部变量&lt;/h1&gt;&lt;figure class=&quot;highlight cpp&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; i;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    i++; &lt;span class=&quot;comment&quot;&gt;// Error -- i not initialized&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
@@ -252,11 +252,11 @@
   </entry>
   
   <entry>
-    <title>Java注解</title>
+    <title>Java基础：注解</title>
     <link href="http://zclau.com/2016/04/03/Java%E6%B3%A8%E8%A7%A3/"/>
     <id>http://zclau.com/2016/04/03/Java注解/</id>
     <published>2016-04-03T13:35:41.000Z</published>
-    <updated>2016-12-01T13:15:52.000Z</updated>
+    <updated>2016-12-16T08:57:08.000Z</updated>
     
     <content type="html">&lt;h1 id=&quot;概念&quot;&gt;概念&lt;/h1&gt;&lt;p&gt;注解就是代码的元数据，而元数据是一种描述数据的数据。&lt;/p&gt;
 &lt;h1 id=&quot;系统注解&quot;&gt;系统注解&lt;/h1&gt;&lt;p&gt;分为标准注解和元注解&lt;/p&gt;
@@ -331,7 +331,7 @@
       <category term="Java" scheme="http://zclau.com/categories/Java/"/>
     
     
-      <category term="Core Java" scheme="http://zclau.com/tags/Core-Java/"/>
+      <category term="Java基础" scheme="http://zclau.com/tags/Java%E5%9F%BA%E7%A1%80/"/>
     
   </entry>
   
