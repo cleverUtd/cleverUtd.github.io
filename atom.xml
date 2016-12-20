@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://zclau.com/"/>
-  <updated>2016-12-16T08:57:21.000Z</updated>
+  <updated>2016-12-20T16:14:39.000Z</updated>
   <id>http://zclau.com/</id>
   
   <author>
@@ -14,6 +14,79 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Redis实现原理之对象与编码</title>
+    <link href="http://zclau.com/2016/12/17/Redis%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8B%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E5%AF%B9%E8%B1%A1/"/>
+    <id>http://zclau.com/2016/12/17/Redis源码学习笔记之数据结构与对象/</id>
+    <published>2016-12-17T14:14:56.000Z</published>
+    <updated>2016-12-20T16:14:39.000Z</updated>
+    
+    <content type="html">&lt;p&gt;上周看完&lt;a href=&quot;https://book.douban.com/subject/25900156/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Redis设计与实现&lt;/a&gt;，过程结合Redis的unstable分支的源码来对照，&lt;br&gt;基本对Redis的实现原理有了个深入的理解。（书本基于3.0版本，源码unstable分支现已去到4.0 rc2，代码略有不同，但思路总体一致）&lt;/p&gt;
+&lt;p&gt;最大感受，无论从设计还是源码，Redis都尽量做到简单，其中运用到的原理也通俗易懂，一点也不会觉得晦涩。特别是源码，简洁易读，真正做到clean and clear， 而且作者对于代码的设计组织能力功力深厚。&lt;/p&gt;
+&lt;p&gt;这篇文章以unstable分支的源码为基准，先从大体上整理Redis的对象类型以及底层编码。&lt;/p&gt;
+&lt;h1 id=&quot;对象类型&quot;&gt;对象类型&lt;/h1&gt;&lt;p&gt;Redis对象由&lt;code&gt;redisObject&lt;/code&gt;结构体表示。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Redis中的每个键值对的键和值都是一个redisObject。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;共有五种类型的对象：字符串（String）、列表（List）、哈希（Hash）、集合（Set）、有序集合（SortedSet），源码&lt;code&gt;server.h&lt;/code&gt;如下定义：&lt;/p&gt;
+&lt;figure class=&quot;highlight stylus&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;/* The actual Redis Object */&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;hexcolor&quot;&gt;#def&lt;/span&gt;ine OBJ_STRING &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;hexcolor&quot;&gt;#def&lt;/span&gt;ine OBJ_LIST &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt; &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;hexcolor&quot;&gt;#def&lt;/span&gt;ine OBJ_SET &lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;hexcolor&quot;&gt;#def&lt;/span&gt;ine OBJ_ZSET &lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;hexcolor&quot;&gt;#def&lt;/span&gt;ine OBJ_HASH &lt;span class=&quot;number&quot;&gt;4&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;每种类型的对象至少都有两种或以上的encoding方式，不同编码&lt;br&gt;可以在不同的使用场景上优化对象的使用场景。用&lt;code&gt;TYPE&lt;/code&gt;命令可查看某个键值对的类型&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&quot;对象编码&quot;&gt;对象编码&lt;/h1&gt;&lt;p&gt;Redis目前使用的编码方式：&lt;/p&gt;
+&lt;figure class=&quot;highlight stylus&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;/* Objects encoding. Some kind of objects like Strings and Hashes can be&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; * internally represented in multiple ways. The &#39;encoding&#39; field of the object&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; * is set to one of this fields for this object. &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; */&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;hexcolor&quot;&gt;#def&lt;/span&gt;ine OBJ_ENCODING_RAW     &lt;span class=&quot;comment&quot;&gt;/* Raw representation */&lt;/span&gt; 简单动态字符串&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;hexcolor&quot;&gt;#def&lt;/span&gt;ine OBJ_ENCODING_INT      &lt;span class=&quot;comment&quot;&gt;/* Encoded as integer */&lt;/span&gt; 整数&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;hexcolor&quot;&gt;#def&lt;/span&gt;ine OBJ_ENCODING_HT       &lt;span class=&quot;comment&quot;&gt;/* Encoded as hash table */&lt;/span&gt; 字典&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;hexcolor&quot;&gt;#def&lt;/span&gt;ine OBJ_ENCODING_ZIPLIST  &lt;span class=&quot;comment&quot;&gt;/* Encoded as ziplist */&lt;/span&gt; 压缩列表&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;hexcolor&quot;&gt;#def&lt;/span&gt;ine OBJ_ENCODING_INTSET   &lt;span class=&quot;comment&quot;&gt;/* Encoded as intset */&lt;/span&gt; 整数集合&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;hexcolor&quot;&gt;#def&lt;/span&gt;ine OBJ_ENCODING_SKIPLIST   &lt;span class=&quot;comment&quot;&gt;/* Encoded as skiplist */&lt;/span&gt; 跳跃表&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;hexcolor&quot;&gt;#def&lt;/span&gt;ine OBJ_ENCODING_EMBSTR  &lt;span class=&quot;comment&quot;&gt;/* Embedded sds string encoding */&lt;/span&gt; embstr编码的简单动态字符串&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;hexcolor&quot;&gt;#def&lt;/span&gt;ine OBJ_ENCODING_QUICKLIST  &lt;span class=&quot;comment&quot;&gt;/* Encoded as linked list of ziplists */&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;本质上，Redis就是基于这些数据结构而构造出一个对象存储系统。redisObject结构体有个ptr指针，指向对象的底层实现数据结构，encoding属性记录对象所使用的编码，即该对象使用什么数据结构作为底层实现。&lt;/p&gt;
+&lt;h3 id=&quot;字符串&quot;&gt;字符串&lt;/h3&gt;&lt;p&gt;字符串对象的编码可以是 INT、RAW 或 EMBSTR。&lt;/p&gt;
+&lt;p&gt;字符串对象保存的是整数值并且可以用long表示，那么编码会设置为INT。当字符串值得长度大于39字节使用RAW，小于等于39字节使用EMBSTR。&lt;/p&gt;
+&lt;p&gt;Redis在3.0引入EMBSTR编码，这是一种专门用于保存短字符串的一种优化编码方式，这种编码和RAW编码都是用sdshdr简单动态字符串结构来表示（下一篇会详细说到这种结构）。RAW编码会调用两次内存分配函数来分别创建redisObject和sdshdr结构，&lt;br&gt;而EMBSTR只调用一次内存分配函数来分配一块连续的空间保存数据，比起RAW编码的字符串更能节省内存，以及能提升获取数据的速度。&lt;/p&gt;
+&lt;p&gt;不过要注意！！！ EMBSTR是不可修改的，当对EMBSTR编码的字符串执行任何修改命令，总会先将其转换成RAW编码再进行修改；而INT编码在条件满足的情况下也会被转换成RAW编码。&lt;/p&gt;
+&lt;h3 id=&quot;列表&quot;&gt;列表&lt;/h3&gt;&lt;p&gt;Redis3.0之前的列表对象的编码可以是ziplist或者linkedlist。&lt;/p&gt;
+&lt;p&gt;当列表对象保存的字符串元素的长度都小于64字节并且保存的元素数量小于512个，使用ziplist编码，可以通过修改配置list-max-ziplist-value和list-max-ziplist-entries来修改这两个条件的上限值、两个条件任意一个不满足时，&lt;br&gt;ziplist会变为linkedlist。&lt;/p&gt;
+&lt;p&gt;从3.2开始Redis只使用quicklist作为列表的编码，&lt;/p&gt;
+&lt;p&gt;quicklist是ziplist和双向链表的结合体，quicklist的每个节点都是一个ziplist。可以通过修改list-max-ziplist-size来设置一个quicklist节点上的ziplist的长度，取正值表示通过元素数量来限定ziplist&lt;br&gt;的长度；负数表示按照占用字节数来限定，并且Redis规定只能取-1到-5这五个负值&lt;br&gt;&lt;figure class=&quot;highlight cpp&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;-&lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;: 每个quicklist节点上的ziplist大小不能超过&lt;span class=&quot;number&quot;&gt;64&lt;/span&gt; Kb。（注：&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;kb =&amp;gt; &lt;span class=&quot;number&quot;&gt;1024&lt;/span&gt; bytes）&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;-&lt;span class=&quot;number&quot;&gt;4&lt;/span&gt;: 每个quicklist节点上的ziplist大小不能超过&lt;span class=&quot;number&quot;&gt;32&lt;/span&gt; Kb。&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;-&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;: 每个quicklist节点上的ziplist大小不能超过&lt;span class=&quot;number&quot;&gt;16&lt;/span&gt; Kb。&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;-&lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;: 每个quicklist节点上的ziplist大小不能超过&lt;span class=&quot;number&quot;&gt;8&lt;/span&gt; Kb。（默认值）&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;-&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;: 每个quicklist节点上的ziplist大小不能超过&lt;span class=&quot;number&quot;&gt;4&lt;/span&gt; Kb。&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;另外配置参数list-compress-depth表示一个quicklist两端不被压缩的节点个数&lt;br&gt;&lt;figure class=&quot;highlight cpp&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;: 表示都不压缩。默认值。&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;: 表示quicklist两端各有&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;个节点不压缩，中间的节点压缩。&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;: 表示quicklist两端各有&lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;个节点不压缩，中间的节点压缩。&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;: 表示quicklist两端各有&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;个节点不压缩，中间的节点压缩。&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;依此类推…&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;这里采用的是一种叫LZF的无损压缩算法&lt;/p&gt;
+&lt;h3 id=&quot;哈希&quot;&gt;哈希&lt;/h3&gt;&lt;p&gt;哈希对象的编码可以是ziplist或者hashtable。&lt;/p&gt;
+&lt;p&gt;使用ziplist 编码时，保存同一键值对的两个节点总是紧挨在一起， 保存键的节点在前， 保存值的节点在后&lt;/p&gt;
+&lt;p&gt;同时满足以下两个条件将使用ziplist编码：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;所有键和值的字符串长度小于64字节；&lt;/li&gt;
+&lt;li&gt;键值对的数量小于512个。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;不能满足这两个条件的都需要使用hashtable编码。以上两个上限值可以通过hash-max-ziplist-value和hash-max-ziplist-entries来修改 &lt;/p&gt;
+&lt;h3 id=&quot;集合&quot;&gt;集合&lt;/h3&gt;&lt;p&gt;集合对象的编码可以是intset或者hashtable。&lt;/p&gt;
+&lt;p&gt;当满足以下两个条件时使用intset编码：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;所有元素都是整数值；&lt;/li&gt;
+&lt;li&gt;元素数量不超过512个。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;可以修改set-max-intset-entries设置元素数量的上限。使用hashtable编码时，字典的每一个键都是字符串对象，每个字符串对象包含一个集合元素，字典的值全部设置为null。&lt;/p&gt;
+&lt;h3 id=&quot;有序集合&quot;&gt;有序集合&lt;/h3&gt;&lt;p&gt;有序集合对象的编码可以是ziplist或者skiplist。同时满足以下条件时使用ziplist编码：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;元素数量小于128个；&lt;/li&gt;
+&lt;li&gt;所有member的长度都小于64字节，&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;以上两个条件的上限值可通过zset-max-ziplist-entries和zset-max-ziplist-value来修改。&lt;/p&gt;
+&lt;p&gt;ziplist编码的有序集合使用紧挨在一起的压缩列表节点来保存，第一个节点保存member，第二个保存score。ziplist内的集合元素按score从小到大排序，score较小的排在表头位置。&lt;/p&gt;
+&lt;p&gt;skiplist编码的有序集合底层是一个命名为&lt;code&gt;zset&lt;/code&gt;的结构体，而一个zset结构同时包含一个字典和一个跳跃表。跳跃表按score从小到大保存所有集合元素。&lt;br&gt;而字典则保存着从member到score的映射，这样就可以用O(1)的复杂度来查找member对应的score值。&lt;/p&gt;
+&lt;p&gt;虽然同时使用两种结构，但它们会通过指针来共享相同元素的member和score，因此不会浪费额外的内存。&lt;/p&gt;
+&lt;p&gt;参考：&lt;br&gt;&lt;a href=&quot;https://book.douban.com/subject/25900156/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Redis设计与实现&lt;/a&gt;&lt;br&gt;&lt;a href=&quot;http://zhangtielei.com/posts/blog-redis-quicklist.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Redis内部数据结构详解(5)——quicklist&lt;/a&gt;&lt;br&gt;&lt;a href=&quot;https://matt.sh/redis-quicklist&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Redis Quicklist - From a More Civilized Age&lt;/a&gt;&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;上周看完&lt;a href=&quot;https://book.douban.com/subject/25900156/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Redis设计与实现&lt;/a&gt;，过程结合Redis的unstable分支的源码来对照，&lt;br&gt;基本对R
+    
+    </summary>
+    
+      <category term="缓存" scheme="http://zclau.com/categories/%E7%BC%93%E5%AD%98/"/>
+    
+    
+      <category term="Redis" scheme="http://zclau.com/tags/Redis/"/>
+    
+  </entry>
   
   <entry>
     <title>Java基础：String使用</title>
@@ -564,34 +637,6 @@
     
     
       <category term="多线程" scheme="http://zclau.com/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>hexo部署在vps上</title>
-    <link href="http://zclau.com/2015/12/14/hexo%E9%83%A8%E7%BD%B2%E5%9C%A8vps%E4%B8%8A/"/>
-    <id>http://zclau.com/2015/12/14/hexo部署在vps上/</id>
-    <published>2015-12-14T13:11:37.000Z</published>
-    <updated>2015-12-14T16:40:43.000Z</updated>
-    
-    <content type="html">&lt;p&gt;之前已经成功把hexo托管在了github上，并且可以访问。不过由于本身已经有个linode的vps，所以还是决定把hexo部署在自己的服务器上。&lt;/p&gt;
-&lt;p&gt;部署过程其实也很简单，因为其实只要把生成的静态文件部署上去即可，完全不涉及后台的交互。所以我在服务器上利用nginx，配置指向存放博客文章的文件夹就搞掂了。&lt;/p&gt;
-&lt;p&gt;首先我在服务器上的用户目录下先新建一个文件夹blog。&lt;br&gt;然后就配置nginx,在nginx.conf里加上这么一段：&lt;/p&gt;
-&lt;figure class=&quot;highlight xquery&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;server &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        listen   &lt;span class=&quot;number&quot;&gt;80&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        server_name  zclau.com;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        proxy_set_header Host &lt;span class=&quot;variable&quot;&gt;$http&lt;/span&gt;_host;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        proxy_set_header X-real-ip &lt;span class=&quot;variable&quot;&gt;$remote&lt;/span&gt;_addr;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        proxy_set_header X-Forwarded-For &lt;span class=&quot;variable&quot;&gt;$proxy&lt;/span&gt;_add_x_forwarded_for;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        location / &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            root /home/zclau/blog;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            #index index.html&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;这样当访问zclau.com时，请求都会转发到我的博客根目录/home/zclau/blog 这个文件夹下&lt;br&gt;然后就可以看到我的博客的首页了。&lt;/p&gt;
-</content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;之前已经成功把hexo托管在了github上，并且可以访问。不过由于本身已经有个linode的vps，所以还是决定把hexo部署在自己的服务器上。&lt;/p&gt;
-&lt;p&gt;部署过程其实也很简单，因为其实只要把生成的静态文件部署上去即可，完全不涉及后台的交互。所以我在服务器上利用ngi
-    
-    </summary>
-    
-      <category term="hexo" scheme="http://zclau.com/categories/hexo/"/>
-    
-    
-      <category term="hexo" scheme="http://zclau.com/tags/hexo/"/>
     
   </entry>
   
