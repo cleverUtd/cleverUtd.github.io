@@ -68,15 +68,15 @@
 问题背景某日，线上的RabbitMQ发现有大量消息堆积，迟迟未能出队。Tomcat没有发现异常报错，却在输出的日志中发现处理1000条消息要耗时几十分钟不等（正常情况只需3~5秒）。
 排查通过 top 命令发现进程占用较高CPU，然后 top -">
 <meta property="og:type" content="article">
-<meta property="og:title" content="记录一次由RabbitMQ Java 客户端代码引起的内存泄露问题">
+<meta property="og:title" content="记录一次内存泄露排查过程">
 <meta property="og:url" content="http://zclau.com/2017/01/23/记录一次由RabbitMQ-Java-客户端代码引起的内存泄露问题/index.html">
 <meta property="og:site_name" content="zclau">
 <meta property="og:description" content="最近线上某个项目发生内存泄露，JVM忙于GC，导致业务线程基本不执行。经过排查最终发现是RabbitMQ的Java客户端代码导致的。现把排查过程记录下来
 问题背景某日，线上的RabbitMQ发现有大量消息堆积，迟迟未能出队。Tomcat没有发现异常报错，却在输出的日志中发现处理1000条消息要耗时几十分钟不等（正常情况只需3~5秒）。
 排查通过 top 命令发现进程占用较高CPU，然后 top -">
-<meta property="og:updated_time" content="2017-01-24T09:52:13.000Z">
+<meta property="og:updated_time" content="2017-01-24T10:00:27.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="记录一次由RabbitMQ Java 客户端代码引起的内存泄露问题">
+<meta name="twitter:title" content="记录一次内存泄露排查过程">
 <meta name="twitter:description" content="最近线上某个项目发生内存泄露，JVM忙于GC，导致业务线程基本不执行。经过排查最终发现是RabbitMQ的Java客户端代码导致的。现把排查过程记录下来
 问题背景某日，线上的RabbitMQ发现有大量消息堆积，迟迟未能出队。Tomcat没有发现异常报错，却在输出的日志中发现处理1000条消息要耗时几十分钟不等（正常情况只需3~5秒）。
 排查通过 top 命令发现进程占用较高CPU，然后 top -">
@@ -115,7 +115,7 @@
 
 
 
-  <title> 记录一次由RabbitMQ Java 客户端代码引起的内存泄露问题 | zclau </title>
+  <title> 记录一次内存泄露排查过程 | zclau </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -279,7 +279,7 @@
             
             
               
-                记录一次由RabbitMQ Java 客户端代码引起的内存泄露问题
+                记录一次内存泄露排查过程
               
             
           </h1>
@@ -371,7 +371,7 @@
 <figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">Channel channel = connection.createChannel();</span><br><span class="line">channel.queueDeclare(queueName);</span><br><span class="line">QueueingConsumer consumer = <span class="keyword">new</span> QueueingConsumer(channel);</span><br><span class="line">channel.basicConsume(queueName, <span class="keyword">false</span>, consumer);</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line"><span class="keyword">int</span> <span class="keyword">count</span> = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">while</span>(<span class="keyword">count</span> &lt; <span class="number">1000</span>) &#123;</span><br><span class="line">    QueueingConsumer.Delivery delivery = consumer.nextDelivery(<span class="number">500</span>);</span><br><span class="line">    ...</span><br><span class="line">    ...</span><br><span class="line">    各种业务逻辑</span><br><span class="line">    ...</span><br><span class="line">    ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125; <span class="keyword">catch</span>(Exception e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    channel.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>总体的处理流程就是如上代码所示，有几点需要注意：</p>
 <ol>
-<li>Channel是个接口，开启了连接重连属性，实现类是RecoveryAwareChannel</li>
+<li>Channel是个接口，设置automaticRecoveryEnalbed为true后，实现类是RecoveryAwareChannel</li>
 <li>channel是QueueingConsumer的一个属性，即QueueingConsumer引用着channel，这也证明了之前的猜测。</li>
 <li>每一轮最多处理1000条消息，处理完之后只close掉channel，没有close connection。</li>
 </ol>
@@ -440,7 +440,7 @@
     <div class="post-spread">
       
         <div class="ds-share flat" data-thread-key="2017/01/23/记录一次由RabbitMQ-Java-客户端代码引起的内存泄露问题/"
-     data-title="记录一次由RabbitMQ Java 客户端代码引起的内存泄露问题"
+     data-title="记录一次内存泄露排查过程"
      data-content=""
      data-url="http://zclau.com/2017/01/23/记录一次由RabbitMQ-Java-客户端代码引起的内存泄露问题/">
   <div class="ds-share-inline">
@@ -473,7 +473,7 @@
   <div class="comments" id="comments">
     
       <div class="ds-thread" data-thread-key="2017/01/23/记录一次由RabbitMQ-Java-客户端代码引起的内存泄露问题/"
-           data-title="记录一次由RabbitMQ Java 客户端代码引起的内存泄露问题" data-url="http://zclau.com/2017/01/23/记录一次由RabbitMQ-Java-客户端代码引起的内存泄露问题/">
+           data-title="记录一次内存泄露排查过程" data-url="http://zclau.com/2017/01/23/记录一次由RabbitMQ-Java-客户端代码引起的内存泄露问题/">
       </div>
     
   </div>
