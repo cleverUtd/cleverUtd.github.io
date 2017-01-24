@@ -68,11 +68,11 @@
 最大感受，无论从设计还是源码，Redis都尽量做到简单，其中运用到的原理也通俗易懂，一点也不会觉得晦涩。特别是源码，简洁易读，真正做到clean and clear， 而">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis实现原理之对象与编码">
-<meta property="og:url" content="http://zclau.com/2016/12/17/Redis源码学习笔记之数据结构与对象/index.html">
+<meta property="og:url" content="http://zclau.com/2016/12/17/Redis实现原理之对象与编码/index.html">
 <meta property="og:site_name" content="zclau">
 <meta property="og:description" content="上周看完Redis设计与实现，过程结合Redis的unstable分支的源码来对照，基本对Redis的实现原理有了个深入的理解。（书本基于3.0版本，源码unstable分支现已去到4.0 rc2，代码略有不同，但思路总体一致）
 最大感受，无论从设计还是源码，Redis都尽量做到简单，其中运用到的原理也通俗易懂，一点也不会觉得晦涩。特别是源码，简洁易读，真正做到clean and clear， 而">
-<meta property="og:updated_time" content="2016-12-20T16:27:52.000Z">
+<meta property="og:updated_time" content="2016-12-20T16:29:53.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Redis实现原理之对象与编码">
 <meta name="twitter:description" content="上周看完Redis设计与实现，过程结合Redis的unstable分支的源码来对照，基本对Redis的实现原理有了个深入的理解。（书本基于3.0版本，源码unstable分支现已去到4.0 rc2，代码略有不同，但思路总体一致）
@@ -104,7 +104,7 @@
 
 
 
-  <link rel="canonical" href="http://zclau.com/2016/12/17/Redis源码学习笔记之数据结构与对象/"/>
+  <link rel="canonical" href="http://zclau.com/2016/12/17/Redis实现原理之对象与编码/"/>
 
 
 
@@ -252,7 +252,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://zclau.com/2016/12/17/Redis源码学习笔记之数据结构与对象/">
+  <link itemprop="mainEntityOfPage" href="http://zclau.com/2016/12/17/Redis实现原理之对象与编码/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="zclau">
@@ -322,8 +322,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/12/17/Redis源码学习笔记之数据结构与对象/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/17/Redis源码学习笔记之数据结构与对象/" itemprop="commentCount"></span>
+                <a href="/2016/12/17/Redis实现原理之对象与编码/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/17/Redis实现原理之对象与编码/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -445,6 +445,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2017/01/23/记录一次由RabbitMQ-Java-客户端代码引起的内存泄露问题/" rel="prev" title="记录一次由RabbitMQ Java 客户端代码引起的内存泄露问题">
+                记录一次由RabbitMQ Java 客户端代码引起的内存泄露问题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -458,10 +462,10 @@
 
     <div class="post-spread">
       
-        <div class="ds-share flat" data-thread-key="2016/12/17/Redis源码学习笔记之数据结构与对象/"
+        <div class="ds-share flat" data-thread-key="2016/12/17/Redis实现原理之对象与编码/"
      data-title="Redis实现原理之对象与编码"
      data-content=""
-     data-url="http://zclau.com/2016/12/17/Redis源码学习笔记之数据结构与对象/">
+     data-url="http://zclau.com/2016/12/17/Redis实现原理之对象与编码/">
   <div class="ds-share-inline">
     <ul  class="ds-share-icons-16">
 
@@ -491,8 +495,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/12/17/Redis源码学习笔记之数据结构与对象/"
-           data-title="Redis实现原理之对象与编码" data-url="http://zclau.com/2016/12/17/Redis源码学习笔记之数据结构与对象/">
+      <div class="ds-thread" data-thread-key="2016/12/17/Redis实现原理之对象与编码/"
+           data-title="Redis实现原理之对象与编码" data-url="http://zclau.com/2016/12/17/Redis实现原理之对象与编码/">
       </div>
     
   </div>
@@ -537,7 +541,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">12</span>
+              <span class="site-state-item-count">13</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -554,7 +558,7 @@
           
             <div class="site-state-item site-state-tags">
               
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">标签</span>
               
             </div>
@@ -637,7 +641,7 @@
         <div class="copyright" >
   
   &copy;  2015 - 
-  <span itemprop="copyrightYear">2016</span>
+  <span itemprop="copyrightYear">2017</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
