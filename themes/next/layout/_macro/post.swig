@@ -69,8 +69,6 @@
               {{ date(post.date, config.date_format) }}
             </time>
 
-            &nbsp;|&nbsp;
-
             
           </span>
 
