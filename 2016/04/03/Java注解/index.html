@@ -1,70 +1,15 @@
-<!doctype html>
 
 
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head prefix="og: http://ogp.me/ns#">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <meta name="description" content="Keep Calm And Coding">
+    <title>Java基础：注解 | 刘梓</title>
 
-
-<html class="theme-next pisces" lang="zh-Hans">
-<head>
-  <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-
-
-
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
-
-
-
-  <meta name="google-site-verification" content="WpUzmCbPHTwSIrecMhBOVSvuOi8CiNrJNabR2s1RV8I" />
-
-
-
-
-
-
-
-
-
-
-  
-  
-    
-  
-  <link href="//cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet" type="text/css" />
-
-
-
-
-
-
-
-  
-
-<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
-
-<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
-
-
-  <meta name="keywords" content="Java基础," />
-
-
-
-
-
-  <link rel="alternate" href="/atom.xml" title="zclau" type="application/atom+xml" />
-
-
-
-
-  <link rel="shortcut icon" type="image/x-icon" href="/images/avatar.png?v=5.1.0" />
-
-
-
-
-
-
-<meta name="description" content="概念注解就是代码的元数据，而元数据是一种描述数据的数据。
+    <!-- Open Graph -->
+    <meta name="description" content="概念注解就是代码的元数据，而元数据是一种描述数据的数据。
 系统注解分为标准注解和元注解
 1. 标准注解
 @Override:保证编译时候Override函数的声明正确性
@@ -75,7 +20,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java基础：注解">
 <meta property="og:url" content="http://zclau.com/2016/04/03/Java注解/index.html">
-<meta property="og:site_name" content="zclau">
+<meta property="og:site_name" content="刘梓">
 <meta property="og:description" content="概念注解就是代码的元数据，而元数据是一种描述数据的数据。
 系统注解分为标准注解和元注解
 1. 标准注解
@@ -96,732 +41,351 @@
 
 @SuppressWarnings: 关闭特定的警告信息">
 
-
-
-<script type="text/javascript" id="hexo.configurations">
-  var NexT = window.NexT || {};
-  var CONFIG = {
-    root: '/',
-    scheme: 'Pisces',
-    sidebar: {"position":"left","display":"always"},
-    fancybox: true,
-    motion: false,
-    duoshuo: {
-      userId: '3589189',
-      author: 'Uni聰_Lau'
-    },
-    algolia: {
-      applicationID: '',
-      apiKey: '',
-      indexName: '',
-      hits: {"per_page":10},
-      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
-    }
-  };
+    <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Person",
+  "email": "mailto:cleverutd@gmail.com",
+  "image": "undefined",
+  "name": "zclau",
+  "url": "http://zclau.com"
+}
+</script>
+    <script>
+    var algoliaEnabled = false;
+    
 </script>
 
+    
 
+    
+    
+        <link href="https://fonts.gmirror.org/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+    
+    
+    
+        <!-- stylesheets list from config.yml -->
+        
+        <link rel="stylesheet" href="/css/aloha.css">
+        
+        <link rel="stylesheet" href="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.css">
+        
+        <link rel="stylesheet" href="//cdn.bootcss.com/magnific-popup.js/1.1.0/magnific-popup.min.css">
+        
+    
 
-  <link rel="canonical" href="http://zclau.com/2016/04/03/Java注解/"/>
-
-
-
-
-
-
-
-  <title> Java基础：注解 | zclau </title>
 </head>
+<body id="body" style="margin-bottom: 0;" class="pushable">
 
-<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+    <div class="ui top fixed menu">
+        <a class="item" id="menu-icon"><i class="sidebar icon"></i></a>
+    </div>
 
-  
+    <div id="menu-sidebar" class="ui left vertical sidebar menu">
 
-
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-  ga('create', 'UA-49937545-1', 'auto');
-  ga('send', 'pageview');
-</script>
-
-
-
-
-
-
-
-
-
-  
-  
-    
-  
-
-  <div class="container one-collumn sidebar-position-left page-post-detail ">
-    <div class="headband"></div>
-
-    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-meta ">
-  
-
-  <div class="custom-logo-site-title">
-    <a href="/"  class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <span class="site-title">zclau</span>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-  </div>
-  <p class="site-subtitle">Keep Calm And Coding</p>
-</div>
-
-<div class="site-nav-toggle">
-  <button>
-    <span class="btn-bar"></span>
-    <span class="btn-bar"></span>
-    <span class="btn-bar"></span>
-  </button>
-</div>
-
-<nav class="site-nav">
-  
-
-  
-    <ul id="menu" class="menu">
-      
-        
-        <li class="menu-item menu-item-home">
-          <a href="/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
-            
-            首页
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-categories">
-          <a href="/categories" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
-            
-            分类
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-archives">
-          <a href="/archives" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
-            
-            归档
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-booklist">
-          <a href="/booklist" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-book"></i> <br />
-            
-            书单
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-commonweal">
-          <a href="/404.html" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
-            
-            公益404
-          </a>
-        </li>
-      
-
-      
-    </ul>
-  
-
-  
-</nav>
-
-
-
- </div>
-    </header>
-
-    <main id="main" class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          <div id="content" class="content">
-            
-
-  <div id="posts" class="posts-expand">
-    
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://zclau.com/2016/04/03/Java注解/">
-
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="zclau">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/avatar.png">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="zclau">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="zclau" src="">
-    </span>
-  </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                Java基础：注解
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time title="Дата создания записи" itemprop="dateCreated datePublished" datetime="2016-04-03T21:35:41+08:00">
-              2016-04-03
-            </time>
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/04/03/Java注解/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/04/03/Java注解/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-              &nbsp; | &nbsp;
-              <span class="page-pv"><i class="fa fa-file-o"></i>
-              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
-              </span>
-          
-          
-          
-
+    <div id="sidebar-top">
+        <div class="content">
+            <h3>刘梓</h3>
         </div>
-      </header>
+    </div>
+    <div class="ui container sidebar-card">
+    <div class="ui people shape content">
+        <div class="active side">
+            <div class="ui card">
+                <div class="image">
+                    <img class="ui medium bordered image" src="/images/avatar.jpg">
+                </div>
+                <div class="content">
+                    <a class="header">zclau</a>
+                    
+                </div>
+                <div class="extra content">
+                    <div class="ui list">
+                        
+                        
+                        <div class="item">
+                            <i class="mail icon" style="float: left"></i>
+                            <div class="content">
+                                <a href="mailto:cleverutd@gmail.com">cleverutd@gmail.com</a>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                </div>
+                <div class="extra content">
+                    <div class="ui list">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+    
     
 
+    
 
-    <div class="post-body" itemprop="articleBody">
+    
+    <a href="/index.html" class="item" >
+        <i class="home icon"></i>
+        首页
+    </a>
 
-      
-      
+    
+    
 
-      
-        <h1 id="概念">概念</h1><p>注解就是代码的元数据，而元数据是一种描述数据的数据。</p>
-<h1 id="系统注解">系统注解</h1><p>分为标准注解和元注解</p>
-<h2 id="1-_标准注解">1. 标准注解</h2><ol>
-<li><p>@Override:保证编译时候Override函数的声明正确性</p>
+    
+
+    
+    <a href="/atom.xml" class="item" >
+        <i class="rss icon"></i>
+        RSS
+    </a>
+
+    
+    
+
+    
+
+    
+    <a href="/archives/index.html" class="item" >
+        <i class="archive icon"></i>
+        归档
+    </a>
+
+    
+    
+
+    
+
+    
+    <a href="/booklist/index.html" class="item" >
+        <i class="book icon"></i>
+        书单
+    </a>
+
+    
+
+    
+</div>
+
+    <div class="pusher body-content">
+        <div id="content" class="ui main container">
+            <!--<div class="ui one column grid">-->
+                <!--<div class="column">-->
+                    <!--<div class="ui main container">-->
+                        <div id="post-Java注解" class="ui main container article-type-post">
+
+    
+
+    <div class="ui divided grid">
+
+        <div class="two column row" id="article-content">
+
+            <div class="thirteen wide computer thirteen wide tablet sixteen wide mobile column">
+                
+
+<h1 class="ui header">
+    
+    Java基础：注解
+</h1>
+
+
+
+                <div class="article-inner">
+
+                    <div class="article-entry" itemprop="articleBody">
+                        
+                        <h1 id="&#x6982;&#x5FF5;"><a href="#&#x6982;&#x5FF5;" class="headerlink" title="&#x6982;&#x5FF5;"></a>&#x6982;&#x5FF5;</h1><p>&#x6CE8;&#x89E3;&#x5C31;&#x662F;&#x4EE3;&#x7801;&#x7684;&#x5143;&#x6570;&#x636E;&#xFF0C;&#x800C;&#x5143;&#x6570;&#x636E;&#x662F;&#x4E00;&#x79CD;&#x63CF;&#x8FF0;&#x6570;&#x636E;&#x7684;&#x6570;&#x636E;&#x3002;</p>
+<h1 id="&#x7CFB;&#x7EDF;&#x6CE8;&#x89E3;"><a href="#&#x7CFB;&#x7EDF;&#x6CE8;&#x89E3;" class="headerlink" title="&#x7CFB;&#x7EDF;&#x6CE8;&#x89E3;"></a>&#x7CFB;&#x7EDF;&#x6CE8;&#x89E3;</h1><p>&#x5206;&#x4E3A;&#x6807;&#x51C6;&#x6CE8;&#x89E3;&#x548C;&#x5143;&#x6CE8;&#x89E3;</p>
+<h2 id="1-&#x6807;&#x51C6;&#x6CE8;&#x89E3;"><a href="#1-&#x6807;&#x51C6;&#x6CE8;&#x89E3;" class="headerlink" title="1. &#x6807;&#x51C6;&#x6CE8;&#x89E3;"></a>1. &#x6807;&#x51C6;&#x6CE8;&#x89E3;</h2><ol class="ui list">
+<li><p>@Override:&#x4FDD;&#x8BC1;&#x7F16;&#x8BD1;&#x65F6;&#x5019;Override&#x51FD;&#x6570;&#x7684;&#x58F0;&#x660E;&#x6B63;&#x786E;&#x6027;</p>
 </li>
-<li><p>@Deprecated:对不应该在使用的方法添加注释</p>
+<li><p>@Deprecated:&#x5BF9;&#x4E0D;&#x5E94;&#x8BE5;&#x5728;&#x4F7F;&#x7528;&#x7684;&#x65B9;&#x6CD5;&#x6DFB;&#x52A0;&#x6CE8;&#x91CA;</p>
 </li>
-<li><p>@SuppressWarnings: 关闭特定的警告信息</p>
+<li><p>@SuppressWarnings: &#x5173;&#x95ED;&#x7279;&#x5B9A;&#x7684;&#x8B66;&#x544A;&#x4FE1;&#x606F;</p>
 </li>
 </ol>
 <a id="more"></a>
-<h2 id="2-_元注解">2. 元注解</h2><p>负责注解其他注解</p>
-<p>@Retention:注解使用级别</p>
-<ul>
-<li>SOURCE:注释将被编译器丢掉</li>
-<li>CLASS: 注释在class文件中可用，但会被JVM丢弃</li>
-<li>RUNTIME: JVM会在运行时保留注释，因此可以通过反射机制读取注释的信息</li>
+<h2 id="2-&#x5143;&#x6CE8;&#x89E3;"><a href="#2-&#x5143;&#x6CE8;&#x89E3;" class="headerlink" title="2. &#x5143;&#x6CE8;&#x89E3;"></a>2. &#x5143;&#x6CE8;&#x89E3;</h2><p>&#x8D1F;&#x8D23;&#x6CE8;&#x89E3;&#x5176;&#x4ED6;&#x6CE8;&#x89E3;</p>
+<p>@Retention:&#x6CE8;&#x89E3;&#x4F7F;&#x7528;&#x7EA7;&#x522B;</p>
+<ul class="ui list">
+<li>SOURCE:&#x6CE8;&#x91CA;&#x5C06;&#x88AB;&#x7F16;&#x8BD1;&#x5668;&#x4E22;&#x6389;</li>
+<li>CLASS: &#x6CE8;&#x91CA;&#x5728;class&#x6587;&#x4EF6;&#x4E2D;&#x53EF;&#x7528;&#xFF0C;&#x4F46;&#x4F1A;&#x88AB;JVM&#x4E22;&#x5F03;</li>
+<li>RUNTIME: JVM&#x4F1A;&#x5728;&#x8FD0;&#x884C;&#x65F6;&#x4FDD;&#x7559;&#x6CE8;&#x91CA;&#xFF0C;&#x56E0;&#x6B64;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x53CD;&#x5C04;&#x673A;&#x5236;&#x8BFB;&#x53D6;&#x6CE8;&#x91CA;&#x7684;&#x4FE1;&#x606F;</li>
 </ul>
-<p>@Target: 表示该注解可以用于什么地方</p>
-<ul>
-<li>CONSTRUCTOR: 构造器的声明</li>
-<li>FIELD: 域声明(包括enum实例)</li>
-<li>LOCAL_VARIABLE: 局部变量声明</li>
-<li>METHOD:方法声明</li>
-<li>PACKAGE:包声明</li>
-<li>PARAMETER：参数声明</li>
-<li>TYPE:类、接口(包括注解类型)或enum声明</li>
+<p>@Target: &#x8868;&#x793A;&#x8BE5;&#x6CE8;&#x89E3;&#x53EF;&#x4EE5;&#x7528;&#x4E8E;&#x4EC0;&#x4E48;&#x5730;&#x65B9;</p>
+<ul class="ui list">
+<li>CONSTRUCTOR: &#x6784;&#x9020;&#x5668;&#x7684;&#x58F0;&#x660E;</li>
+<li>FIELD: &#x57DF;&#x58F0;&#x660E;(&#x5305;&#x62EC;enum&#x5B9E;&#x4F8B;)</li>
+<li>LOCAL_VARIABLE: &#x5C40;&#x90E8;&#x53D8;&#x91CF;&#x58F0;&#x660E;</li>
+<li>METHOD:&#x65B9;&#x6CD5;&#x58F0;&#x660E;</li>
+<li>PACKAGE:&#x5305;&#x58F0;&#x660E;</li>
+<li>PARAMETER&#xFF1A;&#x53C2;&#x6570;&#x58F0;&#x660E;</li>
+<li>TYPE:&#x7C7B;&#x3001;&#x63A5;&#x53E3;(&#x5305;&#x62EC;&#x6CE8;&#x89E3;&#x7C7B;&#x578B;)&#x6216;enum&#x58F0;&#x660E;</li>
 </ul>
-<p>@Documented: 将注释包含在JavaDoc中</p>
-<p>@Inherited:允许子类继承父类中的注解</p>
-<h2 id="注解元素数据类型">注解元素数据类型</h2><ul>
-<li>所有基本类型(int,float,boolean等)</li>
+<p>@Documented: &#x5C06;&#x6CE8;&#x91CA;&#x5305;&#x542B;&#x5728;JavaDoc&#x4E2D;</p>
+<p>@Inherited:&#x5141;&#x8BB8;&#x5B50;&#x7C7B;&#x7EE7;&#x627F;&#x7236;&#x7C7B;&#x4E2D;&#x7684;&#x6CE8;&#x89E3;</p>
+<h2 id="&#x6CE8;&#x89E3;&#x5143;&#x7D20;&#x6570;&#x636E;&#x7C7B;&#x578B;"><a href="#&#x6CE8;&#x89E3;&#x5143;&#x7D20;&#x6570;&#x636E;&#x7C7B;&#x578B;" class="headerlink" title="&#x6CE8;&#x89E3;&#x5143;&#x7D20;&#x6570;&#x636E;&#x7C7B;&#x578B;"></a>&#x6CE8;&#x89E3;&#x5143;&#x7D20;&#x6570;&#x636E;&#x7C7B;&#x578B;</h2><ul class="ui list">
+<li>&#x6240;&#x6709;&#x57FA;&#x672C;&#x7C7B;&#x578B;(int,float,boolean&#x7B49;)</li>
 <li>String</li>
 <li>enum</li>
 <li>Annotation</li>
-<li>以上类型的数组</li>
+<li>&#x4EE5;&#x4E0A;&#x7C7B;&#x578B;&#x7684;&#x6570;&#x7EC4;</li>
 </ul>
-<h1 id="自定义注解">自定义注解</h1><p>创建一个新的注解类型名为 `CustomAnnotationClass</p>
-<figure class="highlight monkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> @<span class="class"><span class="keyword">interface</span> <span class="title">CustomAnnotation</span></span></span><br></pre></td></tr></table></figure>
-<p>定义属性，定义保留策略和目标</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"> <span class="annotation">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"> <span class="annotation">@Target</span>(ElementType.TYPE)</span><br><span class="line"> <span class="keyword">public</span> <span class="annotation">@interface</span> CustomAnnotation &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>定义注解成员</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"> <span class="annotation">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"> <span class="annotation">@Target</span>(ElementType.TYPE)</span><br><span class="line"> <span class="keyword">public</span> <span class="annotation">@interface</span> CustomAnnotation &#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">String <span class="title">author</span><span class="params">()</span> <span class="keyword">default</span> "zclau"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">date</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">description</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>使用注解</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@CustomAnnotation</span>(date = <span class="string">"2016-04-03"</span>, description = <span class="string">"hello world"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AnnotatedClass</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="获取注解">获取注解</h1><p>Java 反射API提供了很多方法来在运行时从类、方法或者其它元素获取注解</p>
-<ul>
-<li>getAnnotations():返回该元素的所有注解，包括没有显示定义该元素上的注解</li>
-<li>isAnnotationPresent(annotation):检查传入的注解是否存在于当前元素</li>
-<li>getAnnotation(class):按照传入的参数获取指定类型的注解，返回null说明当前元素不带有此注解</li>
+<h1 id="&#x81EA;&#x5B9A;&#x4E49;&#x6CE8;&#x89E3;"><a href="#&#x81EA;&#x5B9A;&#x4E49;&#x6CE8;&#x89E3;" class="headerlink" title="&#x81EA;&#x5B9A;&#x4E49;&#x6CE8;&#x89E3;"></a>&#x81EA;&#x5B9A;&#x4E49;&#x6CE8;&#x89E3;</h1><p>&#x521B;&#x5EFA;&#x4E00;&#x4E2A;&#x65B0;&#x7684;&#x6CE8;&#x89E3;&#x7C7B;&#x578B;&#x540D;&#x4E3A; `CustomAnnotationClass</p>
+<figure class="highlight monkey"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> @<span class="class"><span class="keyword">interface</span> <span class="title">CustomAnnotation</span></span></div></pre></td></tr></table></figure>
+<p>&#x5B9A;&#x4E49;&#x5C5E;&#x6027;&#xFF0C;&#x5B9A;&#x4E49;&#x4FDD;&#x7559;&#x7B56;&#x7565;&#x548C;&#x76EE;&#x6807;</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"> <span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</div><div class="line"> <span class="meta">@Target</span>(ElementType.TYPE)</div><div class="line"> <span class="keyword">public</span> <span class="meta">@interface</span> CustomAnnotation {</div><div class="line"></div><div class="line">}</div></pre></td></tr></table></figure>
+<p>&#x5B9A;&#x4E49;&#x6CE8;&#x89E3;&#x6210;&#x5458;</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"> <span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</div><div class="line"> <span class="meta">@Target</span>(ElementType.TYPE)</div><div class="line"> <span class="keyword">public</span> <span class="meta">@interface</span> CustomAnnotation {</div><div class="line"></div><div class="line">    <span class="function">String <span class="title">author</span><span class="params">()</span> <span class="keyword">default</span> &quot;zclau&quot;</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">date</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">description</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">}</div></pre></td></tr></table></figure>
+<p>&#x4F7F;&#x7528;&#x6CE8;&#x89E3;</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@CustomAnnotation</span>(date = <span class="string">&quot;2016-04-03&quot;</span>, description = <span class="string">&quot;hello world&quot;</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AnnotatedClass</span> </span>{</div><div class="line">}</div></pre></td></tr></table></figure>
+<h1 id="&#x83B7;&#x53D6;&#x6CE8;&#x89E3;"><a href="#&#x83B7;&#x53D6;&#x6CE8;&#x89E3;" class="headerlink" title="&#x83B7;&#x53D6;&#x6CE8;&#x89E3;"></a>&#x83B7;&#x53D6;&#x6CE8;&#x89E3;</h1><p>Java &#x53CD;&#x5C04;API&#x63D0;&#x4F9B;&#x4E86;&#x5F88;&#x591A;&#x65B9;&#x6CD5;&#x6765;&#x5728;&#x8FD0;&#x884C;&#x65F6;&#x4ECE;&#x7C7B;&#x3001;&#x65B9;&#x6CD5;&#x6216;&#x8005;&#x5176;&#x5B83;&#x5143;&#x7D20;&#x83B7;&#x53D6;&#x6CE8;&#x89E3;</p>
+<ul class="ui list">
+<li>getAnnotations():&#x8FD4;&#x56DE;&#x8BE5;&#x5143;&#x7D20;&#x7684;&#x6240;&#x6709;&#x6CE8;&#x89E3;&#xFF0C;&#x5305;&#x62EC;&#x6CA1;&#x6709;&#x663E;&#x793A;&#x5B9A;&#x4E49;&#x8BE5;&#x5143;&#x7D20;&#x4E0A;&#x7684;&#x6CE8;&#x89E3;</li>
+<li>isAnnotationPresent(annotation):&#x68C0;&#x67E5;&#x4F20;&#x5165;&#x7684;&#x6CE8;&#x89E3;&#x662F;&#x5426;&#x5B58;&#x5728;&#x4E8E;&#x5F53;&#x524D;&#x5143;&#x7D20;</li>
+<li>getAnnotation(class):&#x6309;&#x7167;&#x4F20;&#x5165;&#x7684;&#x53C2;&#x6570;&#x83B7;&#x53D6;&#x6307;&#x5B9A;&#x7C7B;&#x578B;&#x7684;&#x6CE8;&#x89E3;&#xFF0C;&#x8FD4;&#x56DE;null&#x8BF4;&#x660E;&#x5F53;&#x524D;&#x5143;&#x7D20;&#x4E0D;&#x5E26;&#x6709;&#x6B64;&#x6CE8;&#x89E3;</li>
 </ul>
-<p>从一个类中获取所有的存在的注解</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@CustomAnnotation</span>(date = <span class="string">"2016-04-03"</span>, description = <span class="string">"hello world"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AnnotatedClass</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        Class&lt;AnnotatedClass&gt; object = AnnotatedClass.class;</span><br><span class="line">        <span class="comment">//从AnnotatedClass类中获取所有的注解</span></span><br><span class="line">        Annotation[] annotations = object.getAnnotations();</span><br><span class="line">        <span class="keyword">for</span>(Annotation annotation : annotations) &#123;</span><br><span class="line">            System.out.println(annotation);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(object.isAnnotationPresent(CustomAnnotation.class)) &#123;</span><br><span class="line">            Annotation annotation = object.getAnnotation(CustomAnnotation.class);</span><br><span class="line">            System.out.println(annotation);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&#x4ECE;&#x4E00;&#x4E2A;&#x7C7B;&#x4E2D;&#x83B7;&#x53D6;&#x6240;&#x6709;&#x7684;&#x5B58;&#x5728;&#x7684;&#x6CE8;&#x89E3;</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@CustomAnnotation</span>(date = <span class="string">&quot;2016-04-03&quot;</span>, description = <span class="string">&quot;hello world&quot;</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AnnotatedClass</span> </span>{</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>{</div><div class="line"></div><div class="line">        Class&lt;AnnotatedClass&gt; object = AnnotatedClass.class;</div><div class="line">        <span class="comment">//&#x4ECE;AnnotatedClass&#x7C7B;&#x4E2D;&#x83B7;&#x53D6;&#x6240;&#x6709;&#x7684;&#x6CE8;&#x89E3;</span></div><div class="line">        Annotation[] annotations = object.getAnnotations();</div><div class="line">        <span class="keyword">for</span>(Annotation annotation : annotations) {</div><div class="line">            System.out.println(annotation);</div><div class="line">        }</div><div class="line"></div><div class="line">        <span class="keyword">if</span>(object.isAnnotationPresent(CustomAnnotation.class)) {</div><div class="line">            Annotation annotation = object.getAnnotation(CustomAnnotation.class);</div><div class="line">            System.out.println(annotation);</div><div class="line">        }</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
 
-      
-    </div>
+                        
+                    </div>
 
-    <div>
-      
+                    
+                    
+                    
+
+                    <div class="description post-description">
+    <span class="post-description-item">
+        <time datetime="2016-04-03T13:35:41.000Z" itemprop="datePublished">2016-04-03</time>
+
+    </span>
+    <span class="post-description-item">
         
 
-      
-    </div>
+    <span>
+        <i class="tags icon"></i>
+    </span>
 
-    <div>
-      
-        
-
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/Java基础/" rel="tag"># Java基础</a>
-          
-        </div>
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2016/03/22/Java-SimpleDateFormat的线程安全性问题/" rel="next" title="Java SimpleDateFormat的线程安全性问题">
-                <i class="fa fa-chevron-left"></i> Java SimpleDateFormat的线程安全性问题
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/09/04/Java-Mission-Control之使用/" rel="prev" title="Java Mission Control之使用">
-                Java Mission Control之使用 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </article>
-
-
-
-    <div class="post-spread">
-      
-        <div class="ds-share flat" data-thread-key="2016/04/03/Java注解/"
-     data-title="Java基础：注解"
-     data-content=""
-     data-url="http://zclau.com/2016/04/03/Java注解/">
-  <div class="ds-share-inline">
-    <ul  class="ds-share-icons-16">
-
-      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
-      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
-      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
-      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
-      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
-
-    </ul>
-    <div class="ds-share-icons-more">
-    </div>
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-
-          </div>
-          
-
-  <p>热评文章</p>
-  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
-
-
-          
-  <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/04/03/Java注解/"
-           data-title="Java基础：注解" data-url="http://zclau.com/2016/04/03/Java注解/">
-      </div>
+    <span class="ui tiny label">
+        <a href="/tags/Java基础/">Java基础</a>
+    </span>
+
     
-  </div>
 
+    </span>
+</div>
 
-        </div>
-        
-          
-  
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
-  </div>
+                </div>
+                
+                <div id="pagination" class="nav-web ui text container pagination">
 
-  <aside id="sidebar" class="sidebar">
-    <div class="sidebar-inner">
+    <div class="ui stackable two column divided grid container">
+        <div class="row">
+            <div class="column nav-left">
+                
 
-      
+                <a href="/2016/09/04/Java-Mission-Control之使用/" class="ui tiny button">
 
-      
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
+                    <i class="angle left icon"></i>
+                    
+                    Java Mission Control之使用
+                    
 
-      <section class="site-overview sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-          <img class="site-author-image" itemprop="image"
-               src="/images/avatar.png"
-               alt="zclau" />
-          <p class="site-author-name" itemprop="name">zclau</p>
-          <p class="site-description motion-element" itemprop="description">Just Do IT</p>
-        </div>
-        <nav class="site-state motion-element">
-          <div class="site-state-item site-state-posts">
-            <a href="/archives">
-              <span class="site-state-item-count">13</span>
-              <span class="site-state-item-name">日志</span>
-            </a>
-          </div>
-
-          
-            <div class="site-state-item site-state-categories">
-              <a href="/categories">
-                <span class="site-state-item-count">7</span>
-                <span class="site-state-item-name">分类</span>
-              </a>
-            </div>
-          
-
-          
-            <div class="site-state-item site-state-tags">
-              
-                <span class="site-state-item-count">11</span>
-                <span class="site-state-item-name">标签</span>
-              
-            </div>
-          
-
-        </nav>
-
-        
-          <div class="feed-link motion-element">
-            <a href="/atom.xml" rel="alternate">
-              <i class="fa fa-rss"></i>
-              RSS
-            </a>
-          </div>
-        
-
-        <div class="links-of-author motion-element">
-          
-            
-              <span class="links-of-author-item">
-                <a href="https://github.com/cleverutd" target="_blank" title="GitHub">
-                  
-                    <i class="fa fa-fw fa-github"></i>
-                  
-                  GitHub
                 </a>
-              </span>
-            
-              <span class="links-of-author-item">
-                <a href="http://weibo.com/515074234" target="_blank" title="Weibo">
-                  
-                    <i class="fa fa-fw fa-weibo"></i>
-                  
-                  Weibo
-                </a>
-              </span>
-            
-          
+
+                
+            </div>
+            <div class="column nav-right">
+                
+
+                <a href="/2016/03/22/Java-SimpleDateFormat的线程安全性问题/" class="ui tiny button">
+                    
+                    Java SimpleDateFormat的线程安全性问题
+                    
+                    <i class="angle right icon"></i></a>
+                
+            </div>
         </div>
-
-        
-        
-
-        
-        
-
-        
-
-
-      </section>
-
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#概念"><span class="nav-number">1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#系统注解"><span class="nav-number">2.</span> <span class="nav-text">系统注解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-_标准注解"><span class="nav-number">2.1.</span> <span class="nav-text">1. 标准注解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-_元注解"><span class="nav-number">2.2.</span> <span class="nav-text">2. 元注解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注解元素数据类型"><span class="nav-number">2.3.</span> <span class="nav-text">注解元素数据类型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#自定义注解"><span class="nav-number">3.</span> <span class="nav-text">自定义注解</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#获取注解"><span class="nav-number">4.</span> <span class="nav-text">获取注解</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
-      
-
     </div>
-  </aside>
 
-
-        
-      </div>
-    </main>
-
-    <footer id="footer" class="footer">
-      <div class="footer-inner">
-        <div class="copyright" >
-  
-  &copy;  2015 - 
-  <span itemprop="copyrightYear">2017</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">zclau</span>
 </div>
+                
+            </div>
 
+            
+            <div class="three wide computer three wide tablet column">
 
-<div class="powered-by">
-  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
-</div>
+                <div class="ui sticky article-toc" id="article-toc">
+                    <!-- toc -->
+                    <ol class="ui ordered list"><li><a href="#概念"><span>概念</span></a></li><li><a href="#系统注解"><span>系统注解</span></a><ol><li><a href="#1-标准注解"><span>1. 标准注解</span></a></li><li><a href="#2-元注解"><span>2. 元注解</span></a></li><li><a href="#注解元素数据类型"><span>注解元素数据类型</span></a></li></ol></li><li><a href="#自定义注解"><span>自定义注解</span></a></li><li><a href="#获取注解"><span>获取注解</span></a></li></ol>
+                </div>
 
-<div class="theme-info">
-  主题 -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT.Pisces
-  </a>
-</div>
+            </div>
+            
 
-
-        
-
-<div class="busuanzi-count">
-
-  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-  
-    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
-  
-
-  
-    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
-  
-  
-</div>
-
-
-
-        
-      </div>
-    </footer>
-
-    <div class="back-to-top">
-      <i class="fa fa-arrow-up"></i>
+        </div>
     </div>
-  </div>
+</div>
 
-  
 
+<!-- duoshuo start -->
+<div class="ds-thread" data-thread-key="2016/04/03/Java注解/" data-title="Java基础：注解 | 刘梓" data-url="http://zclau.com/2016/04/03/Java注解/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
-  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
-    window.Promise = null;
-  }
-</script>
-
-
-
-
-
-
-
-
-
-  
-
-
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/jquery/2.1.3/jquery.min.js"></script>
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/fastclick/1.0.6/fastclick.min.js"></script>
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/jquery.lazyload/1.9.3/jquery.lazyload.min.js"></script>
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/velocity/1.2.3/velocity.min.js"></script>
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/velocity/1.2.3/velocity.ui.min.js"></script>
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.pack.js"></script>
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
-
-  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
-
-
-
-  
-  
-
-
-  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
-
-  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
-
-
-
-  
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
-
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
-
-
-
-  
-
-  
-    
-  
-
-  <script type="text/javascript">
     var duoshuoQuery = {short_name:"zclau"};
     (function() {
-      var ds = document.createElement('script');
-      ds.type = 'text/javascript';ds.async = true;
-      ds.id = 'duoshuo-script';
-      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-      ds.charset = 'UTF-8';
-      (document.getElementsByTagName('head')[0]
-      || document.getElementsByTagName('body')[0]).appendChild(ds);
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+        || document.getElementsByTagName('body')[0]).appendChild(ds);
     })();
-  </script>
+</script>
+<!-- duoshuo end -->
 
-  
-    
-    
-    <script src="//cdn.jsdelivr.net/ua-parser.js/0.7.10/ua-parser.min.js"></script>
-    <script src="/js/src/hook-duoshuo.js"></script>
-  
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+        <div class="ui vertical footer segment">
+    <div class="ui center aligned container">
+        <div class="ui inverted section divider"></div>
+        &copy; 2017 <a href="/">zclau</a>,
+        Powered by <a href="https://github.com/henryhuang/hexo-theme-aloha" target="_blank">Aloha</a> and <a
+                href="http://hexo.io/" target="_blank">Hexo</a>.
+    </div>
+</div>
+
+    </div>
 
 
 
 
+<!-- scripts list from theme config.yml -->
 
+<script src="//cdn.bootcss.com/jquery/3.1.0/jquery.min.js"></script>
 
+<script src="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.js"></script>
 
+<script src="//cdn.bootcss.com/algoliasearch/3.18.1/algoliasearch.min.js"></script>
 
-  
-  
+<script src="//cdn.bootcss.com/algoliasearch-helper-js/2.13.0/algoliasearch.helper.min.js"></script>
 
-  
+<script src="/js/semantic-ui-algolia.js"></script>
 
-  
+<script src="/js/aloha-events.js"></script>
 
-  
-
-  
 
 
 </body>

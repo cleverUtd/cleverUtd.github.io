@@ -1,805 +1,366 @@
-<!doctype html>
 
 
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head prefix="og: http://ogp.me/ns#">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <meta name="description" content="Keep Calm And Coding">
+    <title>Redis实现原理之对象与编码 | 刘梓</title>
 
-
-<html class="theme-next pisces" lang="zh-Hans">
-<head>
-  <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-
-
-
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
-
-
-
-  <meta name="google-site-verification" content="WpUzmCbPHTwSIrecMhBOVSvuOi8CiNrJNabR2s1RV8I" />
-
-
-
-
-
-
-
-
-
-
-  
-  
-    
-  
-  <link href="//cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet" type="text/css" />
-
-
-
-
-
-
-
-  
-
-<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
-
-<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
-
-
-  <meta name="keywords" content="Redis," />
-
-
-
-
-
-  <link rel="alternate" href="/atom.xml" title="zclau" type="application/atom+xml" />
-
-
-
-
-  <link rel="shortcut icon" type="image/x-icon" href="/images/avatar.png?v=5.1.0" />
-
-
-
-
-
-
-<meta name="description" content="上周看完Redis设计与实现，过程结合Redis的unstable分支的源码来对照，基本对Redis的实现原理有了个深入的理解。（书本基于3.0版本，源码unstable分支现已去到4.0 rc2，代码略有不同，但思路总体一致）
-最大感受，无论从设计还是源码，Redis都尽量做到简单，其中运用到的原理也通俗易懂，一点也不会觉得晦涩。特别是源码，简洁易读，真正做到clean and clear， 而">
+    <!-- Open Graph -->
+    <meta name="description" content="&amp;#x4E0A;&amp;#x5468;&amp;#x770B;&amp;#x5B8C;Redis&amp;#x8BBE;&amp;#x8BA1;&amp;#x4E0E;&amp;#x5B9E;&amp;#x73B0;&amp;#xFF0C;&amp;#x8FC7;&amp;#x7A0B;&amp;#x7ED3;&amp;#x5408;Redis&amp;#x7684;unstable&amp;#x5206;&amp;#x652F;&amp;#x7684;&amp;#x6E90;&amp;#x7801;&amp;#x6765;&amp;#x5BF9;&amp;#x716">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis实现原理之对象与编码">
 <meta property="og:url" content="http://zclau.com/2016/12/17/Redis实现原理之对象与编码/index.html">
-<meta property="og:site_name" content="zclau">
-<meta property="og:description" content="上周看完Redis设计与实现，过程结合Redis的unstable分支的源码来对照，基本对Redis的实现原理有了个深入的理解。（书本基于3.0版本，源码unstable分支现已去到4.0 rc2，代码略有不同，但思路总体一致）
-最大感受，无论从设计还是源码，Redis都尽量做到简单，其中运用到的原理也通俗易懂，一点也不会觉得晦涩。特别是源码，简洁易读，真正做到clean and clear， 而">
+<meta property="og:site_name" content="刘梓">
+<meta property="og:description" content="&amp;#x4E0A;&amp;#x5468;&amp;#x770B;&amp;#x5B8C;Redis&amp;#x8BBE;&amp;#x8BA1;&amp;#x4E0E;&amp;#x5B9E;&amp;#x73B0;&amp;#xFF0C;&amp;#x8FC7;&amp;#x7A0B;&amp;#x7ED3;&amp;#x5408;Redis&amp;#x7684;unstable&amp;#x5206;&amp;#x652F;&amp;#x7684;&amp;#x6E90;&amp;#x7801;&amp;#x6765;&amp;#x5BF9;&amp;#x716">
 <meta property="og:updated_time" content="2016-12-20T16:29:53.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Redis实现原理之对象与编码">
-<meta name="twitter:description" content="上周看完Redis设计与实现，过程结合Redis的unstable分支的源码来对照，基本对Redis的实现原理有了个深入的理解。（书本基于3.0版本，源码unstable分支现已去到4.0 rc2，代码略有不同，但思路总体一致）
-最大感受，无论从设计还是源码，Redis都尽量做到简单，其中运用到的原理也通俗易懂，一点也不会觉得晦涩。特别是源码，简洁易读，真正做到clean and clear， 而">
+<meta name="twitter:description" content="&amp;#x4E0A;&amp;#x5468;&amp;#x770B;&amp;#x5B8C;Redis&amp;#x8BBE;&amp;#x8BA1;&amp;#x4E0E;&amp;#x5B9E;&amp;#x73B0;&amp;#xFF0C;&amp;#x8FC7;&amp;#x7A0B;&amp;#x7ED3;&amp;#x5408;Redis&amp;#x7684;unstable&amp;#x5206;&amp;#x652F;&amp;#x7684;&amp;#x6E90;&amp;#x7801;&amp;#x6765;&amp;#x5BF9;&amp;#x716">
 
-
-
-<script type="text/javascript" id="hexo.configurations">
-  var NexT = window.NexT || {};
-  var CONFIG = {
-    root: '/',
-    scheme: 'Pisces',
-    sidebar: {"position":"left","display":"always"},
-    fancybox: true,
-    motion: false,
-    duoshuo: {
-      userId: '3589189',
-      author: 'Uni聰_Lau'
-    },
-    algolia: {
-      applicationID: '',
-      apiKey: '',
-      indexName: '',
-      hits: {"per_page":10},
-      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
-    }
-  };
+    <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Person",
+  "email": "mailto:cleverutd@gmail.com",
+  "image": "undefined",
+  "name": "zclau",
+  "url": "http://zclau.com"
+}
+</script>
+    <script>
+    var algoliaEnabled = false;
+    
 </script>
 
+    
 
+    
+    
+        <link href="https://fonts.gmirror.org/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+    
+    
+    
+        <!-- stylesheets list from config.yml -->
+        
+        <link rel="stylesheet" href="/css/aloha.css">
+        
+        <link rel="stylesheet" href="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.css">
+        
+        <link rel="stylesheet" href="//cdn.bootcss.com/magnific-popup.js/1.1.0/magnific-popup.min.css">
+        
+    
 
-  <link rel="canonical" href="http://zclau.com/2016/12/17/Redis实现原理之对象与编码/"/>
-
-
-
-
-
-
-
-  <title> Redis实现原理之对象与编码 | zclau </title>
 </head>
+<body id="body" style="margin-bottom: 0;" class="pushable">
 
-<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+    <div class="ui top fixed menu">
+        <a class="item" id="menu-icon"><i class="sidebar icon"></i></a>
+    </div>
 
-  
+    <div id="menu-sidebar" class="ui left vertical sidebar menu">
 
-
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-  ga('create', 'UA-49937545-1', 'auto');
-  ga('send', 'pageview');
-</script>
-
-
-
-
-
-
-
-
-
-  
-  
-    
-  
-
-  <div class="container one-collumn sidebar-position-left page-post-detail ">
-    <div class="headband"></div>
-
-    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-meta ">
-  
-
-  <div class="custom-logo-site-title">
-    <a href="/"  class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <span class="site-title">zclau</span>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-  </div>
-  <p class="site-subtitle">Keep Calm And Coding</p>
-</div>
-
-<div class="site-nav-toggle">
-  <button>
-    <span class="btn-bar"></span>
-    <span class="btn-bar"></span>
-    <span class="btn-bar"></span>
-  </button>
-</div>
-
-<nav class="site-nav">
-  
-
-  
-    <ul id="menu" class="menu">
-      
-        
-        <li class="menu-item menu-item-home">
-          <a href="/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
-            
-            首页
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-categories">
-          <a href="/categories" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
-            
-            分类
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-archives">
-          <a href="/archives" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
-            
-            归档
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-booklist">
-          <a href="/booklist" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-book"></i> <br />
-            
-            书单
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-commonweal">
-          <a href="/404.html" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
-            
-            公益404
-          </a>
-        </li>
-      
-
-      
-    </ul>
-  
-
-  
-</nav>
-
-
-
- </div>
-    </header>
-
-    <main id="main" class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          <div id="content" class="content">
-            
-
-  <div id="posts" class="posts-expand">
-    
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://zclau.com/2016/12/17/Redis实现原理之对象与编码/">
-
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="zclau">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/avatar.png">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="zclau">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="zclau" src="">
-    </span>
-  </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                Redis实现原理之对象与编码
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time title="Дата создания записи" itemprop="dateCreated datePublished" datetime="2016-12-17T22:14:56+08:00">
-              2016-12-17
-            </time>
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/缓存/" itemprop="url" rel="index">
-                    <span itemprop="name">缓存</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/12/17/Redis实现原理之对象与编码/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/17/Redis实现原理之对象与编码/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-              &nbsp; | &nbsp;
-              <span class="page-pv"><i class="fa fa-file-o"></i>
-              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
-              </span>
-          
-          
-          
-
+    <div id="sidebar-top">
+        <div class="content">
+            <h3>刘梓</h3>
         </div>
-      </header>
+    </div>
+    <div class="ui container sidebar-card">
+    <div class="ui people shape content">
+        <div class="active side">
+            <div class="ui card">
+                <div class="image">
+                    <img class="ui medium bordered image" src="/images/avatar.jpg">
+                </div>
+                <div class="content">
+                    <a class="header">zclau</a>
+                    
+                </div>
+                <div class="extra content">
+                    <div class="ui list">
+                        
+                        
+                        <div class="item">
+                            <i class="mail icon" style="float: left"></i>
+                            <div class="content">
+                                <a href="mailto:cleverutd@gmail.com">cleverutd@gmail.com</a>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                </div>
+                <div class="extra content">
+                    <div class="ui list">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+    
     
 
+    
 
-    <div class="post-body" itemprop="articleBody">
+    
+    <a href="/index.html" class="item" >
+        <i class="home icon"></i>
+        首页
+    </a>
 
-      
-      
+    
+    
 
-      
-        <p>上周看完<a href="https://book.douban.com/subject/25900156/" target="_blank" rel="external">Redis设计与实现</a>，过程结合Redis的unstable分支的源码来对照，<br>基本对Redis的实现原理有了个深入的理解。（书本基于3.0版本，源码unstable分支现已去到4.0 rc2，代码略有不同，但思路总体一致）</p>
-<p>最大感受，无论从设计还是源码，Redis都尽量做到简单，其中运用到的原理也通俗易懂，一点也不会觉得晦涩。特别是源码，简洁易读，真正做到clean and clear， 而且作者对于代码的设计组织能力功力深厚。</p>
-<p>这篇文章以unstable分支的源码为基准，先从大体上整理Redis的对象类型以及底层编码。</p>
-<h1 id="对象类型">对象类型</h1><p>Redis对象由<code>redisObject</code>结构体表示。</p>
-<ul>
-<li><p>Redis中的每个键值对的键和值都是一个redisObject。</p>
+    
+
+    
+    <a href="/atom.xml" class="item" >
+        <i class="rss icon"></i>
+        RSS
+    </a>
+
+    
+    
+
+    
+
+    
+    <a href="/archives/index.html" class="item" >
+        <i class="archive icon"></i>
+        归档
+    </a>
+
+    
+    
+
+    
+
+    
+    <a href="/booklist/index.html" class="item" >
+        <i class="book icon"></i>
+        书单
+    </a>
+
+    
+
+    
+</div>
+
+    <div class="pusher body-content">
+        <div id="content" class="ui main container">
+            <!--<div class="ui one column grid">-->
+                <!--<div class="column">-->
+                    <!--<div class="ui main container">-->
+                        <div id="post-Redis实现原理之对象与编码" class="ui main container article-type-post">
+
+    
+
+    <div class="ui divided grid">
+
+        <div class="two column row" id="article-content">
+
+            <div class="thirteen wide computer thirteen wide tablet sixteen wide mobile column">
+                
+
+<h1 class="ui header">
+    
+    Redis实现原理之对象与编码
+</h1>
+
+
+
+                <div class="article-inner">
+
+                    <div class="article-entry" itemprop="articleBody">
+                        
+                        <p>&#x4E0A;&#x5468;&#x770B;&#x5B8C;<a href="https://book.douban.com/subject/25900156/" target="_blank" rel="external">Redis&#x8BBE;&#x8BA1;&#x4E0E;&#x5B9E;&#x73B0;</a>&#xFF0C;&#x8FC7;&#x7A0B;&#x7ED3;&#x5408;Redis&#x7684;unstable&#x5206;&#x652F;&#x7684;&#x6E90;&#x7801;&#x6765;&#x5BF9;&#x7167;&#xFF0C;<br>&#x57FA;&#x672C;&#x5BF9;Redis&#x7684;&#x5B9E;&#x73B0;&#x539F;&#x7406;&#x6709;&#x4E86;&#x4E2A;&#x6DF1;&#x5165;&#x7684;&#x7406;&#x89E3;&#x3002;&#xFF08;&#x4E66;&#x672C;&#x57FA;&#x4E8E;3.0&#x7248;&#x672C;&#xFF0C;&#x6E90;&#x7801;unstable&#x5206;&#x652F;&#x73B0;&#x5DF2;&#x53BB;&#x5230;4.0 rc2&#xFF0C;&#x4EE3;&#x7801;&#x7565;&#x6709;&#x4E0D;&#x540C;&#xFF0C;&#x4F46;&#x601D;&#x8DEF;&#x603B;&#x4F53;&#x4E00;&#x81F4;&#xFF09;</p>
+<p>&#x6700;&#x5927;&#x611F;&#x53D7;&#xFF0C;&#x65E0;&#x8BBA;&#x4ECE;&#x8BBE;&#x8BA1;&#x8FD8;&#x662F;&#x6E90;&#x7801;&#xFF0C;Redis&#x90FD;&#x5C3D;&#x91CF;&#x505A;&#x5230;&#x7B80;&#x5355;&#xFF0C;&#x5176;&#x4E2D;&#x8FD0;&#x7528;&#x5230;&#x7684;&#x539F;&#x7406;&#x4E5F;&#x901A;&#x4FD7;&#x6613;&#x61C2;&#xFF0C;&#x4E00;&#x70B9;&#x4E5F;&#x4E0D;&#x4F1A;&#x89C9;&#x5F97;&#x6666;&#x6DA9;&#x3002;&#x7279;&#x522B;&#x662F;&#x6E90;&#x7801;&#xFF0C;&#x7B80;&#x6D01;&#x6613;&#x8BFB;&#xFF0C;&#x771F;&#x6B63;&#x505A;&#x5230;clean and clear&#xFF0C; &#x800C;&#x4E14;&#x4F5C;&#x8005;&#x5BF9;&#x4E8E;&#x4EE3;&#x7801;&#x7684;&#x8BBE;&#x8BA1;&#x7EC4;&#x7EC7;&#x80FD;&#x529B;&#x529F;&#x529B;&#x6DF1;&#x539A;&#x3002;</p>
+<p>&#x8FD9;&#x7BC7;&#x6587;&#x7AE0;&#x4EE5;unstable&#x5206;&#x652F;&#x7684;&#x6E90;&#x7801;&#x4E3A;&#x57FA;&#x51C6;&#xFF0C;&#x5148;&#x4ECE;&#x5927;&#x4F53;&#x4E0A;&#x6574;&#x7406;Redis&#x7684;&#x5BF9;&#x8C61;&#x7C7B;&#x578B;&#x4EE5;&#x53CA;&#x5E95;&#x5C42;&#x7F16;&#x7801;&#x3002;</p>
+<h1 id="&#x5BF9;&#x8C61;&#x7C7B;&#x578B;"><a href="#&#x5BF9;&#x8C61;&#x7C7B;&#x578B;" class="headerlink" title="&#x5BF9;&#x8C61;&#x7C7B;&#x578B;"></a>&#x5BF9;&#x8C61;&#x7C7B;&#x578B;</h1><p>Redis&#x5BF9;&#x8C61;&#x7531;<code>redisObject</code>&#x7ED3;&#x6784;&#x4F53;&#x8868;&#x793A;&#x3002;</p>
+<ul class="ui list">
+<li><p>Redis&#x4E2D;&#x7684;&#x6BCF;&#x4E2A;&#x952E;&#x503C;&#x5BF9;&#x7684;&#x952E;&#x548C;&#x503C;&#x90FD;&#x662F;&#x4E00;&#x4E2A;redisObject&#x3002;</p>
 </li>
-<li><p>共有五种类型的对象：字符串（String）、列表（List）、哈希（Hash）、集合（Set）、有序集合（SortedSet），源码<code>server.h</code>如下定义：</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* The actual Redis Object */</span></span><br><span class="line"><span class="hexcolor">#def</span>ine OBJ_STRING <span class="number">0</span></span><br><span class="line"><span class="hexcolor">#def</span>ine OBJ_LIST <span class="number">1</span> </span><br><span class="line"><span class="hexcolor">#def</span>ine OBJ_SET <span class="number">2</span></span><br><span class="line"><span class="hexcolor">#def</span>ine OBJ_ZSET <span class="number">3</span></span><br><span class="line"><span class="hexcolor">#def</span>ine OBJ_HASH <span class="number">4</span></span><br></pre></td></tr></table></figure>
+<li><p>&#x5171;&#x6709;&#x4E94;&#x79CD;&#x7C7B;&#x578B;&#x7684;&#x5BF9;&#x8C61;&#xFF1A;&#x5B57;&#x7B26;&#x4E32;&#xFF08;String&#xFF09;&#x3001;&#x5217;&#x8868;&#xFF08;List&#xFF09;&#x3001;&#x54C8;&#x5E0C;&#xFF08;Hash&#xFF09;&#x3001;&#x96C6;&#x5408;&#xFF08;Set&#xFF09;&#x3001;&#x6709;&#x5E8F;&#x96C6;&#x5408;&#xFF08;SortedSet&#xFF09;&#xFF0C;&#x6E90;&#x7801;<code>server.h</code>&#x5982;&#x4E0B;&#x5B9A;&#x4E49;&#xFF1A;</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/* The actual Redis Object */</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> OBJ_STRING 0</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> OBJ_LIST 1 </span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> OBJ_SET 2</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> OBJ_ZSET 3</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> OBJ_HASH 4</span></div></pre></td></tr></table></figure>
 </li>
-<li><p>每种类型的对象至少都有两种或以上的encoding方式，不同编码<br>可以在不同的使用场景上优化对象的使用场景。用<code>TYPE</code>命令可查看某个键值对的类型</p>
+<li><p>&#x6BCF;&#x79CD;&#x7C7B;&#x578B;&#x7684;&#x5BF9;&#x8C61;&#x81F3;&#x5C11;&#x90FD;&#x6709;&#x4E24;&#x79CD;&#x6216;&#x4EE5;&#x4E0A;&#x7684;encoding&#x65B9;&#x5F0F;&#xFF0C;&#x4E0D;&#x540C;&#x7F16;&#x7801;<br>&#x53EF;&#x4EE5;&#x5728;&#x4E0D;&#x540C;&#x7684;&#x4F7F;&#x7528;&#x573A;&#x666F;&#x4E0A;&#x4F18;&#x5316;&#x5BF9;&#x8C61;&#x7684;&#x4F7F;&#x7528;&#x573A;&#x666F;&#x3002;&#x7528;<code>TYPE</code>&#x547D;&#x4EE4;&#x53EF;&#x67E5;&#x770B;&#x67D0;&#x4E2A;&#x952E;&#x503C;&#x5BF9;&#x7684;&#x7C7B;&#x578B;</p>
 </li>
 </ul>
-<h1 id="对象编码">对象编码</h1><p>Redis目前使用的编码方式：</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Objects encoding. Some kind of objects like Strings and Hashes can be</span><br><span class="line"> * internally represented in multiple ways. The 'encoding' field of the object</span><br><span class="line"> * is set to one of this fields for this object. </span><br><span class="line"> */</span></span><br><span class="line"><span class="hexcolor">#def</span>ine OBJ_ENCODING_RAW     <span class="comment">/* Raw representation */</span> 简单动态字符串</span><br><span class="line"><span class="hexcolor">#def</span>ine OBJ_ENCODING_INT      <span class="comment">/* Encoded as integer */</span> 整数</span><br><span class="line"><span class="hexcolor">#def</span>ine OBJ_ENCODING_HT       <span class="comment">/* Encoded as hash table */</span> 字典</span><br><span class="line"><span class="hexcolor">#def</span>ine OBJ_ENCODING_ZIPLIST  <span class="comment">/* Encoded as ziplist */</span> 压缩列表</span><br><span class="line"><span class="hexcolor">#def</span>ine OBJ_ENCODING_INTSET   <span class="comment">/* Encoded as intset */</span> 整数集合</span><br><span class="line"><span class="hexcolor">#def</span>ine OBJ_ENCODING_SKIPLIST   <span class="comment">/* Encoded as skiplist */</span> 跳跃表</span><br><span class="line"><span class="hexcolor">#def</span>ine OBJ_ENCODING_EMBSTR  <span class="comment">/* Embedded sds string encoding */</span> embstr编码的简单动态字符串</span><br><span class="line"><span class="hexcolor">#def</span>ine OBJ_ENCODING_QUICKLIST  <span class="comment">/* Encoded as linked list of ziplists */</span></span><br></pre></td></tr></table></figure>
-<p>本质上，Redis就是基于这些数据结构而构造出一个对象存储系统。redisObject结构体有个ptr指针，指向对象的底层实现数据结构，encoding属性记录对象所使用的编码，即该对象使用什么数据结构作为底层实现。</p>
-<h3 id="字符串">字符串</h3><p>字符串对象的编码可以是 INT、RAW 或 EMBSTR。</p>
-<p>字符串对象保存的是整数值并且可以用long表示，那么编码会设置为INT。当字符串值得长度大于39字节使用RAW，小于等于39字节使用EMBSTR。</p>
-<p>Redis在3.0引入EMBSTR编码，这是一种专门用于保存短字符串的一种优化编码方式，这种编码和RAW编码都是用sdshdr简单动态字符串结构来表示。RAW编码会调用两次内存分配函数来分别创建redisObject和sdshdr结构，<br>而EMBSTR只调用一次内存分配函数来分配一块连续的空间保存数据，比起RAW编码的字符串更能节省内存，以及能提升获取数据的速度。</p>
-<p>不过要注意！！！ EMBSTR是不可修改的，当对EMBSTR编码的字符串执行任何修改命令，总会先将其转换成RAW编码再进行修改；而INT编码在条件满足的情况下也会被转换成RAW编码。</p>
-<h3 id="列表">列表</h3><p>Redis3.0之前的列表对象的编码可以是ziplist或者linkedlist。<br>当列表对象保存的字符串元素的长度都小于64字节并且保存的元素数量小于512个，使用ziplist编码，可以通过修改配置list-max-ziplist-value和list-max-ziplist-entries来修改这两个条件的上限值、两个条件任意一个不满足时，ziplist会变为linkedlist。</p>
-<p>从3.2开始Redis只使用quicklist作为列表的编码，<br>quicklist是ziplist和双向链表的结合体，quicklist的每个节点都是一个ziplist。可以通过修改list-max-ziplist-size来设置一个quicklist节点上的ziplist的长度，取正值表示通过元素数量来限定ziplist的长度；负数表示按照占用字节数来限定，并且Redis规定只能取-1到-5这五个负值<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-<span class="number">5</span>: 每个quicklist节点上的ziplist大小不能超过<span class="number">64</span> Kb。（注：<span class="number">1</span>kb =&gt; <span class="number">1024</span> bytes）</span><br><span class="line">-<span class="number">4</span>: 每个quicklist节点上的ziplist大小不能超过<span class="number">32</span> Kb。</span><br><span class="line">-<span class="number">3</span>: 每个quicklist节点上的ziplist大小不能超过<span class="number">16</span> Kb。</span><br><span class="line">-<span class="number">2</span>: 每个quicklist节点上的ziplist大小不能超过<span class="number">8</span> Kb。（默认值）</span><br><span class="line">-<span class="number">1</span>: 每个quicklist节点上的ziplist大小不能超过<span class="number">4</span> Kb。</span><br></pre></td></tr></table></figure></p>
-<p>另外配置参数list-compress-depth表示一个quicklist两端不被压缩的节点个数<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span>: 表示都不压缩。默认值。</span><br><span class="line"><span class="number">1</span>: 表示quicklist两端各有<span class="number">1</span>个节点不压缩，中间的节点压缩。</span><br><span class="line"><span class="number">2</span>: 表示quicklist两端各有<span class="number">2</span>个节点不压缩，中间的节点压缩。</span><br><span class="line"><span class="number">3</span>: 表示quicklist两端各有<span class="number">3</span>个节点不压缩，中间的节点压缩。</span><br><span class="line">依此类推…</span><br></pre></td></tr></table></figure></p>
-<p>这里采用的是一种叫LZF的无损压缩算法</p>
-<h3 id="哈希">哈希</h3><p>哈希对象的编码可以是ziplist或者hashtable。</p>
-<p>使用ziplist 编码时，保存同一键值对的两个节点总是紧挨在一起，键节点在前，值节点在后</p>
-<p>同时满足以下两个条件将使用ziplist编码：</p>
-<ol>
-<li>所有键和值的字符串长度小于64字节；</li>
-<li>键值对的数量小于512个。</li>
+<h1 id="&#x5BF9;&#x8C61;&#x7F16;&#x7801;"><a href="#&#x5BF9;&#x8C61;&#x7F16;&#x7801;" class="headerlink" title="&#x5BF9;&#x8C61;&#x7F16;&#x7801;"></a>&#x5BF9;&#x8C61;&#x7F16;&#x7801;</h1><p>Redis&#x76EE;&#x524D;&#x4F7F;&#x7528;&#x7684;&#x7F16;&#x7801;&#x65B9;&#x5F0F;&#xFF1A;</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/* Objects encoding. Some kind of objects like Strings and Hashes can be</span></div><div class="line"> * internally represented in multiple ways. The &apos;encoding&apos; field of the object</div><div class="line"> * is set to one of this fields for this object. </div><div class="line"> */</div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> OBJ_ENCODING_RAW     <span class="comment">/* Raw representation */</span> &#x7B80;&#x5355;&#x52A8;&#x6001;&#x5B57;&#x7B26;&#x4E32;</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> OBJ_ENCODING_INT      <span class="comment">/* Encoded as integer */</span> &#x6574;&#x6570;</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> OBJ_ENCODING_HT       <span class="comment">/* Encoded as hash table */</span> &#x5B57;&#x5178;</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> OBJ_ENCODING_ZIPLIST  <span class="comment">/* Encoded as ziplist */</span> &#x538B;&#x7F29;&#x5217;&#x8868;</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> OBJ_ENCODING_INTSET   <span class="comment">/* Encoded as intset */</span> &#x6574;&#x6570;&#x96C6;&#x5408;</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> OBJ_ENCODING_SKIPLIST   <span class="comment">/* Encoded as skiplist */</span> &#x8DF3;&#x8DC3;&#x8868;</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> OBJ_ENCODING_EMBSTR  <span class="comment">/* Embedded sds string encoding */</span> embstr&#x7F16;&#x7801;&#x7684;&#x7B80;&#x5355;&#x52A8;&#x6001;&#x5B57;&#x7B26;&#x4E32;</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> OBJ_ENCODING_QUICKLIST  <span class="comment">/* Encoded as linked list of ziplists */</span></span></div></pre></td></tr></table></figure>
+<p>&#x672C;&#x8D28;&#x4E0A;&#xFF0C;Redis&#x5C31;&#x662F;&#x57FA;&#x4E8E;&#x8FD9;&#x4E9B;&#x6570;&#x636E;&#x7ED3;&#x6784;&#x800C;&#x6784;&#x9020;&#x51FA;&#x4E00;&#x4E2A;&#x5BF9;&#x8C61;&#x5B58;&#x50A8;&#x7CFB;&#x7EDF;&#x3002;redisObject&#x7ED3;&#x6784;&#x4F53;&#x6709;&#x4E2A;ptr&#x6307;&#x9488;&#xFF0C;&#x6307;&#x5411;&#x5BF9;&#x8C61;&#x7684;&#x5E95;&#x5C42;&#x5B9E;&#x73B0;&#x6570;&#x636E;&#x7ED3;&#x6784;&#xFF0C;encoding&#x5C5E;&#x6027;&#x8BB0;&#x5F55;&#x5BF9;&#x8C61;&#x6240;&#x4F7F;&#x7528;&#x7684;&#x7F16;&#x7801;&#xFF0C;&#x5373;&#x8BE5;&#x5BF9;&#x8C61;&#x4F7F;&#x7528;&#x4EC0;&#x4E48;&#x6570;&#x636E;&#x7ED3;&#x6784;&#x4F5C;&#x4E3A;&#x5E95;&#x5C42;&#x5B9E;&#x73B0;&#x3002;</p>
+<h3 id="&#x5B57;&#x7B26;&#x4E32;"><a href="#&#x5B57;&#x7B26;&#x4E32;" class="headerlink" title="&#x5B57;&#x7B26;&#x4E32;"></a>&#x5B57;&#x7B26;&#x4E32;</h3><p>&#x5B57;&#x7B26;&#x4E32;&#x5BF9;&#x8C61;&#x7684;&#x7F16;&#x7801;&#x53EF;&#x4EE5;&#x662F; INT&#x3001;RAW &#x6216; EMBSTR&#x3002;</p>
+<p>&#x5B57;&#x7B26;&#x4E32;&#x5BF9;&#x8C61;&#x4FDD;&#x5B58;&#x7684;&#x662F;&#x6574;&#x6570;&#x503C;&#x5E76;&#x4E14;&#x53EF;&#x4EE5;&#x7528;long&#x8868;&#x793A;&#xFF0C;&#x90A3;&#x4E48;&#x7F16;&#x7801;&#x4F1A;&#x8BBE;&#x7F6E;&#x4E3A;INT&#x3002;&#x5F53;&#x5B57;&#x7B26;&#x4E32;&#x503C;&#x5F97;&#x957F;&#x5EA6;&#x5927;&#x4E8E;39&#x5B57;&#x8282;&#x4F7F;&#x7528;RAW&#xFF0C;&#x5C0F;&#x4E8E;&#x7B49;&#x4E8E;39&#x5B57;&#x8282;&#x4F7F;&#x7528;EMBSTR&#x3002;</p>
+<p>Redis&#x5728;3.0&#x5F15;&#x5165;EMBSTR&#x7F16;&#x7801;&#xFF0C;&#x8FD9;&#x662F;&#x4E00;&#x79CD;&#x4E13;&#x95E8;&#x7528;&#x4E8E;&#x4FDD;&#x5B58;&#x77ED;&#x5B57;&#x7B26;&#x4E32;&#x7684;&#x4E00;&#x79CD;&#x4F18;&#x5316;&#x7F16;&#x7801;&#x65B9;&#x5F0F;&#xFF0C;&#x8FD9;&#x79CD;&#x7F16;&#x7801;&#x548C;RAW&#x7F16;&#x7801;&#x90FD;&#x662F;&#x7528;sdshdr&#x7B80;&#x5355;&#x52A8;&#x6001;&#x5B57;&#x7B26;&#x4E32;&#x7ED3;&#x6784;&#x6765;&#x8868;&#x793A;&#x3002;RAW&#x7F16;&#x7801;&#x4F1A;&#x8C03;&#x7528;&#x4E24;&#x6B21;&#x5185;&#x5B58;&#x5206;&#x914D;&#x51FD;&#x6570;&#x6765;&#x5206;&#x522B;&#x521B;&#x5EFA;redisObject&#x548C;sdshdr&#x7ED3;&#x6784;&#xFF0C;<br>&#x800C;EMBSTR&#x53EA;&#x8C03;&#x7528;&#x4E00;&#x6B21;&#x5185;&#x5B58;&#x5206;&#x914D;&#x51FD;&#x6570;&#x6765;&#x5206;&#x914D;&#x4E00;&#x5757;&#x8FDE;&#x7EED;&#x7684;&#x7A7A;&#x95F4;&#x4FDD;&#x5B58;&#x6570;&#x636E;&#xFF0C;&#x6BD4;&#x8D77;RAW&#x7F16;&#x7801;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#x66F4;&#x80FD;&#x8282;&#x7701;&#x5185;&#x5B58;&#xFF0C;&#x4EE5;&#x53CA;&#x80FD;&#x63D0;&#x5347;&#x83B7;&#x53D6;&#x6570;&#x636E;&#x7684;&#x901F;&#x5EA6;&#x3002;</p>
+<p>&#x4E0D;&#x8FC7;&#x8981;&#x6CE8;&#x610F;&#xFF01;&#xFF01;&#xFF01; EMBSTR&#x662F;&#x4E0D;&#x53EF;&#x4FEE;&#x6539;&#x7684;&#xFF0C;&#x5F53;&#x5BF9;EMBSTR&#x7F16;&#x7801;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#x6267;&#x884C;&#x4EFB;&#x4F55;&#x4FEE;&#x6539;&#x547D;&#x4EE4;&#xFF0C;&#x603B;&#x4F1A;&#x5148;&#x5C06;&#x5176;&#x8F6C;&#x6362;&#x6210;RAW&#x7F16;&#x7801;&#x518D;&#x8FDB;&#x884C;&#x4FEE;&#x6539;&#xFF1B;&#x800C;INT&#x7F16;&#x7801;&#x5728;&#x6761;&#x4EF6;&#x6EE1;&#x8DB3;&#x7684;&#x60C5;&#x51B5;&#x4E0B;&#x4E5F;&#x4F1A;&#x88AB;&#x8F6C;&#x6362;&#x6210;RAW&#x7F16;&#x7801;&#x3002;</p>
+<h3 id="&#x5217;&#x8868;"><a href="#&#x5217;&#x8868;" class="headerlink" title="&#x5217;&#x8868;"></a>&#x5217;&#x8868;</h3><p>Redis3.0&#x4E4B;&#x524D;&#x7684;&#x5217;&#x8868;&#x5BF9;&#x8C61;&#x7684;&#x7F16;&#x7801;&#x53EF;&#x4EE5;&#x662F;ziplist&#x6216;&#x8005;linkedlist&#x3002;<br>&#x5F53;&#x5217;&#x8868;&#x5BF9;&#x8C61;&#x4FDD;&#x5B58;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#x5143;&#x7D20;&#x7684;&#x957F;&#x5EA6;&#x90FD;&#x5C0F;&#x4E8E;64&#x5B57;&#x8282;&#x5E76;&#x4E14;&#x4FDD;&#x5B58;&#x7684;&#x5143;&#x7D20;&#x6570;&#x91CF;&#x5C0F;&#x4E8E;512&#x4E2A;&#xFF0C;&#x4F7F;&#x7528;ziplist&#x7F16;&#x7801;&#xFF0C;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x4FEE;&#x6539;&#x914D;&#x7F6E;list-max-ziplist-value&#x548C;list-max-ziplist-entries&#x6765;&#x4FEE;&#x6539;&#x8FD9;&#x4E24;&#x4E2A;&#x6761;&#x4EF6;&#x7684;&#x4E0A;&#x9650;&#x503C;&#x3001;&#x4E24;&#x4E2A;&#x6761;&#x4EF6;&#x4EFB;&#x610F;&#x4E00;&#x4E2A;&#x4E0D;&#x6EE1;&#x8DB3;&#x65F6;&#xFF0C;ziplist&#x4F1A;&#x53D8;&#x4E3A;linkedlist&#x3002;</p>
+<p>&#x4ECE;3.2&#x5F00;&#x59CB;Redis&#x53EA;&#x4F7F;&#x7528;quicklist&#x4F5C;&#x4E3A;&#x5217;&#x8868;&#x7684;&#x7F16;&#x7801;&#xFF0C;<br>quicklist&#x662F;ziplist&#x548C;&#x53CC;&#x5411;&#x94FE;&#x8868;&#x7684;&#x7ED3;&#x5408;&#x4F53;&#xFF0C;quicklist&#x7684;&#x6BCF;&#x4E2A;&#x8282;&#x70B9;&#x90FD;&#x662F;&#x4E00;&#x4E2A;ziplist&#x3002;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x4FEE;&#x6539;list-max-ziplist-size&#x6765;&#x8BBE;&#x7F6E;&#x4E00;&#x4E2A;quicklist&#x8282;&#x70B9;&#x4E0A;&#x7684;ziplist&#x7684;&#x957F;&#x5EA6;&#xFF0C;&#x53D6;&#x6B63;&#x503C;&#x8868;&#x793A;&#x901A;&#x8FC7;&#x5143;&#x7D20;&#x6570;&#x91CF;&#x6765;&#x9650;&#x5B9A;ziplist&#x7684;&#x957F;&#x5EA6;&#xFF1B;&#x8D1F;&#x6570;&#x8868;&#x793A;&#x6309;&#x7167;&#x5360;&#x7528;&#x5B57;&#x8282;&#x6570;&#x6765;&#x9650;&#x5B9A;&#xFF0C;&#x5E76;&#x4E14;Redis&#x89C4;&#x5B9A;&#x53EA;&#x80FD;&#x53D6;-1&#x5230;-5&#x8FD9;&#x4E94;&#x4E2A;&#x8D1F;&#x503C;<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby"><span class="number">5</span>: &#x6BCF;&#x4E2A;quicklist&#x8282;&#x70B9;&#x4E0A;&#x7684;ziplist&#x5927;&#x5C0F;&#x4E0D;&#x80FD;&#x8D85;&#x8FC7;<span class="number">64</span> Kb&#x3002;&#xFF08;&#x6CE8;&#xFF1A;<span class="number">1</span>kb =&gt; <span class="number">1024</span> bytes&#xFF09;</span></div><div class="line">-<span class="ruby"><span class="number">4</span>: &#x6BCF;&#x4E2A;quicklist&#x8282;&#x70B9;&#x4E0A;&#x7684;ziplist&#x5927;&#x5C0F;&#x4E0D;&#x80FD;&#x8D85;&#x8FC7;<span class="number">32</span> Kb&#x3002;</span></div><div class="line">-<span class="ruby"><span class="number">3</span>: &#x6BCF;&#x4E2A;quicklist&#x8282;&#x70B9;&#x4E0A;&#x7684;ziplist&#x5927;&#x5C0F;&#x4E0D;&#x80FD;&#x8D85;&#x8FC7;<span class="number">16</span> Kb&#x3002;</span></div><div class="line">-<span class="ruby"><span class="number">2</span>: &#x6BCF;&#x4E2A;quicklist&#x8282;&#x70B9;&#x4E0A;&#x7684;ziplist&#x5927;&#x5C0F;&#x4E0D;&#x80FD;&#x8D85;&#x8FC7;<span class="number">8</span> Kb&#x3002;&#xFF08;&#x9ED8;&#x8BA4;&#x503C;&#xFF09;</span></div><div class="line">-<span class="ruby"><span class="number">1</span>: &#x6BCF;&#x4E2A;quicklist&#x8282;&#x70B9;&#x4E0A;&#x7684;ziplist&#x5927;&#x5C0F;&#x4E0D;&#x80FD;&#x8D85;&#x8FC7;<span class="number">4</span> Kb&#x3002;</span></div></pre></td></tr></table></figure></p>
+<p>&#x53E6;&#x5916;&#x914D;&#x7F6E;&#x53C2;&#x6570;list-compress-depth&#x8868;&#x793A;&#x4E00;&#x4E2A;quicklist&#x4E24;&#x7AEF;&#x4E0D;&#x88AB;&#x538B;&#x7F29;&#x7684;&#x8282;&#x70B9;&#x4E2A;&#x6570;<br><figure class="highlight ldif"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">0</span>: &#x8868;&#x793A;&#x90FD;&#x4E0D;&#x538B;&#x7F29;&#x3002;&#x9ED8;&#x8BA4;&#x503C;&#x3002;</div><div class="line"><span class="attribute">1</span>: &#x8868;&#x793A;quicklist&#x4E24;&#x7AEF;&#x5404;&#x6709;1&#x4E2A;&#x8282;&#x70B9;&#x4E0D;&#x538B;&#x7F29;&#xFF0C;&#x4E2D;&#x95F4;&#x7684;&#x8282;&#x70B9;&#x538B;&#x7F29;&#x3002;</div><div class="line"><span class="attribute">2</span>: &#x8868;&#x793A;quicklist&#x4E24;&#x7AEF;&#x5404;&#x6709;2&#x4E2A;&#x8282;&#x70B9;&#x4E0D;&#x538B;&#x7F29;&#xFF0C;&#x4E2D;&#x95F4;&#x7684;&#x8282;&#x70B9;&#x538B;&#x7F29;&#x3002;</div><div class="line"><span class="attribute">3</span>: &#x8868;&#x793A;quicklist&#x4E24;&#x7AEF;&#x5404;&#x6709;3&#x4E2A;&#x8282;&#x70B9;&#x4E0D;&#x538B;&#x7F29;&#xFF0C;&#x4E2D;&#x95F4;&#x7684;&#x8282;&#x70B9;&#x538B;&#x7F29;&#x3002;</div><div class="line">&#x4F9D;&#x6B64;&#x7C7B;&#x63A8;&#x2026;</div></pre></td></tr></table></figure></p>
+<p>&#x8FD9;&#x91CC;&#x91C7;&#x7528;&#x7684;&#x662F;&#x4E00;&#x79CD;&#x53EB;LZF&#x7684;&#x65E0;&#x635F;&#x538B;&#x7F29;&#x7B97;&#x6CD5;</p>
+<h3 id="&#x54C8;&#x5E0C;"><a href="#&#x54C8;&#x5E0C;" class="headerlink" title="&#x54C8;&#x5E0C;"></a>&#x54C8;&#x5E0C;</h3><p>&#x54C8;&#x5E0C;&#x5BF9;&#x8C61;&#x7684;&#x7F16;&#x7801;&#x53EF;&#x4EE5;&#x662F;ziplist&#x6216;&#x8005;hashtable&#x3002;</p>
+<p>&#x4F7F;&#x7528;ziplist &#x7F16;&#x7801;&#x65F6;&#xFF0C;&#x4FDD;&#x5B58;&#x540C;&#x4E00;&#x952E;&#x503C;&#x5BF9;&#x7684;&#x4E24;&#x4E2A;&#x8282;&#x70B9;&#x603B;&#x662F;&#x7D27;&#x6328;&#x5728;&#x4E00;&#x8D77;&#xFF0C;&#x952E;&#x8282;&#x70B9;&#x5728;&#x524D;&#xFF0C;&#x503C;&#x8282;&#x70B9;&#x5728;&#x540E;</p>
+<p>&#x540C;&#x65F6;&#x6EE1;&#x8DB3;&#x4EE5;&#x4E0B;&#x4E24;&#x4E2A;&#x6761;&#x4EF6;&#x5C06;&#x4F7F;&#x7528;ziplist&#x7F16;&#x7801;&#xFF1A;</p>
+<ol class="ui list">
+<li>&#x6240;&#x6709;&#x952E;&#x548C;&#x503C;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#x957F;&#x5EA6;&#x5C0F;&#x4E8E;64&#x5B57;&#x8282;&#xFF1B;</li>
+<li>&#x952E;&#x503C;&#x5BF9;&#x7684;&#x6570;&#x91CF;&#x5C0F;&#x4E8E;512&#x4E2A;&#x3002;</li>
 </ol>
-<p>不能满足这两个条件的都需要使用hashtable编码。以上两个上限值可以通过hash-max-ziplist-value和hash-max-ziplist-entries来修改 </p>
-<h3 id="集合">集合</h3><p>集合对象的编码可以是intset或者hashtable。</p>
-<p>当满足以下两个条件时使用intset编码：</p>
-<ol>
-<li>所有元素都是整数值；</li>
-<li>元素数量不超过512个。</li>
+<p>&#x4E0D;&#x80FD;&#x6EE1;&#x8DB3;&#x8FD9;&#x4E24;&#x4E2A;&#x6761;&#x4EF6;&#x7684;&#x90FD;&#x9700;&#x8981;&#x4F7F;&#x7528;hashtable&#x7F16;&#x7801;&#x3002;&#x4EE5;&#x4E0A;&#x4E24;&#x4E2A;&#x4E0A;&#x9650;&#x503C;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;hash-max-ziplist-value&#x548C;hash-max-ziplist-entries&#x6765;&#x4FEE;&#x6539; </p>
+<h3 id="&#x96C6;&#x5408;"><a href="#&#x96C6;&#x5408;" class="headerlink" title="&#x96C6;&#x5408;"></a>&#x96C6;&#x5408;</h3><p>&#x96C6;&#x5408;&#x5BF9;&#x8C61;&#x7684;&#x7F16;&#x7801;&#x53EF;&#x4EE5;&#x662F;intset&#x6216;&#x8005;hashtable&#x3002;</p>
+<p>&#x5F53;&#x6EE1;&#x8DB3;&#x4EE5;&#x4E0B;&#x4E24;&#x4E2A;&#x6761;&#x4EF6;&#x65F6;&#x4F7F;&#x7528;intset&#x7F16;&#x7801;&#xFF1A;</p>
+<ol class="ui list">
+<li>&#x6240;&#x6709;&#x5143;&#x7D20;&#x90FD;&#x662F;&#x6574;&#x6570;&#x503C;&#xFF1B;</li>
+<li>&#x5143;&#x7D20;&#x6570;&#x91CF;&#x4E0D;&#x8D85;&#x8FC7;512&#x4E2A;&#x3002;</li>
 </ol>
-<p>可以修改set-max-intset-entries设置元素数量的上限。使用hashtable编码时，字典的每一个键都是字符串对象，每个字符串对象包含一个集合元素，字典的值全部设置为null。</p>
-<h3 id="有序集合">有序集合</h3><p>有序集合对象的编码可以是ziplist或者skiplist。同时满足以下条件时使用ziplist编码：</p>
-<ol>
-<li>元素数量小于128个；</li>
-<li>所有member的长度都小于64字节，</li>
+<p>&#x53EF;&#x4EE5;&#x4FEE;&#x6539;set-max-intset-entries&#x8BBE;&#x7F6E;&#x5143;&#x7D20;&#x6570;&#x91CF;&#x7684;&#x4E0A;&#x9650;&#x3002;&#x4F7F;&#x7528;hashtable&#x7F16;&#x7801;&#x65F6;&#xFF0C;&#x5B57;&#x5178;&#x7684;&#x6BCF;&#x4E00;&#x4E2A;&#x952E;&#x90FD;&#x662F;&#x5B57;&#x7B26;&#x4E32;&#x5BF9;&#x8C61;&#xFF0C;&#x6BCF;&#x4E2A;&#x5B57;&#x7B26;&#x4E32;&#x5BF9;&#x8C61;&#x5305;&#x542B;&#x4E00;&#x4E2A;&#x96C6;&#x5408;&#x5143;&#x7D20;&#xFF0C;&#x5B57;&#x5178;&#x7684;&#x503C;&#x5168;&#x90E8;&#x8BBE;&#x7F6E;&#x4E3A;null&#x3002;</p>
+<h3 id="&#x6709;&#x5E8F;&#x96C6;&#x5408;"><a href="#&#x6709;&#x5E8F;&#x96C6;&#x5408;" class="headerlink" title="&#x6709;&#x5E8F;&#x96C6;&#x5408;"></a>&#x6709;&#x5E8F;&#x96C6;&#x5408;</h3><p>&#x6709;&#x5E8F;&#x96C6;&#x5408;&#x5BF9;&#x8C61;&#x7684;&#x7F16;&#x7801;&#x53EF;&#x4EE5;&#x662F;ziplist&#x6216;&#x8005;skiplist&#x3002;&#x540C;&#x65F6;&#x6EE1;&#x8DB3;&#x4EE5;&#x4E0B;&#x6761;&#x4EF6;&#x65F6;&#x4F7F;&#x7528;ziplist&#x7F16;&#x7801;&#xFF1A;</p>
+<ol class="ui list">
+<li>&#x5143;&#x7D20;&#x6570;&#x91CF;&#x5C0F;&#x4E8E;128&#x4E2A;&#xFF1B;</li>
+<li>&#x6240;&#x6709;member&#x7684;&#x957F;&#x5EA6;&#x90FD;&#x5C0F;&#x4E8E;64&#x5B57;&#x8282;&#xFF0C;</li>
 </ol>
-<p>以上两个条件的上限值可通过zset-max-ziplist-entries和zset-max-ziplist-value来修改。</p>
-<p>ziplist编码的有序集合使用紧挨在一起的压缩列表节点来保存，第一个节点保存member，第二个保存score。ziplist内的集合元素按score从小到大排序，score较小的排在表头位置。</p>
-<p>skiplist编码的有序集合底层是一个命名为<code>zset</code>的结构体，而一个zset结构同时包含一个字典和一个跳跃表。跳跃表按score从小到大保存所有集合元素。<br>而字典则保存着从member到score的映射，这样就可以用O(1)的复杂度来查找member对应的score值。</p>
-<p>虽然同时使用两种结构，但它们会通过指针来共享相同元素的member和score，因此不会浪费额外的内存。</p>
-<p>参考：<br><a href="https://book.douban.com/subject/25900156/" target="_blank" rel="external">Redis设计与实现</a><br><a href="https://github.com/antirez/redis/issues/543" target="_blank" rel="external">New encoding for string: embedded SDS. #543</a><br><a href="http://zhangtielei.com/posts/blog-redis-quicklist.html" target="_blank" rel="external">Redis内部数据结构详解(5)——quicklist</a><br><a href="https://matt.sh/redis-quicklist" target="_blank" rel="external">Redis Quicklist - From a More Civilized Age</a></p>
+<p>&#x4EE5;&#x4E0A;&#x4E24;&#x4E2A;&#x6761;&#x4EF6;&#x7684;&#x4E0A;&#x9650;&#x503C;&#x53EF;&#x901A;&#x8FC7;zset-max-ziplist-entries&#x548C;zset-max-ziplist-value&#x6765;&#x4FEE;&#x6539;&#x3002;</p>
+<p>ziplist&#x7F16;&#x7801;&#x7684;&#x6709;&#x5E8F;&#x96C6;&#x5408;&#x4F7F;&#x7528;&#x7D27;&#x6328;&#x5728;&#x4E00;&#x8D77;&#x7684;&#x538B;&#x7F29;&#x5217;&#x8868;&#x8282;&#x70B9;&#x6765;&#x4FDD;&#x5B58;&#xFF0C;&#x7B2C;&#x4E00;&#x4E2A;&#x8282;&#x70B9;&#x4FDD;&#x5B58;member&#xFF0C;&#x7B2C;&#x4E8C;&#x4E2A;&#x4FDD;&#x5B58;score&#x3002;ziplist&#x5185;&#x7684;&#x96C6;&#x5408;&#x5143;&#x7D20;&#x6309;score&#x4ECE;&#x5C0F;&#x5230;&#x5927;&#x6392;&#x5E8F;&#xFF0C;score&#x8F83;&#x5C0F;&#x7684;&#x6392;&#x5728;&#x8868;&#x5934;&#x4F4D;&#x7F6E;&#x3002;</p>
+<p>skiplist&#x7F16;&#x7801;&#x7684;&#x6709;&#x5E8F;&#x96C6;&#x5408;&#x5E95;&#x5C42;&#x662F;&#x4E00;&#x4E2A;&#x547D;&#x540D;&#x4E3A;<code>zset</code>&#x7684;&#x7ED3;&#x6784;&#x4F53;&#xFF0C;&#x800C;&#x4E00;&#x4E2A;zset&#x7ED3;&#x6784;&#x540C;&#x65F6;&#x5305;&#x542B;&#x4E00;&#x4E2A;&#x5B57;&#x5178;&#x548C;&#x4E00;&#x4E2A;&#x8DF3;&#x8DC3;&#x8868;&#x3002;&#x8DF3;&#x8DC3;&#x8868;&#x6309;score&#x4ECE;&#x5C0F;&#x5230;&#x5927;&#x4FDD;&#x5B58;&#x6240;&#x6709;&#x96C6;&#x5408;&#x5143;&#x7D20;&#x3002;<br>&#x800C;&#x5B57;&#x5178;&#x5219;&#x4FDD;&#x5B58;&#x7740;&#x4ECE;member&#x5230;score&#x7684;&#x6620;&#x5C04;&#xFF0C;&#x8FD9;&#x6837;&#x5C31;&#x53EF;&#x4EE5;&#x7528;O(1)&#x7684;&#x590D;&#x6742;&#x5EA6;&#x6765;&#x67E5;&#x627E;member&#x5BF9;&#x5E94;&#x7684;score&#x503C;&#x3002;</p>
+<p>&#x867D;&#x7136;&#x540C;&#x65F6;&#x4F7F;&#x7528;&#x4E24;&#x79CD;&#x7ED3;&#x6784;&#xFF0C;&#x4F46;&#x5B83;&#x4EEC;&#x4F1A;&#x901A;&#x8FC7;&#x6307;&#x9488;&#x6765;&#x5171;&#x4EAB;&#x76F8;&#x540C;&#x5143;&#x7D20;&#x7684;member&#x548C;score&#xFF0C;&#x56E0;&#x6B64;&#x4E0D;&#x4F1A;&#x6D6A;&#x8D39;&#x989D;&#x5916;&#x7684;&#x5185;&#x5B58;&#x3002;</p>
+<p>&#x53C2;&#x8003;&#xFF1A;<br><a href="https://book.douban.com/subject/25900156/" target="_blank" rel="external">Redis&#x8BBE;&#x8BA1;&#x4E0E;&#x5B9E;&#x73B0;</a><br><a href="https://github.com/antirez/redis/issues/543" target="_blank" rel="external">New encoding for string: embedded SDS. #543</a><br><a href="http://zhangtielei.com/posts/blog-redis-quicklist.html" target="_blank" rel="external">Redis&#x5185;&#x90E8;&#x6570;&#x636E;&#x7ED3;&#x6784;&#x8BE6;&#x89E3;(5)&#x2014;&#x2014;quicklist</a><br><a href="https://matt.sh/redis-quicklist" target="_blank" rel="external">Redis Quicklist - From a More Civilized Age</a></p>
 
-      
-    </div>
+                        
+                    </div>
 
-    <div>
-      
+                    
+                    
+                    
+
+                    <div class="description post-description">
+    <span class="post-description-item">
+        <time datetime="2016-12-17T14:14:56.000Z" itemprop="datePublished">2016-12-17</time>
+
+    </span>
+    <span class="post-description-item">
         
 
-      
-    </div>
+    <span>
+        <i class="tags icon"></i>
+    </span>
 
-    <div>
-      
-        
-
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/Redis/" rel="tag"># Redis</a>
-          
-        </div>
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2016/12/01/Java里的String/" rel="next" title="Java基础：String使用">
-                <i class="fa fa-chevron-left"></i> Java基础：String使用
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/01/23/记录一次由RabbitMQ-Java-客户端代码引起的内存泄露问题/" rel="prev" title="记录一次内存泄露排查过程">
-                记录一次内存泄露排查过程 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </article>
-
-
-
-    <div class="post-spread">
-      
-        <div class="ds-share flat" data-thread-key="2016/12/17/Redis实现原理之对象与编码/"
-     data-title="Redis实现原理之对象与编码"
-     data-content=""
-     data-url="http://zclau.com/2016/12/17/Redis实现原理之对象与编码/">
-  <div class="ds-share-inline">
-    <ul  class="ds-share-icons-16">
-
-      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
-      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
-      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
-      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
-      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
-
-    </ul>
-    <div class="ds-share-icons-more">
-    </div>
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-
-          </div>
-          
-
-  <p>热评文章</p>
-  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
-
-
-          
-  <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/12/17/Redis实现原理之对象与编码/"
-           data-title="Redis实现原理之对象与编码" data-url="http://zclau.com/2016/12/17/Redis实现原理之对象与编码/">
-      </div>
+    <span class="ui tiny label">
+        <a href="/tags/Redis/">Redis</a>
+    </span>
+
     
-  </div>
 
+    </span>
+</div>
 
-        </div>
-        
-          
-  
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
-  </div>
+                </div>
+                
+                <div id="pagination" class="nav-web ui text container pagination">
 
-  <aside id="sidebar" class="sidebar">
-    <div class="sidebar-inner">
+    <div class="ui stackable two column divided grid container">
+        <div class="row">
+            <div class="column nav-left">
+                
 
-      
+                <a href="/2017/01/23/记录一次由RabbitMQ-Java-客户端代码引起的内存泄露问题/" class="ui tiny button">
 
-      
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
+                    <i class="angle left icon"></i>
+                    
+                    记录一次内存泄露排查过程
+                    
 
-      <section class="site-overview sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-          <img class="site-author-image" itemprop="image"
-               src="/images/avatar.png"
-               alt="zclau" />
-          <p class="site-author-name" itemprop="name">zclau</p>
-          <p class="site-description motion-element" itemprop="description">Just Do IT</p>
-        </div>
-        <nav class="site-state motion-element">
-          <div class="site-state-item site-state-posts">
-            <a href="/archives">
-              <span class="site-state-item-count">13</span>
-              <span class="site-state-item-name">日志</span>
-            </a>
-          </div>
-
-          
-            <div class="site-state-item site-state-categories">
-              <a href="/categories">
-                <span class="site-state-item-count">7</span>
-                <span class="site-state-item-name">分类</span>
-              </a>
-            </div>
-          
-
-          
-            <div class="site-state-item site-state-tags">
-              
-                <span class="site-state-item-count">11</span>
-                <span class="site-state-item-name">标签</span>
-              
-            </div>
-          
-
-        </nav>
-
-        
-          <div class="feed-link motion-element">
-            <a href="/atom.xml" rel="alternate">
-              <i class="fa fa-rss"></i>
-              RSS
-            </a>
-          </div>
-        
-
-        <div class="links-of-author motion-element">
-          
-            
-              <span class="links-of-author-item">
-                <a href="https://github.com/cleverutd" target="_blank" title="GitHub">
-                  
-                    <i class="fa fa-fw fa-github"></i>
-                  
-                  GitHub
                 </a>
-              </span>
-            
-              <span class="links-of-author-item">
-                <a href="http://weibo.com/515074234" target="_blank" title="Weibo">
-                  
-                    <i class="fa fa-fw fa-weibo"></i>
-                  
-                  Weibo
-                </a>
-              </span>
-            
-          
+
+                
+            </div>
+            <div class="column nav-right">
+                
+
+                <a href="/2016/12/01/Java里的String/" class="ui tiny button">
+                    
+                    Java基础：String使用
+                    
+                    <i class="angle right icon"></i></a>
+                
+            </div>
         </div>
-
-        
-        
-
-        
-        
-
-        
-
-
-      </section>
-
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#对象类型"><span class="nav-number">1.</span> <span class="nav-text">对象类型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#对象编码"><span class="nav-number">2.</span> <span class="nav-text">对象编码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#字符串"><span class="nav-number">2.0.1.</span> <span class="nav-text">字符串</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#列表"><span class="nav-number">2.0.2.</span> <span class="nav-text">列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#哈希"><span class="nav-number">2.0.3.</span> <span class="nav-text">哈希</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#集合"><span class="nav-number">2.0.4.</span> <span class="nav-text">集合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#有序集合"><span class="nav-number">2.0.5.</span> <span class="nav-text">有序集合</span></a></li></ol></li></ol></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
-      
-
     </div>
-  </aside>
 
-
-        
-      </div>
-    </main>
-
-    <footer id="footer" class="footer">
-      <div class="footer-inner">
-        <div class="copyright" >
-  
-  &copy;  2015 - 
-  <span itemprop="copyrightYear">2017</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">zclau</span>
 </div>
+                
+            </div>
 
+            
+            <div class="three wide computer three wide tablet column">
 
-<div class="powered-by">
-  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
-</div>
+                <div class="ui sticky article-toc" id="article-toc">
+                    <!-- toc -->
+                    <ol class="ui ordered list"><li><a href="#对象类型"><span>对象类型</span></a></li><li><a href="#对象编码"><span>对象编码</span></a><ol><li><a href="#字符串"><span>字符串</span></a></li><li><a href="#列表"><span>列表</span></a></li><li><a href="#哈希"><span>哈希</span></a></li><li><a href="#集合"><span>集合</span></a></li><li><a href="#有序集合"><span>有序集合</span></a></li></ol></li></ol></li></ol>
+                </div>
 
-<div class="theme-info">
-  主题 -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT.Pisces
-  </a>
-</div>
+            </div>
+            
 
-
-        
-
-<div class="busuanzi-count">
-
-  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-  
-    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
-  
-
-  
-    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
-  
-  
-</div>
-
-
-
-        
-      </div>
-    </footer>
-
-    <div class="back-to-top">
-      <i class="fa fa-arrow-up"></i>
+        </div>
     </div>
-  </div>
+</div>
 
-  
 
+<!-- duoshuo start -->
+<div class="ds-thread" data-thread-key="2016/12/17/Redis实现原理之对象与编码/" data-title="Redis实现原理之对象与编码 | 刘梓" data-url="http://zclau.com/2016/12/17/Redis实现原理之对象与编码/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
-  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
-    window.Promise = null;
-  }
-</script>
-
-
-
-
-
-
-
-
-
-  
-
-
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/jquery/2.1.3/jquery.min.js"></script>
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/fastclick/1.0.6/fastclick.min.js"></script>
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/jquery.lazyload/1.9.3/jquery.lazyload.min.js"></script>
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/velocity/1.2.3/velocity.min.js"></script>
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/velocity/1.2.3/velocity.ui.min.js"></script>
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.pack.js"></script>
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
-
-  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
-
-
-
-  
-  
-
-
-  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
-
-  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
-
-
-
-  
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
-
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
-
-
-
-  
-
-  
-    
-  
-
-  <script type="text/javascript">
     var duoshuoQuery = {short_name:"zclau"};
     (function() {
-      var ds = document.createElement('script');
-      ds.type = 'text/javascript';ds.async = true;
-      ds.id = 'duoshuo-script';
-      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-      ds.charset = 'UTF-8';
-      (document.getElementsByTagName('head')[0]
-      || document.getElementsByTagName('body')[0]).appendChild(ds);
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+        || document.getElementsByTagName('body')[0]).appendChild(ds);
     })();
-  </script>
+</script>
+<!-- duoshuo end -->
 
-  
-    
-    
-    <script src="//cdn.jsdelivr.net/ua-parser.js/0.7.10/ua-parser.min.js"></script>
-    <script src="/js/src/hook-duoshuo.js"></script>
-  
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+        <div class="ui vertical footer segment">
+    <div class="ui center aligned container">
+        <div class="ui inverted section divider"></div>
+        &copy; 2017 <a href="/">zclau</a>,
+        Powered by <a href="https://github.com/henryhuang/hexo-theme-aloha" target="_blank">Aloha</a> and <a
+                href="http://hexo.io/" target="_blank">Hexo</a>.
+    </div>
+</div>
+
+    </div>
 
 
 
 
+<!-- scripts list from theme config.yml -->
 
+<script src="//cdn.bootcss.com/jquery/3.1.0/jquery.min.js"></script>
 
+<script src="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.js"></script>
 
+<script src="//cdn.bootcss.com/algoliasearch/3.18.1/algoliasearch.min.js"></script>
 
-  
-  
+<script src="//cdn.bootcss.com/algoliasearch-helper-js/2.13.0/algoliasearch.helper.min.js"></script>
 
-  
+<script src="/js/semantic-ui-algolia.js"></script>
 
-  
+<script src="/js/aloha-events.js"></script>
 
-  
-
-  
 
 
 </body>

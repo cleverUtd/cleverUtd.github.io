@@ -1,810 +1,359 @@
-<!doctype html>
 
 
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head prefix="og: http://ogp.me/ns#">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <meta name="description" content="Keep Calm And Coding">
+    <title>Java基础：String使用 | 刘梓</title>
 
-
-<html class="theme-next pisces" lang="zh-Hans">
-<head>
-  <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-
-
-
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
-
-
-
-  <meta name="google-site-verification" content="WpUzmCbPHTwSIrecMhBOVSvuOi8CiNrJNabR2s1RV8I" />
-
-
-
-
-
-
-
-
-
-
-  
-  
-    
-  
-  <link href="//cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet" type="text/css" />
-
-
-
-
-
-
-
-  
-
-<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
-
-<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
-
-
-  <meta name="keywords" content="Core Java," />
-
-
-
-
-
-  <link rel="alternate" href="/atom.xml" title="zclau" type="application/atom+xml" />
-
-
-
-
-  <link rel="shortcut icon" type="image/x-icon" href="/images/avatar.png?v=5.1.0" />
-
-
-
-
-
-
-<meta name="description" content="字符串操作是最常见的操作。在Java中，往往使用String类来进行各种字符串操作。而对于String这个类，其实隐含不少特性。对此，自己最近梳理了一遍。
-字符串创建常用方式主要两种：
-1String a = &quot;123&quot;
-和
-1String b = new String(&quot;123&quot;);
-第一种方式，”123“直接存储在常量池；第二种方式实际创建了两个对象，第一个对象是”123“字符串在常量池中，第">
+    <!-- Open Graph -->
+    <meta name="description" content="&amp;#x5B57;&amp;#x7B26;&amp;#x4E32;&amp;#x64CD;&amp;#x4F5C;&amp;#x662F;&amp;#x6700;&amp;#x5E38;&amp;#x89C1;&amp;#x7684;&amp;#x64CD;&amp;#x4F5C;&amp;#x3002;&amp;#x5728;Java&amp;#x4E2D;&amp;#xFF0C;&amp;#x5F80;&amp;#x5F80;&amp;#x4F7F;&amp;#x7528;String&amp;#x7C7B;&amp;#x6765;&amp;#x8FDB;&amp;#x884">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java基础：String使用">
 <meta property="og:url" content="http://zclau.com/2016/12/01/Java里的String/index.html">
-<meta property="og:site_name" content="zclau">
-<meta property="og:description" content="字符串操作是最常见的操作。在Java中，往往使用String类来进行各种字符串操作。而对于String这个类，其实隐含不少特性。对此，自己最近梳理了一遍。
-字符串创建常用方式主要两种：
-1String a = &quot;123&quot;
-和
-1String b = new String(&quot;123&quot;);
-第一种方式，”123“直接存储在常量池；第二种方式实际创建了两个对象，第一个对象是”123“字符串在常量池中，第">
+<meta property="og:site_name" content="刘梓">
+<meta property="og:description" content="&amp;#x5B57;&amp;#x7B26;&amp;#x4E32;&amp;#x64CD;&amp;#x4F5C;&amp;#x662F;&amp;#x6700;&amp;#x5E38;&amp;#x89C1;&amp;#x7684;&amp;#x64CD;&amp;#x4F5C;&amp;#x3002;&amp;#x5728;Java&amp;#x4E2D;&amp;#xFF0C;&amp;#x5F80;&amp;#x5F80;&amp;#x4F7F;&amp;#x7528;String&amp;#x7C7B;&amp;#x6765;&amp;#x8FDB;&amp;#x884">
 <meta property="og:updated_time" content="2016-12-16T08:57:21.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java基础：String使用">
-<meta name="twitter:description" content="字符串操作是最常见的操作。在Java中，往往使用String类来进行各种字符串操作。而对于String这个类，其实隐含不少特性。对此，自己最近梳理了一遍。
-字符串创建常用方式主要两种：
-1String a = &quot;123&quot;
-和
-1String b = new String(&quot;123&quot;);
-第一种方式，”123“直接存储在常量池；第二种方式实际创建了两个对象，第一个对象是”123“字符串在常量池中，第">
+<meta name="twitter:description" content="&amp;#x5B57;&amp;#x7B26;&amp;#x4E32;&amp;#x64CD;&amp;#x4F5C;&amp;#x662F;&amp;#x6700;&amp;#x5E38;&amp;#x89C1;&amp;#x7684;&amp;#x64CD;&amp;#x4F5C;&amp;#x3002;&amp;#x5728;Java&amp;#x4E2D;&amp;#xFF0C;&amp;#x5F80;&amp;#x5F80;&amp;#x4F7F;&amp;#x7528;String&amp;#x7C7B;&amp;#x6765;&amp;#x8FDB;&amp;#x884">
 
-
-
-<script type="text/javascript" id="hexo.configurations">
-  var NexT = window.NexT || {};
-  var CONFIG = {
-    root: '/',
-    scheme: 'Pisces',
-    sidebar: {"position":"left","display":"always"},
-    fancybox: true,
-    motion: false,
-    duoshuo: {
-      userId: '3589189',
-      author: 'Uni聰_Lau'
-    },
-    algolia: {
-      applicationID: '',
-      apiKey: '',
-      indexName: '',
-      hits: {"per_page":10},
-      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
-    }
-  };
+    <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Person",
+  "email": "mailto:cleverutd@gmail.com",
+  "image": "undefined",
+  "name": "zclau",
+  "url": "http://zclau.com"
+}
+</script>
+    <script>
+    var algoliaEnabled = false;
+    
 </script>
 
+    
 
+    
+    
+        <link href="https://fonts.gmirror.org/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+    
+    
+    
+        <!-- stylesheets list from config.yml -->
+        
+        <link rel="stylesheet" href="/css/aloha.css">
+        
+        <link rel="stylesheet" href="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.css">
+        
+        <link rel="stylesheet" href="//cdn.bootcss.com/magnific-popup.js/1.1.0/magnific-popup.min.css">
+        
+    
 
-  <link rel="canonical" href="http://zclau.com/2016/12/01/Java里的String/"/>
-
-
-
-
-
-
-
-  <title> Java基础：String使用 | zclau </title>
 </head>
+<body id="body" style="margin-bottom: 0;" class="pushable">
 
-<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+    <div class="ui top fixed menu">
+        <a class="item" id="menu-icon"><i class="sidebar icon"></i></a>
+    </div>
 
-  
+    <div id="menu-sidebar" class="ui left vertical sidebar menu">
+
+    <div id="sidebar-top">
+        <div class="content">
+            <h3>刘梓</h3>
+        </div>
+    </div>
+    <div class="ui container sidebar-card">
+    <div class="ui people shape content">
+        <div class="active side">
+            <div class="ui card">
+                <div class="image">
+                    <img class="ui medium bordered image" src="/images/avatar.jpg">
+                </div>
+                <div class="content">
+                    <a class="header">zclau</a>
+                    
+                </div>
+                <div class="extra content">
+                    <div class="ui list">
+                        
+                        
+                        <div class="item">
+                            <i class="mail icon" style="float: left"></i>
+                            <div class="content">
+                                <a href="mailto:cleverutd@gmail.com">cleverutd@gmail.com</a>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                </div>
+                <div class="extra content">
+                    <div class="ui list">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-  ga('create', 'UA-49937545-1', 'auto');
-  ga('send', 'pageview');
-</script>
+</div>
 
-
-
-
-
-
-
-
-
-  
-  
     
-  
+    
 
-  <div class="container one-collumn sidebar-position-left page-post-detail ">
-    <div class="headband"></div>
+    
 
-    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-meta ">
-  
-
-  <div class="custom-logo-site-title">
-    <a href="/"  class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <span class="site-title">zclau</span>
-      <span class="logo-line-after"><i></i></span>
+    
+    <a href="/index.html" class="item" >
+        <i class="home icon"></i>
+        首页
     </a>
-  </div>
-  <p class="site-subtitle">Keep Calm And Coding</p>
+
+    
+    
+
+    
+
+    
+    <a href="/atom.xml" class="item" >
+        <i class="rss icon"></i>
+        RSS
+    </a>
+
+    
+    
+
+    
+
+    
+    <a href="/archives/index.html" class="item" >
+        <i class="archive icon"></i>
+        归档
+    </a>
+
+    
+    
+
+    
+
+    
+    <a href="/booklist/index.html" class="item" >
+        <i class="book icon"></i>
+        书单
+    </a>
+
+    
+
+    
 </div>
 
-<div class="site-nav-toggle">
-  <button>
-    <span class="btn-bar"></span>
-    <span class="btn-bar"></span>
-    <span class="btn-bar"></span>
-  </button>
-</div>
-
-<nav class="site-nav">
-  
-
-  
-    <ul id="menu" class="menu">
-      
-        
-        <li class="menu-item menu-item-home">
-          <a href="/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
-            
-            首页
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-categories">
-          <a href="/categories" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
-            
-            分类
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-archives">
-          <a href="/archives" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
-            
-            归档
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-booklist">
-          <a href="/booklist" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-book"></i> <br />
-            
-            书单
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-commonweal">
-          <a href="/404.html" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
-            
-            公益404
-          </a>
-        </li>
-      
-
-      
-    </ul>
-  
-
-  
-</nav>
-
-
-
- </div>
-    </header>
-
-    <main id="main" class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          <div id="content" class="content">
-            
-
-  <div id="posts" class="posts-expand">
-    
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://zclau.com/2016/12/01/Java里的String/">
-
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="zclau">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/avatar.png">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="zclau">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="zclau" src="">
-    </span>
-  </span>
+    <div class="pusher body-content">
+        <div id="content" class="ui main container">
+            <!--<div class="ui one column grid">-->
+                <!--<div class="column">-->
+                    <!--<div class="ui main container">-->
+                        <div id="post-Java里的String" class="ui main container article-type-post">
 
     
-      <header class="post-header">
 
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                Java基础：String使用
-              
-            
-          </h1>
-        
+    <div class="ui divided grid">
 
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time title="Дата создания записи" itemprop="dateCreated datePublished" datetime="2016-12-01T21:15:10+08:00">
-              2016-12-01
-            </time>
+        <div class="two column row" id="article-content">
 
-            
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
+            <div class="thirteen wide computer thirteen wide tablet sixteen wide mobile column">
                 
 
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/12/01/Java里的String/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/01/Java里的String/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-              &nbsp; | &nbsp;
-              <span class="page-pv"><i class="fa fa-file-o"></i>
-              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
-              </span>
-          
-          
-          
-
-        </div>
-      </header>
+<h1 class="ui header">
     
+    Java基础：String使用
+</h1>
 
 
-    <div class="post-body" itemprop="articleBody">
 
-      
-      
+                <div class="article-inner">
 
-      
-        <p>字符串操作是最常见的操作。在Java中，往往使用String类来进行各种字符串操作。<br>而对于String这个类，其实隐含不少特性。对此，自己最近梳理了一遍。</p>
-<h1 id="字符串创建">字符串创建</h1><p>常用方式主要两种：</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String <span class="tag">a</span> = <span class="string">"123"</span></span><br></pre></td></tr></table></figure>
-<p>和</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">String</span> b = <span class="keyword">new</span> <span class="built_in">String</span>(<span class="string">"123"</span>);</span><br></pre></td></tr></table></figure>
-<p>第一种方式，”123“直接存储在常量池；第二种方式实际创建了两个对象，第一个对象是”123“字符串在常量池中，第二个对象是在java堆中的String对象。</p>
-<h1 id="不可变">不可变</h1><p>翻看jdk源码，java.lang.String的定义是这样的：</p>
-<figure class="highlight zephir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">String</span></span><br><span class="line">    <span class="keyword">implements</span> <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span>, <span class="title">Comparable</span>&lt;<span class="title">String</span>&gt;, <span class="title">CharSequence</span> </span>&#123;</span><br><span class="line">    <span class="comment">/** The value is used for character storage. */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">char</span> value[];</span><br><span class="line">    <span class="comment">/** Cache the hash code for the string */</span>  </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> hash; <span class="comment">// Default to 0  </span></span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
-<p>以上代码在jdk7，8都是一致的。</p>
-<p>String类用final修饰，从java的final关键字语义上看，说明String不可继承。</p>
-<p>其次，String的底层其实用了一个final类型的char数组来存储，说明该字段一旦创建后就不能改变。</p>
-<p>其中有个很容易引起迷惑的地方，必须要弄清楚：String对象本质是引用，我们所说的不可变是指引用指向的对象内容不可变，并不是引用不可变。而String类中涉及修改的方法（substring、replace、toLowerCase等）都是创建一个新的字符串，并把这个它重新赋给引用。这就说明引用是重新指向了一个新的的字符串，但原来的字符串依旧存在内存里。</p>
-<p>虽然说String不可变，但也不是绝对不可变，可以通过反射机制进行修改。然而大多情况不需要也没必要用到反射，这里就不详细讨论了</p>
-<p>具体可参考<a href="http://blog.csdn.net/zhangjg_blog/article/details/18319521" target="_blank" rel="external">Java中的String为什么是不可变的？ – String源码分析</a><br>里面阐述比较详细了。</p>
-<h1 id="字符串‘+’操作">字符串‘+’操作</h1><p>以前的文章中很多都说字符串‘+’操作会导致性能低效，要用StringBuilder或StringBuffer。但其实现在的JVM已经优化得足够强大，</p>
-<p>例如以下代码<br><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> StringTest&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">void</span> main(<span class="built_in">String</span>[] args) &#123;</span><br><span class="line">        <span class="built_in">String</span> a = <span class="string">"hello"</span>;</span><br><span class="line">        <span class="built_in">String</span> b = <span class="string">"abc"</span> + <span class="string">"def"</span> + <span class="number">47</span> + a;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
-<p>通过 javap -c 反编译出来的字节码如下：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(java.lang.String[])</span></span>;</span><br><span class="line">    Code:</span><br><span class="line">       <span class="number">0</span>: ldc           <span class="preprocessor">#<span class="number">2</span>                  <span class="comment">// String hello</span></span></span><br><span class="line">       <span class="number">2</span>: astore_1</span><br><span class="line">       <span class="number">3</span>: <span class="keyword">new</span>           <span class="preprocessor">#<span class="number">3</span>                  <span class="comment">// class java/lang/StringBuilder</span></span></span><br><span class="line">       <span class="number">6</span>: dup</span><br><span class="line">       <span class="number">7</span>: invokespecial <span class="preprocessor">#<span class="number">4</span>                  <span class="comment">// Method java/lang/StringBuilder."&lt;init&gt;":()V</span></span></span><br><span class="line">      <span class="number">10</span>: ldc           <span class="preprocessor">#<span class="number">5</span>                  <span class="comment">// String abcdef47</span></span></span><br><span class="line">      <span class="number">12</span>: invokevirtual <span class="preprocessor">#<span class="number">6</span>                  <span class="comment">// Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;</span></span></span><br><span class="line">      <span class="number">15</span>: aload_1</span><br><span class="line">      <span class="number">16</span>: invokevirtual <span class="preprocessor">#<span class="number">6</span>                  <span class="comment">// Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;</span></span></span><br><span class="line">      <span class="number">19</span>: invokevirtual <span class="preprocessor">#<span class="number">7</span>                  <span class="comment">// Method java/lang/StringBuilder.toString:()Ljava/lang/String;</span></span></span><br><span class="line">      <span class="number">22</span>: astore_2</span><br><span class="line">      <span class="number">23</span>: <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们可以看到，字符串的‘+’操作其实在实际执行过程中，就是一个StringBuilder的append操作。</p>
-<p>再看这段代码：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> StringTest&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        String a = <span class="string">""</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;i++) &#123;</span><br><span class="line">            a = a + i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>对应的字节码：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(java.lang.String[])</span></span>;</span><br><span class="line">    Code:</span><br><span class="line">       <span class="number">0</span>: ldc           <span class="preprocessor">#<span class="number">2</span>                  <span class="comment">// String</span></span></span><br><span class="line">       <span class="number">2</span>: astore_1</span><br><span class="line">       <span class="number">3</span>: iconst_0</span><br><span class="line">       <span class="number">4</span>: istore_2</span><br><span class="line">       <span class="number">5</span>: iload_2</span><br><span class="line">       <span class="number">6</span>: bipush        <span class="number">10</span></span><br><span class="line">       <span class="number">8</span>: if_icmpge     <span class="number">36</span></span><br><span class="line">      <span class="number">11</span>: <span class="keyword">new</span>           <span class="preprocessor">#<span class="number">3</span>                  <span class="comment">// class java/lang/StringBuilder</span></span></span><br><span class="line">      <span class="number">14</span>: dup</span><br><span class="line">      <span class="number">15</span>: invokespecial <span class="preprocessor">#<span class="number">4</span>                  <span class="comment">// Method java/lang/StringBuilder."&lt;init&gt;":()V</span></span></span><br><span class="line">      <span class="number">18</span>: aload_1</span><br><span class="line">      <span class="number">19</span>: invokevirtual <span class="preprocessor">#<span class="number">5</span>                  <span class="comment">// Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;</span></span></span><br><span class="line">      <span class="number">22</span>: iload_2</span><br><span class="line">      <span class="number">23</span>: invokevirtual <span class="preprocessor">#<span class="number">6</span>                  <span class="comment">// Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;</span></span></span><br><span class="line">      <span class="number">26</span>: invokevirtual <span class="preprocessor">#<span class="number">7</span>                  <span class="comment">// Method java/lang/StringBuilder.toString:()Ljava/lang/String;</span></span></span><br><span class="line">      <span class="number">29</span>: astore_1</span><br><span class="line">      <span class="number">30</span>: iinc          <span class="number">2</span>, <span class="number">1</span></span><br><span class="line">      <span class="number">33</span>: <span class="keyword">goto</span>          <span class="number">5</span></span><br><span class="line">      <span class="number">36</span>: <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>对于循环内的字符串拼接，虽然还是转化为StringBuilder，但是情况有点不同，留意8：和 33：之间的代码就是每一次循环所执行的操作，可以看到每一次的循环都创建了一个新的StringBuilder对象。</p>
-<p>所以总结来说，对于普通的一次性的‘+’操作，可以放心使用；但循环下的‘+’，因为每一次都要new 一个StringBuilder而导致性能降低，因此还是先自己定义一个StringBuilder，然后每次循环通过append操作来完成</p>
-<h1 id="字符串常量池">字符串常量池</h1><p>JVM为了提高性能和减少内存开销，在实例化字符串常量的时候进行了一些优化。为了减少在JVM中创建的字符串的数量，字符串类维护了一个字符串池，每当创建字符串常量时，JVM会首先检查字符串常量池。如果字符串已经存在池中，就返回池中的实例引用。如果字符串不在池中，就会实例化一个字符串并放到池中</p>
-<p>在JDK6中，字符串常量池在永久代分配内存；而JDK7开始，常量池已经在Java堆上分配内存。</p>
-<p>而字符串常量池本质是个固定容量的HashMap。 Java7和8可以通过 -XX:StringTableSize 设置其map size。<br>在Java6到Java7u40之前-XX:StringTableSize的默认大小是1009；7u40之后扩大到60013。</p>
-<p>-XX:+PrintStringTableStatistics 会在程序终止时打印字符串常量池的使用情况</p>
-<h1 id="String-intern">String.intern</h1><p>String.intern是把双刃剑，用时需谨慎，切记切记！！！</p>
-<p>String.intern()是一个Native方法，底层调用C++的 StringTable::intern 方法。</p>
-<p>源码注释：当调用 intern 方法时，如果常量池中已经存在该字符串，则返回池中的字符串；否则将此字符串添加到常量池中，并返回字符串的引用。<br>在这里jdk6和jdk7表现有点区别：</p>
-<ol>
-<li>jdk6会直接生成一个新的字符串对象到常量池中，并返回该对象引用</li>
-<li>jdk7因为常量池不在Perm区，不需要重新生成对象，而是直接存储堆中的引用</li>
+                    <div class="article-entry" itemprop="articleBody">
+                        
+                        <p>&#x5B57;&#x7B26;&#x4E32;&#x64CD;&#x4F5C;&#x662F;&#x6700;&#x5E38;&#x89C1;&#x7684;&#x64CD;&#x4F5C;&#x3002;&#x5728;Java&#x4E2D;&#xFF0C;&#x5F80;&#x5F80;&#x4F7F;&#x7528;String&#x7C7B;&#x6765;&#x8FDB;&#x884C;&#x5404;&#x79CD;&#x5B57;&#x7B26;&#x4E32;&#x64CD;&#x4F5C;&#x3002;<br>&#x800C;&#x5BF9;&#x4E8E;String&#x8FD9;&#x4E2A;&#x7C7B;&#xFF0C;&#x5176;&#x5B9E;&#x9690;&#x542B;&#x4E0D;&#x5C11;&#x7279;&#x6027;&#x3002;&#x5BF9;&#x6B64;&#xFF0C;&#x81EA;&#x5DF1;&#x6700;&#x8FD1;&#x68B3;&#x7406;&#x4E86;&#x4E00;&#x904D;&#x3002;</p>
+<h1 id="&#x5B57;&#x7B26;&#x4E32;&#x521B;&#x5EFA;"><a href="#&#x5B57;&#x7B26;&#x4E32;&#x521B;&#x5EFA;" class="headerlink" title="&#x5B57;&#x7B26;&#x4E32;&#x521B;&#x5EFA;"></a>&#x5B57;&#x7B26;&#x4E32;&#x521B;&#x5EFA;</h1><p>&#x5E38;&#x7528;&#x65B9;&#x5F0F;&#x4E3B;&#x8981;&#x4E24;&#x79CD;&#xFF1A;</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">String <span class="selector-tag">a</span> = <span class="string">&quot;123&quot;</span></div></pre></td></tr></table></figure>
+<p>&#x548C;</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">String</span> b = <span class="keyword">new</span> <span class="keyword">String</span>(<span class="string">&quot;123&quot;</span>);</div></pre></td></tr></table></figure>
+<p>&#x7B2C;&#x4E00;&#x79CD;&#x65B9;&#x5F0F;&#xFF0C;&#x201D;123&#x201C;&#x76F4;&#x63A5;&#x5B58;&#x50A8;&#x5728;&#x5E38;&#x91CF;&#x6C60;&#xFF1B;&#x7B2C;&#x4E8C;&#x79CD;&#x65B9;&#x5F0F;&#x5B9E;&#x9645;&#x521B;&#x5EFA;&#x4E86;&#x4E24;&#x4E2A;&#x5BF9;&#x8C61;&#xFF0C;&#x7B2C;&#x4E00;&#x4E2A;&#x5BF9;&#x8C61;&#x662F;&#x201D;123&#x201C;&#x5B57;&#x7B26;&#x4E32;&#x5728;&#x5E38;&#x91CF;&#x6C60;&#x4E2D;&#xFF0C;&#x7B2C;&#x4E8C;&#x4E2A;&#x5BF9;&#x8C61;&#x662F;&#x5728;java&#x5806;&#x4E2D;&#x7684;String&#x5BF9;&#x8C61;&#x3002;</p>
+<h1 id="&#x4E0D;&#x53EF;&#x53D8;"><a href="#&#x4E0D;&#x53EF;&#x53D8;" class="headerlink" title="&#x4E0D;&#x53EF;&#x53D8;"></a>&#x4E0D;&#x53EF;&#x53D8;</h1><p>&#x7FFB;&#x770B;jdk&#x6E90;&#x7801;&#xFF0C;java.lang.String&#x7684;&#x5B9A;&#x4E49;&#x662F;&#x8FD9;&#x6837;&#x7684;&#xFF1A;</p>
+<figure class="highlight zephir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">String</span></span></div><div class="line">    <span class="keyword">implements</span> <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span>, <span class="title">Comparable</span>&lt;<span class="title">String</span>&gt;, <span class="title">CharSequence</span> {</div><div class="line">    <span class="comment">/** The value is used for character storage. */</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">char</span> value[];</div><div class="line">    <span class="comment">/** Cache the hash code for the string */</span>  </div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> hash; <span class="comment">// Default to 0  </span></div><div class="line">    </div><div class="line">    ...</div><div class="line">    ...</div></pre></td></tr></table></figure>
+<p>&#x4EE5;&#x4E0A;&#x4EE3;&#x7801;&#x5728;jdk7&#xFF0C;8&#x90FD;&#x662F;&#x4E00;&#x81F4;&#x7684;&#x3002;</p>
+<p>String&#x7C7B;&#x7528;final&#x4FEE;&#x9970;&#xFF0C;&#x4ECE;java&#x7684;final&#x5173;&#x952E;&#x5B57;&#x8BED;&#x4E49;&#x4E0A;&#x770B;&#xFF0C;&#x8BF4;&#x660E;String&#x4E0D;&#x53EF;&#x7EE7;&#x627F;&#x3002;</p>
+<p>&#x5176;&#x6B21;&#xFF0C;String&#x7684;&#x5E95;&#x5C42;&#x5176;&#x5B9E;&#x7528;&#x4E86;&#x4E00;&#x4E2A;final&#x7C7B;&#x578B;&#x7684;char&#x6570;&#x7EC4;&#x6765;&#x5B58;&#x50A8;&#xFF0C;&#x8BF4;&#x660E;&#x8BE5;&#x5B57;&#x6BB5;&#x4E00;&#x65E6;&#x521B;&#x5EFA;&#x540E;&#x5C31;&#x4E0D;&#x80FD;&#x6539;&#x53D8;&#x3002;</p>
+<p>&#x5176;&#x4E2D;&#x6709;&#x4E2A;&#x5F88;&#x5BB9;&#x6613;&#x5F15;&#x8D77;&#x8FF7;&#x60D1;&#x7684;&#x5730;&#x65B9;&#xFF0C;&#x5FC5;&#x987B;&#x8981;&#x5F04;&#x6E05;&#x695A;&#xFF1A;String&#x5BF9;&#x8C61;&#x672C;&#x8D28;&#x662F;&#x5F15;&#x7528;&#xFF0C;&#x6211;&#x4EEC;&#x6240;&#x8BF4;&#x7684;&#x4E0D;&#x53EF;&#x53D8;&#x662F;&#x6307;&#x5F15;&#x7528;&#x6307;&#x5411;&#x7684;&#x5BF9;&#x8C61;&#x5185;&#x5BB9;&#x4E0D;&#x53EF;&#x53D8;&#xFF0C;&#x5E76;&#x4E0D;&#x662F;&#x5F15;&#x7528;&#x4E0D;&#x53EF;&#x53D8;&#x3002;&#x800C;String&#x7C7B;&#x4E2D;&#x6D89;&#x53CA;&#x4FEE;&#x6539;&#x7684;&#x65B9;&#x6CD5;&#xFF08;substring&#x3001;replace&#x3001;toLowerCase&#x7B49;&#xFF09;&#x90FD;&#x662F;&#x521B;&#x5EFA;&#x4E00;&#x4E2A;&#x65B0;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#xFF0C;&#x5E76;&#x628A;&#x8FD9;&#x4E2A;&#x5B83;&#x91CD;&#x65B0;&#x8D4B;&#x7ED9;&#x5F15;&#x7528;&#x3002;&#x8FD9;&#x5C31;&#x8BF4;&#x660E;&#x5F15;&#x7528;&#x662F;&#x91CD;&#x65B0;&#x6307;&#x5411;&#x4E86;&#x4E00;&#x4E2A;&#x65B0;&#x7684;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#xFF0C;&#x4F46;&#x539F;&#x6765;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#x4F9D;&#x65E7;&#x5B58;&#x5728;&#x5185;&#x5B58;&#x91CC;&#x3002;</p>
+<p>&#x867D;&#x7136;&#x8BF4;String&#x4E0D;&#x53EF;&#x53D8;&#xFF0C;&#x4F46;&#x4E5F;&#x4E0D;&#x662F;&#x7EDD;&#x5BF9;&#x4E0D;&#x53EF;&#x53D8;&#xFF0C;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x53CD;&#x5C04;&#x673A;&#x5236;&#x8FDB;&#x884C;&#x4FEE;&#x6539;&#x3002;&#x7136;&#x800C;&#x5927;&#x591A;&#x60C5;&#x51B5;&#x4E0D;&#x9700;&#x8981;&#x4E5F;&#x6CA1;&#x5FC5;&#x8981;&#x7528;&#x5230;&#x53CD;&#x5C04;&#xFF0C;&#x8FD9;&#x91CC;&#x5C31;&#x4E0D;&#x8BE6;&#x7EC6;&#x8BA8;&#x8BBA;&#x4E86;</p>
+<p>&#x5177;&#x4F53;&#x53EF;&#x53C2;&#x8003;<a href="http://blog.csdn.net/zhangjg_blog/article/details/18319521" target="_blank" rel="external">Java&#x4E2D;&#x7684;String&#x4E3A;&#x4EC0;&#x4E48;&#x662F;&#x4E0D;&#x53EF;&#x53D8;&#x7684;&#xFF1F; &#x2013; String&#x6E90;&#x7801;&#x5206;&#x6790;</a><br>&#x91CC;&#x9762;&#x9610;&#x8FF0;&#x6BD4;&#x8F83;&#x8BE6;&#x7EC6;&#x4E86;&#x3002;</p>
+<h1 id="&#x5B57;&#x7B26;&#x4E32;&#x2018;-&#x2019;&#x64CD;&#x4F5C;"><a href="#&#x5B57;&#x7B26;&#x4E32;&#x2018;-&#x2019;&#x64CD;&#x4F5C;" class="headerlink" title="&#x5B57;&#x7B26;&#x4E32;&#x2018;+&#x2019;&#x64CD;&#x4F5C;"></a>&#x5B57;&#x7B26;&#x4E32;&#x2018;+&#x2019;&#x64CD;&#x4F5C;</h1><p>&#x4EE5;&#x524D;&#x7684;&#x6587;&#x7AE0;&#x4E2D;&#x5F88;&#x591A;&#x90FD;&#x8BF4;&#x5B57;&#x7B26;&#x4E32;&#x2018;+&#x2019;&#x64CD;&#x4F5C;&#x4F1A;&#x5BFC;&#x81F4;&#x6027;&#x80FD;&#x4F4E;&#x6548;&#xFF0C;&#x8981;&#x7528;StringBuilder&#x6216;StringBuffer&#x3002;&#x4F46;&#x5176;&#x5B9E;&#x73B0;&#x5728;&#x7684;JVM&#x5DF2;&#x7ECF;&#x4F18;&#x5316;&#x5F97;&#x8DB3;&#x591F;&#x5F3A;&#x5927;&#xFF0C;</p>
+<p>&#x4F8B;&#x5982;&#x4EE5;&#x4E0B;&#x4EE3;&#x7801;<br><figure class="highlight arduino"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">class</span> StringTest{</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(<span class="keyword">String</span>[] args) {</div><div class="line">        <span class="keyword">String</span> a = <span class="string">&quot;hello&quot;</span>;</div><div class="line">        <span class="keyword">String</span> b = <span class="string">&quot;abc&quot;</span> + <span class="string">&quot;def&quot;</span> + <span class="number">47</span> + a;</div><div class="line">    }</div></pre></td></tr></table></figure></p>
+<p>&#x901A;&#x8FC7; javap -c &#x53CD;&#x7F16;&#x8BD1;&#x51FA;&#x6765;&#x7684;&#x5B57;&#x8282;&#x7801;&#x5982;&#x4E0B;&#xFF1A;</p>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">public static void main(java.lang.<span class="keyword">String</span>[]);</div><div class="line">    <span class="built_in">Code</span>:</div><div class="line">       <span class="number">0</span>: ldc           <span class="meta">#2                  <span class="comment">// String hello</span></span></div><div class="line">       <span class="number">2</span>: astore_1</div><div class="line">       <span class="number">3</span>: <span class="keyword">new</span>           <span class="meta">#3                  <span class="comment">// class java/lang/StringBuilder</span></span></div><div class="line">       <span class="number">6</span>: dup</div><div class="line">       <span class="number">7</span>: invokespecial <span class="meta">#4                  <span class="comment">// Method java/lang/StringBuilder.&quot;&lt;init&gt;&quot;:()V</span></span></div><div class="line">      <span class="number">10</span>: ldc           <span class="meta">#5                  <span class="comment">// String abcdef47</span></span></div><div class="line">      <span class="number">12</span>: invokevirtual <span class="meta">#6                  <span class="comment">// Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;</span></span></div><div class="line">      <span class="number">15</span>: aload_1</div><div class="line">      <span class="number">16</span>: invokevirtual <span class="meta">#6                  <span class="comment">// Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;</span></span></div><div class="line">      <span class="number">19</span>: invokevirtual <span class="meta">#7                  <span class="comment">// Method java/lang/StringBuilder.toString:()Ljava/lang/String;</span></span></div><div class="line">      <span class="number">22</span>: astore_2</div><div class="line">      <span class="number">23</span>: <span class="keyword">return</span></div><div class="line">}</div></pre></td></tr></table></figure>
+<p>&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x770B;&#x5230;&#xFF0C;&#x5B57;&#x7B26;&#x4E32;&#x7684;&#x2018;+&#x2019;&#x64CD;&#x4F5C;&#x5176;&#x5B9E;&#x5728;&#x5B9E;&#x9645;&#x6267;&#x884C;&#x8FC7;&#x7A0B;&#x4E2D;&#xFF0C;&#x5C31;&#x662F;&#x4E00;&#x4E2A;StringBuilder&#x7684;append&#x64CD;&#x4F5C;&#x3002;</p>
+<p>&#x518D;&#x770B;&#x8FD9;&#x6BB5;&#x4EE3;&#x7801;&#xFF1A;</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">class</span> StringTest{</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(<span class="keyword">String</span>[] args) {</div><div class="line">        <span class="keyword">String</span> a = <span class="string">&quot;&quot;</span>;</div><div class="line">        <span class="built_in">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;i++) {</div><div class="line">            a = a + i;</div><div class="line">        }</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
+<p>&#x5BF9;&#x5E94;&#x7684;&#x5B57;&#x8282;&#x7801;&#xFF1A;</p>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">public static void main(java.lang.<span class="keyword">String</span>[]);</div><div class="line">    <span class="built_in">Code</span>:</div><div class="line">       <span class="number">0</span>: ldc           <span class="meta">#2                  <span class="comment">// String</span></span></div><div class="line">       <span class="number">2</span>: astore_1</div><div class="line">       <span class="number">3</span>: iconst_0</div><div class="line">       <span class="number">4</span>: istore_2</div><div class="line">       <span class="number">5</span>: iload_2</div><div class="line">       <span class="number">6</span>: bipush        <span class="number">10</span></div><div class="line">       <span class="number">8</span>: if_icmpge     <span class="number">36</span></div><div class="line">      <span class="number">11</span>: <span class="keyword">new</span>           <span class="meta">#3                  <span class="comment">// class java/lang/StringBuilder</span></span></div><div class="line">      <span class="number">14</span>: dup</div><div class="line">      <span class="number">15</span>: invokespecial <span class="meta">#4                  <span class="comment">// Method java/lang/StringBuilder.&quot;&lt;init&gt;&quot;:()V</span></span></div><div class="line">      <span class="number">18</span>: aload_1</div><div class="line">      <span class="number">19</span>: invokevirtual <span class="meta">#5                  <span class="comment">// Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;</span></span></div><div class="line">      <span class="number">22</span>: iload_2</div><div class="line">      <span class="number">23</span>: invokevirtual <span class="meta">#6                  <span class="comment">// Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;</span></span></div><div class="line">      <span class="number">26</span>: invokevirtual <span class="meta">#7                  <span class="comment">// Method java/lang/StringBuilder.toString:()Ljava/lang/String;</span></span></div><div class="line">      <span class="number">29</span>: astore_1</div><div class="line">      <span class="number">30</span>: iinc          <span class="number">2</span>, <span class="number">1</span></div><div class="line">      <span class="number">33</span>: <span class="keyword">goto</span>          <span class="number">5</span></div><div class="line">      <span class="number">36</span>: <span class="keyword">return</span></div><div class="line">}</div></pre></td></tr></table></figure>
+<p>&#x5BF9;&#x4E8E;&#x5FAA;&#x73AF;&#x5185;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#x62FC;&#x63A5;&#xFF0C;&#x867D;&#x7136;&#x8FD8;&#x662F;&#x8F6C;&#x5316;&#x4E3A;StringBuilder&#xFF0C;&#x4F46;&#x662F;&#x60C5;&#x51B5;&#x6709;&#x70B9;&#x4E0D;&#x540C;&#xFF0C;&#x7559;&#x610F;8&#xFF1A;&#x548C; 33&#xFF1A;&#x4E4B;&#x95F4;&#x7684;&#x4EE3;&#x7801;&#x5C31;&#x662F;&#x6BCF;&#x4E00;&#x6B21;&#x5FAA;&#x73AF;&#x6240;&#x6267;&#x884C;&#x7684;&#x64CD;&#x4F5C;&#xFF0C;&#x53EF;&#x4EE5;&#x770B;&#x5230;&#x6BCF;&#x4E00;&#x6B21;&#x7684;&#x5FAA;&#x73AF;&#x90FD;&#x521B;&#x5EFA;&#x4E86;&#x4E00;&#x4E2A;&#x65B0;&#x7684;StringBuilder&#x5BF9;&#x8C61;&#x3002;</p>
+<p>&#x6240;&#x4EE5;&#x603B;&#x7ED3;&#x6765;&#x8BF4;&#xFF0C;&#x5BF9;&#x4E8E;&#x666E;&#x901A;&#x7684;&#x4E00;&#x6B21;&#x6027;&#x7684;&#x2018;+&#x2019;&#x64CD;&#x4F5C;&#xFF0C;&#x53EF;&#x4EE5;&#x653E;&#x5FC3;&#x4F7F;&#x7528;&#xFF1B;&#x4F46;&#x5FAA;&#x73AF;&#x4E0B;&#x7684;&#x2018;+&#x2019;&#xFF0C;&#x56E0;&#x4E3A;&#x6BCF;&#x4E00;&#x6B21;&#x90FD;&#x8981;new &#x4E00;&#x4E2A;StringBuilder&#x800C;&#x5BFC;&#x81F4;&#x6027;&#x80FD;&#x964D;&#x4F4E;&#xFF0C;&#x56E0;&#x6B64;&#x8FD8;&#x662F;&#x5148;&#x81EA;&#x5DF1;&#x5B9A;&#x4E49;&#x4E00;&#x4E2A;StringBuilder&#xFF0C;&#x7136;&#x540E;&#x6BCF;&#x6B21;&#x5FAA;&#x73AF;&#x901A;&#x8FC7;append&#x64CD;&#x4F5C;&#x6765;&#x5B8C;&#x6210;</p>
+<h1 id="&#x5B57;&#x7B26;&#x4E32;&#x5E38;&#x91CF;&#x6C60;"><a href="#&#x5B57;&#x7B26;&#x4E32;&#x5E38;&#x91CF;&#x6C60;" class="headerlink" title="&#x5B57;&#x7B26;&#x4E32;&#x5E38;&#x91CF;&#x6C60;"></a>&#x5B57;&#x7B26;&#x4E32;&#x5E38;&#x91CF;&#x6C60;</h1><p>JVM&#x4E3A;&#x4E86;&#x63D0;&#x9AD8;&#x6027;&#x80FD;&#x548C;&#x51CF;&#x5C11;&#x5185;&#x5B58;&#x5F00;&#x9500;&#xFF0C;&#x5728;&#x5B9E;&#x4F8B;&#x5316;&#x5B57;&#x7B26;&#x4E32;&#x5E38;&#x91CF;&#x7684;&#x65F6;&#x5019;&#x8FDB;&#x884C;&#x4E86;&#x4E00;&#x4E9B;&#x4F18;&#x5316;&#x3002;&#x4E3A;&#x4E86;&#x51CF;&#x5C11;&#x5728;JVM&#x4E2D;&#x521B;&#x5EFA;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#x7684;&#x6570;&#x91CF;&#xFF0C;&#x5B57;&#x7B26;&#x4E32;&#x7C7B;&#x7EF4;&#x62A4;&#x4E86;&#x4E00;&#x4E2A;&#x5B57;&#x7B26;&#x4E32;&#x6C60;&#xFF0C;&#x6BCF;&#x5F53;&#x521B;&#x5EFA;&#x5B57;&#x7B26;&#x4E32;&#x5E38;&#x91CF;&#x65F6;&#xFF0C;JVM&#x4F1A;&#x9996;&#x5148;&#x68C0;&#x67E5;&#x5B57;&#x7B26;&#x4E32;&#x5E38;&#x91CF;&#x6C60;&#x3002;&#x5982;&#x679C;&#x5B57;&#x7B26;&#x4E32;&#x5DF2;&#x7ECF;&#x5B58;&#x5728;&#x6C60;&#x4E2D;&#xFF0C;&#x5C31;&#x8FD4;&#x56DE;&#x6C60;&#x4E2D;&#x7684;&#x5B9E;&#x4F8B;&#x5F15;&#x7528;&#x3002;&#x5982;&#x679C;&#x5B57;&#x7B26;&#x4E32;&#x4E0D;&#x5728;&#x6C60;&#x4E2D;&#xFF0C;&#x5C31;&#x4F1A;&#x5B9E;&#x4F8B;&#x5316;&#x4E00;&#x4E2A;&#x5B57;&#x7B26;&#x4E32;&#x5E76;&#x653E;&#x5230;&#x6C60;&#x4E2D;</p>
+<p>&#x5728;JDK6&#x4E2D;&#xFF0C;&#x5B57;&#x7B26;&#x4E32;&#x5E38;&#x91CF;&#x6C60;&#x5728;&#x6C38;&#x4E45;&#x4EE3;&#x5206;&#x914D;&#x5185;&#x5B58;&#xFF1B;&#x800C;JDK7&#x5F00;&#x59CB;&#xFF0C;&#x5E38;&#x91CF;&#x6C60;&#x5DF2;&#x7ECF;&#x5728;Java&#x5806;&#x4E0A;&#x5206;&#x914D;&#x5185;&#x5B58;&#x3002;</p>
+<p>&#x800C;&#x5B57;&#x7B26;&#x4E32;&#x5E38;&#x91CF;&#x6C60;&#x672C;&#x8D28;&#x662F;&#x4E2A;&#x56FA;&#x5B9A;&#x5BB9;&#x91CF;&#x7684;HashMap&#x3002; Java7&#x548C;8&#x53EF;&#x4EE5;&#x901A;&#x8FC7; -XX:StringTableSize &#x8BBE;&#x7F6E;&#x5176;map size&#x3002;<br>&#x5728;Java6&#x5230;Java7u40&#x4E4B;&#x524D;-XX:StringTableSize&#x7684;&#x9ED8;&#x8BA4;&#x5927;&#x5C0F;&#x662F;1009&#xFF1B;7u40&#x4E4B;&#x540E;&#x6269;&#x5927;&#x5230;60013&#x3002;</p>
+<p>-XX:+PrintStringTableStatistics &#x4F1A;&#x5728;&#x7A0B;&#x5E8F;&#x7EC8;&#x6B62;&#x65F6;&#x6253;&#x5370;&#x5B57;&#x7B26;&#x4E32;&#x5E38;&#x91CF;&#x6C60;&#x7684;&#x4F7F;&#x7528;&#x60C5;&#x51B5;</p>
+<h1 id="String-intern"><a href="#String-intern" class="headerlink" title="String.intern"></a>String.intern</h1><p>String.intern&#x662F;&#x628A;&#x53CC;&#x5203;&#x5251;&#xFF0C;&#x7528;&#x65F6;&#x9700;&#x8C28;&#x614E;&#xFF0C;&#x5207;&#x8BB0;&#x5207;&#x8BB0;&#xFF01;&#xFF01;&#xFF01;</p>
+<p>String.intern()&#x662F;&#x4E00;&#x4E2A;Native&#x65B9;&#x6CD5;&#xFF0C;&#x5E95;&#x5C42;&#x8C03;&#x7528;C++&#x7684; StringTable::intern &#x65B9;&#x6CD5;&#x3002;</p>
+<p>&#x6E90;&#x7801;&#x6CE8;&#x91CA;&#xFF1A;&#x5F53;&#x8C03;&#x7528; intern &#x65B9;&#x6CD5;&#x65F6;&#xFF0C;&#x5982;&#x679C;&#x5E38;&#x91CF;&#x6C60;&#x4E2D;&#x5DF2;&#x7ECF;&#x5B58;&#x5728;&#x8BE5;&#x5B57;&#x7B26;&#x4E32;&#xFF0C;&#x5219;&#x8FD4;&#x56DE;&#x6C60;&#x4E2D;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#xFF1B;&#x5426;&#x5219;&#x5C06;&#x6B64;&#x5B57;&#x7B26;&#x4E32;&#x6DFB;&#x52A0;&#x5230;&#x5E38;&#x91CF;&#x6C60;&#x4E2D;&#xFF0C;&#x5E76;&#x8FD4;&#x56DE;&#x5B57;&#x7B26;&#x4E32;&#x7684;&#x5F15;&#x7528;&#x3002;<br>&#x5728;&#x8FD9;&#x91CC;jdk6&#x548C;jdk7&#x8868;&#x73B0;&#x6709;&#x70B9;&#x533A;&#x522B;&#xFF1A;</p>
+<ol class="ui list">
+<li>jdk6&#x4F1A;&#x76F4;&#x63A5;&#x751F;&#x6210;&#x4E00;&#x4E2A;&#x65B0;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#x5BF9;&#x8C61;&#x5230;&#x5E38;&#x91CF;&#x6C60;&#x4E2D;&#xFF0C;&#x5E76;&#x8FD4;&#x56DE;&#x8BE5;&#x5BF9;&#x8C61;&#x5F15;&#x7528;</li>
+<li>jdk7&#x56E0;&#x4E3A;&#x5E38;&#x91CF;&#x6C60;&#x4E0D;&#x5728;Perm&#x533A;&#xFF0C;&#x4E0D;&#x9700;&#x8981;&#x91CD;&#x65B0;&#x751F;&#x6210;&#x5BF9;&#x8C61;&#xFF0C;&#x800C;&#x662F;&#x76F4;&#x63A5;&#x5B58;&#x50A8;&#x5806;&#x4E2D;&#x7684;&#x5F15;&#x7528;</li>
 </ol>
-<p>关于stirng.intern的更深入分析可看<br><a href="http://tech.meituan.com/in_depth_understanding_string_intern.html" target="_blank" rel="external">深入解析String#intern</a><br>以及<br>详细可看白衣大神的<a href="http://calvin1978.blogcn.com/articles/string-intern.html" target="_blank" rel="external">String.intern() 祛魅</a></p>
-<h1 id="substring()">substring()</h1><p>jdk6与jdk7中的实现方式不一样。</p>
-<p>jdk6调用substring()虽然会创建一个新的字符串对象，但里面的char[] 仍然指向原来的那个，<br>因此对一个很长很长的字符串进行截取后，可能导致内存泄露。</p>
-<p>jdk7中substring()方法在堆中真正的创建了一个新的数组,原字符数组没有被引用后就被GC回收了.因此避免了上述问题.</p>
-<p>如有纰漏，敬请指出~</p>
-<p>参考：<br><a href="http://java-performance.info/string-intern-in-java-6-7-8/" target="_blank" rel="external">String.intern in Java 6, 7 and 8 – string pooling</a><br><a href="http://www.importnew.com/7418.html" target="_blank" rel="external">JDK6和JDK7中的substring()方法</a></p>
+<p>&#x5173;&#x4E8E;stirng.intern&#x7684;&#x66F4;&#x6DF1;&#x5165;&#x5206;&#x6790;&#x53EF;&#x770B;<br><a href="http://tech.meituan.com/in_depth_understanding_string_intern.html" target="_blank" rel="external">&#x6DF1;&#x5165;&#x89E3;&#x6790;String#intern</a><br>&#x4EE5;&#x53CA;<br>&#x8BE6;&#x7EC6;&#x53EF;&#x770B;&#x767D;&#x8863;&#x5927;&#x795E;&#x7684;<a href="http://calvin1978.blogcn.com/articles/string-intern.html" target="_blank" rel="external">String.intern() &#x795B;&#x9B45;</a></p>
+<h1 id="substring"><a href="#substring" class="headerlink" title="substring()"></a>substring()</h1><p>jdk6&#x4E0E;jdk7&#x4E2D;&#x7684;&#x5B9E;&#x73B0;&#x65B9;&#x5F0F;&#x4E0D;&#x4E00;&#x6837;&#x3002;</p>
+<p>jdk6&#x8C03;&#x7528;substring()&#x867D;&#x7136;&#x4F1A;&#x521B;&#x5EFA;&#x4E00;&#x4E2A;&#x65B0;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#x5BF9;&#x8C61;&#xFF0C;&#x4F46;&#x91CC;&#x9762;&#x7684;char[] &#x4ECD;&#x7136;&#x6307;&#x5411;&#x539F;&#x6765;&#x7684;&#x90A3;&#x4E2A;&#xFF0C;<br>&#x56E0;&#x6B64;&#x5BF9;&#x4E00;&#x4E2A;&#x5F88;&#x957F;&#x5F88;&#x957F;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#x8FDB;&#x884C;&#x622A;&#x53D6;&#x540E;&#xFF0C;&#x53EF;&#x80FD;&#x5BFC;&#x81F4;&#x5185;&#x5B58;&#x6CC4;&#x9732;&#x3002;</p>
+<p>jdk7&#x4E2D;substring()&#x65B9;&#x6CD5;&#x5728;&#x5806;&#x4E2D;&#x771F;&#x6B63;&#x7684;&#x521B;&#x5EFA;&#x4E86;&#x4E00;&#x4E2A;&#x65B0;&#x7684;&#x6570;&#x7EC4;,&#x539F;&#x5B57;&#x7B26;&#x6570;&#x7EC4;&#x6CA1;&#x6709;&#x88AB;&#x5F15;&#x7528;&#x540E;&#x5C31;&#x88AB;GC&#x56DE;&#x6536;&#x4E86;.&#x56E0;&#x6B64;&#x907F;&#x514D;&#x4E86;&#x4E0A;&#x8FF0;&#x95EE;&#x9898;.</p>
+<p>&#x5982;&#x6709;&#x7EB0;&#x6F0F;&#xFF0C;&#x656C;&#x8BF7;&#x6307;&#x51FA;~</p>
+<p>&#x53C2;&#x8003;&#xFF1A;<br><a href="http://java-performance.info/string-intern-in-java-6-7-8/" target="_blank" rel="external">String.intern in Java 6, 7 and 8 &#x2013; string pooling</a><br><a href="http://www.importnew.com/7418.html" target="_blank" rel="external">JDK6&#x548C;JDK7&#x4E2D;&#x7684;substring()&#x65B9;&#x6CD5;</a></p>
 
-      
-    </div>
+                        
+                    </div>
 
-    <div>
-      
+                    
+                    
+                    
+
+                    <div class="description post-description">
+    <span class="post-description-item">
+        <time datetime="2016-12-01T13:15:10.000Z" itemprop="datePublished">2016-12-01</time>
+
+    </span>
+    <span class="post-description-item">
         
 
-      
-    </div>
+    <span>
+        <i class="tags icon"></i>
+    </span>
 
-    <div>
-      
-        
-
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/Core-Java/" rel="tag"># Core Java</a>
-          
-        </div>
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2016/11/22/Java里的各种初始化/" rel="next" title="Java基础：初始化">
-                <i class="fa fa-chevron-left"></i> Java基础：初始化
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/12/17/Redis实现原理之对象与编码/" rel="prev" title="Redis实现原理之对象与编码">
-                Redis实现原理之对象与编码 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </article>
-
-
-
-    <div class="post-spread">
-      
-        <div class="ds-share flat" data-thread-key="2016/12/01/Java里的String/"
-     data-title="Java基础：String使用"
-     data-content=""
-     data-url="http://zclau.com/2016/12/01/Java里的String/">
-  <div class="ds-share-inline">
-    <ul  class="ds-share-icons-16">
-
-      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
-      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
-      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
-      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
-      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
-
-    </ul>
-    <div class="ds-share-icons-more">
-    </div>
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-
-          </div>
-          
-
-  <p>热评文章</p>
-  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
-
-
-          
-  <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/12/01/Java里的String/"
-           data-title="Java基础：String使用" data-url="http://zclau.com/2016/12/01/Java里的String/">
-      </div>
+    <span class="ui tiny label">
+        <a href="/tags/Core-Java/">Core Java</a>
+    </span>
+
     
-  </div>
 
+    </span>
+</div>
 
-        </div>
-        
-          
-  
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
-  </div>
+                </div>
+                
+                <div id="pagination" class="nav-web ui text container pagination">
 
-  <aside id="sidebar" class="sidebar">
-    <div class="sidebar-inner">
+    <div class="ui stackable two column divided grid container">
+        <div class="row">
+            <div class="column nav-left">
+                
 
-      
+                <a href="/2016/12/17/Redis实现原理之对象与编码/" class="ui tiny button">
 
-      
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
+                    <i class="angle left icon"></i>
+                    
+                    Redis实现原理之对象与编码
+                    
 
-      <section class="site-overview sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-          <img class="site-author-image" itemprop="image"
-               src="/images/avatar.png"
-               alt="zclau" />
-          <p class="site-author-name" itemprop="name">zclau</p>
-          <p class="site-description motion-element" itemprop="description">Just Do IT</p>
-        </div>
-        <nav class="site-state motion-element">
-          <div class="site-state-item site-state-posts">
-            <a href="/archives">
-              <span class="site-state-item-count">13</span>
-              <span class="site-state-item-name">日志</span>
-            </a>
-          </div>
-
-          
-            <div class="site-state-item site-state-categories">
-              <a href="/categories">
-                <span class="site-state-item-count">7</span>
-                <span class="site-state-item-name">分类</span>
-              </a>
-            </div>
-          
-
-          
-            <div class="site-state-item site-state-tags">
-              
-                <span class="site-state-item-count">11</span>
-                <span class="site-state-item-name">标签</span>
-              
-            </div>
-          
-
-        </nav>
-
-        
-          <div class="feed-link motion-element">
-            <a href="/atom.xml" rel="alternate">
-              <i class="fa fa-rss"></i>
-              RSS
-            </a>
-          </div>
-        
-
-        <div class="links-of-author motion-element">
-          
-            
-              <span class="links-of-author-item">
-                <a href="https://github.com/cleverutd" target="_blank" title="GitHub">
-                  
-                    <i class="fa fa-fw fa-github"></i>
-                  
-                  GitHub
                 </a>
-              </span>
-            
-              <span class="links-of-author-item">
-                <a href="http://weibo.com/515074234" target="_blank" title="Weibo">
-                  
-                    <i class="fa fa-fw fa-weibo"></i>
-                  
-                  Weibo
-                </a>
-              </span>
-            
-          
+
+                
+            </div>
+            <div class="column nav-right">
+                
+
+                <a href="/2016/11/22/Java里的各种初始化/" class="ui tiny button">
+                    
+                    Java基础：初始化
+                    
+                    <i class="angle right icon"></i></a>
+                
+            </div>
         </div>
-
-        
-        
-
-        
-        
-
-        
-
-
-      </section>
-
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#字符串创建"><span class="nav-number">1.</span> <span class="nav-text">字符串创建</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#不可变"><span class="nav-number">2.</span> <span class="nav-text">不可变</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#字符串‘+’操作"><span class="nav-number">3.</span> <span class="nav-text">字符串‘+’操作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#字符串常量池"><span class="nav-number">4.</span> <span class="nav-text">字符串常量池</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#String-intern"><span class="nav-number">5.</span> <span class="nav-text">String.intern</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#substring()"><span class="nav-number">6.</span> <span class="nav-text">substring()</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
-      
-
     </div>
-  </aside>
 
-
-        
-      </div>
-    </main>
-
-    <footer id="footer" class="footer">
-      <div class="footer-inner">
-        <div class="copyright" >
-  
-  &copy;  2015 - 
-  <span itemprop="copyrightYear">2017</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">zclau</span>
 </div>
+                
+            </div>
 
+            
+            <div class="three wide computer three wide tablet column">
 
-<div class="powered-by">
-  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
-</div>
+                <div class="ui sticky article-toc" id="article-toc">
+                    <!-- toc -->
+                    <ol class="ui ordered list"><li><a href="#字符串创建"><span>字符串创建</span></a></li><li><a href="#不可变"><span>不可变</span></a></li><li><a href="#字符串‘-’操作"><span>字符串‘+’操作</span></a></li><li><a href="#字符串常量池"><span>字符串常量池</span></a></li><li><a href="#String-intern"><span>String.intern</span></a></li><li><a href="#substring"><span>substring()</span></a></li></ol>
+                </div>
 
-<div class="theme-info">
-  主题 -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT.Pisces
-  </a>
-</div>
+            </div>
+            
 
-
-        
-
-<div class="busuanzi-count">
-
-  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-  
-    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
-  
-
-  
-    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
-  
-  
-</div>
-
-
-
-        
-      </div>
-    </footer>
-
-    <div class="back-to-top">
-      <i class="fa fa-arrow-up"></i>
+        </div>
     </div>
-  </div>
+</div>
 
-  
 
+<!-- duoshuo start -->
+<div class="ds-thread" data-thread-key="2016/12/01/Java里的String/" data-title="Java基础：String使用 | 刘梓" data-url="http://zclau.com/2016/12/01/Java里的String/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
-  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
-    window.Promise = null;
-  }
-</script>
-
-
-
-
-
-
-
-
-
-  
-
-
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/jquery/2.1.3/jquery.min.js"></script>
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/fastclick/1.0.6/fastclick.min.js"></script>
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/jquery.lazyload/1.9.3/jquery.lazyload.min.js"></script>
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/velocity/1.2.3/velocity.min.js"></script>
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/velocity/1.2.3/velocity.ui.min.js"></script>
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.pack.js"></script>
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
-
-  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
-
-
-
-  
-  
-
-
-  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
-
-  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
-
-
-
-  
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
-
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
-
-
-
-  
-
-  
-    
-  
-
-  <script type="text/javascript">
     var duoshuoQuery = {short_name:"zclau"};
     (function() {
-      var ds = document.createElement('script');
-      ds.type = 'text/javascript';ds.async = true;
-      ds.id = 'duoshuo-script';
-      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-      ds.charset = 'UTF-8';
-      (document.getElementsByTagName('head')[0]
-      || document.getElementsByTagName('body')[0]).appendChild(ds);
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+        || document.getElementsByTagName('body')[0]).appendChild(ds);
     })();
-  </script>
+</script>
+<!-- duoshuo end -->
 
-  
-    
-    
-    <script src="//cdn.jsdelivr.net/ua-parser.js/0.7.10/ua-parser.min.js"></script>
-    <script src="/js/src/hook-duoshuo.js"></script>
-  
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+        <div class="ui vertical footer segment">
+    <div class="ui center aligned container">
+        <div class="ui inverted section divider"></div>
+        &copy; 2017 <a href="/">zclau</a>,
+        Powered by <a href="https://github.com/henryhuang/hexo-theme-aloha" target="_blank">Aloha</a> and <a
+                href="http://hexo.io/" target="_blank">Hexo</a>.
+    </div>
+</div>
+
+    </div>
 
 
 
 
+<!-- scripts list from theme config.yml -->
 
+<script src="//cdn.bootcss.com/jquery/3.1.0/jquery.min.js"></script>
 
+<script src="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.js"></script>
 
+<script src="//cdn.bootcss.com/algoliasearch/3.18.1/algoliasearch.min.js"></script>
 
-  
-  
+<script src="//cdn.bootcss.com/algoliasearch-helper-js/2.13.0/algoliasearch.helper.min.js"></script>
 
-  
+<script src="/js/semantic-ui-algolia.js"></script>
 
-  
+<script src="/js/aloha-events.js"></script>
 
-  
-
-  
 
 
 </body>

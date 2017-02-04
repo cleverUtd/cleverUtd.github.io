@@ -1,75 +1,20 @@
-<!doctype html>
 
 
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head prefix="og: http://ogp.me/ns#">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <meta name="description" content="Keep Calm And Coding">
+    <title>一次使用新浪微博api抓取数据的优化 | 刘梓</title>
 
-
-<html class="theme-next pisces" lang="zh-Hans">
-<head>
-  <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-
-
-
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
-
-
-
-  <meta name="google-site-verification" content="WpUzmCbPHTwSIrecMhBOVSvuOi8CiNrJNabR2s1RV8I" />
-
-
-
-
-
-
-
-
-
-
-  
-  
-    
-  
-  <link href="//cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet" type="text/css" />
-
-
-
-
-
-
-
-  
-
-<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
-
-<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
-
-
-  <meta name="keywords" content="多线程," />
-
-
-
-
-
-  <link rel="alternate" href="/atom.xml" title="zclau" type="application/atom+xml" />
-
-
-
-
-  <link rel="shortcut icon" type="image/x-icon" href="/images/avatar.png?v=5.1.0" />
-
-
-
-
-
-
-<meta name="description" content="场景调用新浪微博 根据微博ID返回某条微博的表态列表 接口爬取点赞列表，并将每个点赞用户保存进db
+    <!-- Open Graph -->
+    <meta name="description" content="场景调用新浪微博 根据微博ID返回某条微博的表态列表 接口爬取点赞列表，并将每个点赞用户保存进db
 api文档">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一次使用新浪微博api抓取数据的优化">
 <meta property="og:url" content="http://zclau.com/2016/01/05/一次使用新浪微博api抓取数据的优化/index.html">
-<meta property="og:site_name" content="zclau">
+<meta property="og:site_name" content="刘梓">
 <meta property="og:description" content="场景调用新浪微博 根据微博ID返回某条微博的表态列表 接口爬取点赞列表，并将每个点赞用户保存进db
 api文档">
 <meta property="og:updated_time" content="2016-11-13T12:39:28.000Z">
@@ -78,719 +23,338 @@ api文档">
 <meta name="twitter:description" content="场景调用新浪微博 根据微博ID返回某条微博的表态列表 接口爬取点赞列表，并将每个点赞用户保存进db
 api文档">
 
-
-
-<script type="text/javascript" id="hexo.configurations">
-  var NexT = window.NexT || {};
-  var CONFIG = {
-    root: '/',
-    scheme: 'Pisces',
-    sidebar: {"position":"left","display":"always"},
-    fancybox: true,
-    motion: false,
-    duoshuo: {
-      userId: '3589189',
-      author: 'Uni聰_Lau'
-    },
-    algolia: {
-      applicationID: '',
-      apiKey: '',
-      indexName: '',
-      hits: {"per_page":10},
-      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
-    }
-  };
+    <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Person",
+  "email": "mailto:cleverutd@gmail.com",
+  "image": "undefined",
+  "name": "zclau",
+  "url": "http://zclau.com"
+}
+</script>
+    <script>
+    var algoliaEnabled = false;
+    
 </script>
 
+    
 
+    
+    
+        <link href="https://fonts.gmirror.org/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+    
+    
+    
+        <!-- stylesheets list from config.yml -->
+        
+        <link rel="stylesheet" href="/css/aloha.css">
+        
+        <link rel="stylesheet" href="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.css">
+        
+        <link rel="stylesheet" href="//cdn.bootcss.com/magnific-popup.js/1.1.0/magnific-popup.min.css">
+        
+    
 
-  <link rel="canonical" href="http://zclau.com/2016/01/05/一次使用新浪微博api抓取数据的优化/"/>
-
-
-
-
-
-
-
-  <title> 一次使用新浪微博api抓取数据的优化 | zclau </title>
 </head>
+<body id="body" style="margin-bottom: 0;" class="pushable">
 
-<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+    <div class="ui top fixed menu">
+        <a class="item" id="menu-icon"><i class="sidebar icon"></i></a>
+    </div>
 
-  
+    <div id="menu-sidebar" class="ui left vertical sidebar menu">
+
+    <div id="sidebar-top">
+        <div class="content">
+            <h3>刘梓</h3>
+        </div>
+    </div>
+    <div class="ui container sidebar-card">
+    <div class="ui people shape content">
+        <div class="active side">
+            <div class="ui card">
+                <div class="image">
+                    <img class="ui medium bordered image" src="/images/avatar.jpg">
+                </div>
+                <div class="content">
+                    <a class="header">zclau</a>
+                    
+                </div>
+                <div class="extra content">
+                    <div class="ui list">
+                        
+                        
+                        <div class="item">
+                            <i class="mail icon" style="float: left"></i>
+                            <div class="content">
+                                <a href="mailto:cleverutd@gmail.com">cleverutd@gmail.com</a>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                </div>
+                <div class="extra content">
+                    <div class="ui list">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-  ga('create', 'UA-49937545-1', 'auto');
-  ga('send', 'pageview');
-</script>
+</div>
 
-
-
-
-
-
-
-
-
-  
-  
     
-  
+    
 
-  <div class="container one-collumn sidebar-position-left page-post-detail ">
-    <div class="headband"></div>
+    
 
-    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-meta ">
-  
-
-  <div class="custom-logo-site-title">
-    <a href="/"  class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <span class="site-title">zclau</span>
-      <span class="logo-line-after"><i></i></span>
+    
+    <a href="/index.html" class="item" >
+        <i class="home icon"></i>
+        首页
     </a>
-  </div>
-  <p class="site-subtitle">Keep Calm And Coding</p>
+
+    
+    
+
+    
+
+    
+    <a href="/atom.xml" class="item" >
+        <i class="rss icon"></i>
+        RSS
+    </a>
+
+    
+    
+
+    
+
+    
+    <a href="/archives/index.html" class="item" >
+        <i class="archive icon"></i>
+        归档
+    </a>
+
+    
+    
+
+    
+
+    
+    <a href="/booklist/index.html" class="item" >
+        <i class="book icon"></i>
+        书单
+    </a>
+
+    
+
+    
 </div>
 
-<div class="site-nav-toggle">
-  <button>
-    <span class="btn-bar"></span>
-    <span class="btn-bar"></span>
-    <span class="btn-bar"></span>
-  </button>
-</div>
-
-<nav class="site-nav">
-  
-
-  
-    <ul id="menu" class="menu">
-      
-        
-        <li class="menu-item menu-item-home">
-          <a href="/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
-            
-            首页
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-categories">
-          <a href="/categories" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
-            
-            分类
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-archives">
-          <a href="/archives" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
-            
-            归档
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-booklist">
-          <a href="/booklist" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-book"></i> <br />
-            
-            书单
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-commonweal">
-          <a href="/404.html" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
-            
-            公益404
-          </a>
-        </li>
-      
-
-      
-    </ul>
-  
-
-  
-</nav>
-
-
-
- </div>
-    </header>
-
-    <main id="main" class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          <div id="content" class="content">
-            
-
-  <div id="posts" class="posts-expand">
-    
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://zclau.com/2016/01/05/一次使用新浪微博api抓取数据的优化/">
-
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="zclau">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/avatar.png">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="zclau">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="zclau" src="">
-    </span>
-  </span>
+    <div class="pusher body-content">
+        <div id="content" class="ui main container">
+            <!--<div class="ui one column grid">-->
+                <!--<div class="column">-->
+                    <!--<div class="ui main container">-->
+                        <div id="post-一次使用新浪微博api抓取数据的优化" class="ui main container article-type-post">
 
     
-      <header class="post-header">
 
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                一次使用新浪微博api抓取数据的优化
-              
-            
-          </h1>
-        
+    <div class="ui divided grid">
 
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time title="Дата создания записи" itemprop="dateCreated datePublished" datetime="2016-01-05T17:23:25+08:00">
-              2016-01-05
-            </time>
+        <div class="two column row" id="article-content">
 
-            
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/代码优化/" itemprop="url" rel="index">
-                    <span itemprop="name">代码优化</span>
-                  </a>
-                </span>
-
-                
+            <div class="thirteen wide computer thirteen wide tablet sixteen wide mobile column">
                 
 
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/01/05/一次使用新浪微博api抓取数据的优化/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/05/一次使用新浪微博api抓取数据的优化/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-              &nbsp; | &nbsp;
-              <span class="page-pv"><i class="fa fa-file-o"></i>
-              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
-              </span>
-          
-          
-          
-
-        </div>
-      </header>
+<h1 class="ui header">
     
+    一次使用新浪微博api抓取数据的优化
+</h1>
 
 
-    <div class="post-body" itemprop="articleBody">
 
-      
-      
+                <div class="article-inner">
 
-      
-        <h1 id="场景">场景</h1><p>调用新浪微博 根据微博ID返回某条微博的表态列表 接口爬取点赞列表，并将每个点赞用户保存进db</p>
-<p><a href="http://open.weibo.com/wiki/2/attitudes/show" target="_blank" rel="external">api文档</a></p>
+                    <div class="article-entry" itemprop="articleBody">
+                        
+                        <h1 id="&#x573A;&#x666F;"><a href="#&#x573A;&#x666F;" class="headerlink" title="&#x573A;&#x666F;"></a>&#x573A;&#x666F;</h1><p>&#x8C03;&#x7528;&#x65B0;&#x6D6A;&#x5FAE;&#x535A; &#x6839;&#x636E;&#x5FAE;&#x535A;ID&#x8FD4;&#x56DE;&#x67D0;&#x6761;&#x5FAE;&#x535A;&#x7684;&#x8868;&#x6001;&#x5217;&#x8868; &#x63A5;&#x53E3;&#x722C;&#x53D6;&#x70B9;&#x8D5E;&#x5217;&#x8868;&#xFF0C;&#x5E76;&#x5C06;&#x6BCF;&#x4E2A;&#x70B9;&#x8D5E;&#x7528;&#x6237;&#x4FDD;&#x5B58;&#x8FDB;db</p>
+<p><a href="http://open.weibo.com/wiki/2/attitudes/show" target="_blank" rel="external">api&#x6587;&#x6863;</a></p>
 <a id="more"></a>
-<h1 id="实现流程">实现流程</h1><ol>
-<li>爬取点赞列表</li>
-<li>爬取回来的json数据，解析出其中的attitudes数组，如果数组长度大于0，跳去步骤3；否则跳去步骤6</li>
-<li>遍历数组，获取对应的user字段(即点赞用户的信息)，构造成User的pojo，并添加进一个User的list里</li>
-<li>批量保存 user list </li>
-<li>返回步骤1，爬取下一页数据</li>
-<li>退出方法</li>
+<h1 id="&#x5B9E;&#x73B0;&#x6D41;&#x7A0B;"><a href="#&#x5B9E;&#x73B0;&#x6D41;&#x7A0B;" class="headerlink" title="&#x5B9E;&#x73B0;&#x6D41;&#x7A0B;"></a>&#x5B9E;&#x73B0;&#x6D41;&#x7A0B;</h1><ol class="ui list">
+<li>&#x722C;&#x53D6;&#x70B9;&#x8D5E;&#x5217;&#x8868;</li>
+<li>&#x722C;&#x53D6;&#x56DE;&#x6765;&#x7684;json&#x6570;&#x636E;&#xFF0C;&#x89E3;&#x6790;&#x51FA;&#x5176;&#x4E2D;&#x7684;attitudes&#x6570;&#x7EC4;&#xFF0C;&#x5982;&#x679C;&#x6570;&#x7EC4;&#x957F;&#x5EA6;&#x5927;&#x4E8E;0&#xFF0C;&#x8DF3;&#x53BB;&#x6B65;&#x9AA4;3&#xFF1B;&#x5426;&#x5219;&#x8DF3;&#x53BB;&#x6B65;&#x9AA4;6</li>
+<li>&#x904D;&#x5386;&#x6570;&#x7EC4;&#xFF0C;&#x83B7;&#x53D6;&#x5BF9;&#x5E94;&#x7684;user&#x5B57;&#x6BB5;(&#x5373;&#x70B9;&#x8D5E;&#x7528;&#x6237;&#x7684;&#x4FE1;&#x606F;)&#xFF0C;&#x6784;&#x9020;&#x6210;User&#x7684;pojo&#xFF0C;&#x5E76;&#x6DFB;&#x52A0;&#x8FDB;&#x4E00;&#x4E2A;User&#x7684;list&#x91CC;</li>
+<li>&#x6279;&#x91CF;&#x4FDD;&#x5B58; user list </li>
+<li>&#x8FD4;&#x56DE;&#x6B65;&#x9AA4;1&#xFF0C;&#x722C;&#x53D6;&#x4E0B;&#x4E00;&#x9875;&#x6570;&#x636E;</li>
+<li>&#x9000;&#x51FA;&#x65B9;&#x6CD5;</li>
 </ol>
-<h1 id="通用版">通用版</h1><p>核心代码： </p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">fetchAttitudeList</span><span class="params">(String id, String accessToken, <span class="keyword">int</span> page, <span class="keyword">int</span> count)</span> </span>&#123;</span><br><span class="line">    Attitudes attitudes = <span class="keyword">new</span> Attitudes();</span><br><span class="line">    JSONObject jsonObject;</span><br><span class="line">    JSONObject attitudeJsonObject;</span><br><span class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 调用api获取点赞列表</span></span><br><span class="line">            jsonObject = attitudes.getAttitudes(accessToken, id, page, count);</span><br><span class="line">            JSONArray jsonArray = jsonObject.getJSONArray(<span class="string">"attitudes"</span>);</span><br><span class="line">            <span class="keyword">if</span> (jsonArray.length() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                List&lt;User&gt; users = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">                List&lt;AttitudesMapping&gt; attitudesMappings = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; jsonArray.length(); i++) &#123;</span><br><span class="line">                    attitudeJsonObject = jsonArray.getJSONObject(i);</span><br><span class="line">                    <span class="keyword">if</span> (attitudeJsonObject.has(<span class="string">"user"</span>)) &#123;</span><br><span class="line">                        <span class="comment">// 构造 wbUser</span></span><br><span class="line">                        User user = <span class="keyword">new</span> User(attitudeJsonObject.getJSONObject(<span class="string">"user"</span>));</span><br><span class="line">                        users.add(user);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                dataService.saveWbUsers(users);<span class="comment">//批量保存进db</span></span><br><span class="line">                users = <span class="keyword">null</span>;</span><br><span class="line">                attitudesMappings = <span class="keyword">null</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            page++;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>第一版的代码是最容易理解并且实现起来最简单，但是并不通用。因为所有事情都是在一条线程完成，这种执行的步骤是线性且阻塞的。</p>
-<p>如果在数据量较少的情况下，使用这种做法倒没有什么问题。但是我这次要爬的这条<a href="http://weibo.com/2082990561/D8SBU9K2z" target="_blank" rel="external">微博</a>，有11w+的赞。如果还是用这种做法的话，问题就显现出来了：<strong>太慢，效率太低了</strong>。 总共爬了560多页，全部完成后大概花了一个半小时，实在接受不了。</p>
-<p>必须改善优化一下，于是就决定引入线程去处理，尽可能使CPU都得到充分的利用。于是就有了第二个版本的代码</p>
-<h1 id="线程版">线程版</h1><p>对于线程的使用，交给jdk的Executor框架来控制处理。</p>
-<p>这里的线程版本，开始想了两种方案</p>
-<ol>
-<li>上面实现流程的 步骤1至步骤4都放在处理线程中。这样主线程只负责页数的控制，然后处理线程负责爬取主线程提供过来的某一页的数据并保存</li>
-<li>步骤1,2 在主线程， 步骤3,4在处理线程。这样就是主线程负责爬取每一页的数据，然后数据解析以及保存交给处理线程。</li>
+<h1 id="&#x901A;&#x7528;&#x7248;"><a href="#&#x901A;&#x7528;&#x7248;" class="headerlink" title="&#x901A;&#x7528;&#x7248;"></a>&#x901A;&#x7528;&#x7248;</h1><p>&#x6838;&#x5FC3;&#x4EE3;&#x7801;&#xFF1A; </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">fetchAttitudeList</span><span class="params">(String id, String accessToken, <span class="keyword">int</span> page, <span class="keyword">int</span> count)</span> </span>{</div><div class="line">    Attitudes attitudes = <span class="keyword">new</span> Attitudes();</div><div class="line">    JSONObject jsonObject;</div><div class="line">    JSONObject attitudeJsonObject;</div><div class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>) {</div><div class="line">        <span class="keyword">try</span> {</div><div class="line">            <span class="comment">// &#x8C03;&#x7528;api&#x83B7;&#x53D6;&#x70B9;&#x8D5E;&#x5217;&#x8868;</span></div><div class="line">            jsonObject = attitudes.getAttitudes(accessToken, id, page, count);</div><div class="line">            JSONArray jsonArray = jsonObject.getJSONArray(<span class="string">&quot;attitudes&quot;</span>);</div><div class="line">            <span class="keyword">if</span> (jsonArray.length() &gt; <span class="number">0</span>) {</div><div class="line">                List&lt;User&gt; users = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">                List&lt;AttitudesMapping&gt; attitudesMappings = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; jsonArray.length(); i++) {</div><div class="line">                    attitudeJsonObject = jsonArray.getJSONObject(i);</div><div class="line">                    <span class="keyword">if</span> (attitudeJsonObject.has(<span class="string">&quot;user&quot;</span>)) {</div><div class="line">                        <span class="comment">// &#x6784;&#x9020; wbUser</span></div><div class="line">                        User user = <span class="keyword">new</span> User(attitudeJsonObject.getJSONObject(<span class="string">&quot;user&quot;</span>));</div><div class="line">                        users.add(user);</div><div class="line">                    }</div><div class="line">                }</div><div class="line">                dataService.saveWbUsers(users);<span class="comment">//&#x6279;&#x91CF;&#x4FDD;&#x5B58;&#x8FDB;db</span></div><div class="line">                users = <span class="keyword">null</span>;</div><div class="line">                attitudesMappings = <span class="keyword">null</span>;</div><div class="line">            } <span class="keyword">else</span> {</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            }</div><div class="line">            page++;</div><div class="line">        } <span class="keyword">catch</span> (Exception e) {</div><div class="line">            e.printStackTrace();</div><div class="line">        } </div><div class="line">    } </div><div class="line">}</div></pre></td></tr></table></figure>
+<p>&#x7B2C;&#x4E00;&#x7248;&#x7684;&#x4EE3;&#x7801;&#x662F;&#x6700;&#x5BB9;&#x6613;&#x7406;&#x89E3;&#x5E76;&#x4E14;&#x5B9E;&#x73B0;&#x8D77;&#x6765;&#x6700;&#x7B80;&#x5355;&#xFF0C;&#x4F46;&#x662F;&#x5E76;&#x4E0D;&#x901A;&#x7528;&#x3002;&#x56E0;&#x4E3A;&#x6240;&#x6709;&#x4E8B;&#x60C5;&#x90FD;&#x662F;&#x5728;&#x4E00;&#x6761;&#x7EBF;&#x7A0B;&#x5B8C;&#x6210;&#xFF0C;&#x8FD9;&#x79CD;&#x6267;&#x884C;&#x7684;&#x6B65;&#x9AA4;&#x662F;&#x7EBF;&#x6027;&#x4E14;&#x963B;&#x585E;&#x7684;&#x3002;</p>
+<p>&#x5982;&#x679C;&#x5728;&#x6570;&#x636E;&#x91CF;&#x8F83;&#x5C11;&#x7684;&#x60C5;&#x51B5;&#x4E0B;&#xFF0C;&#x4F7F;&#x7528;&#x8FD9;&#x79CD;&#x505A;&#x6CD5;&#x5012;&#x6CA1;&#x6709;&#x4EC0;&#x4E48;&#x95EE;&#x9898;&#x3002;&#x4F46;&#x662F;&#x6211;&#x8FD9;&#x6B21;&#x8981;&#x722C;&#x7684;&#x8FD9;&#x6761;<a href="http://weibo.com/2082990561/D8SBU9K2z" target="_blank" rel="external">&#x5FAE;&#x535A;</a>&#xFF0C;&#x6709;11w+&#x7684;&#x8D5E;&#x3002;&#x5982;&#x679C;&#x8FD8;&#x662F;&#x7528;&#x8FD9;&#x79CD;&#x505A;&#x6CD5;&#x7684;&#x8BDD;&#xFF0C;&#x95EE;&#x9898;&#x5C31;&#x663E;&#x73B0;&#x51FA;&#x6765;&#x4E86;&#xFF1A;<strong>&#x592A;&#x6162;&#xFF0C;&#x6548;&#x7387;&#x592A;&#x4F4E;&#x4E86;</strong>&#x3002; &#x603B;&#x5171;&#x722C;&#x4E86;560&#x591A;&#x9875;&#xFF0C;&#x5168;&#x90E8;&#x5B8C;&#x6210;&#x540E;&#x5927;&#x6982;&#x82B1;&#x4E86;&#x4E00;&#x4E2A;&#x534A;&#x5C0F;&#x65F6;&#xFF0C;&#x5B9E;&#x5728;&#x63A5;&#x53D7;&#x4E0D;&#x4E86;&#x3002;</p>
+<p>&#x5FC5;&#x987B;&#x6539;&#x5584;&#x4F18;&#x5316;&#x4E00;&#x4E0B;&#xFF0C;&#x4E8E;&#x662F;&#x5C31;&#x51B3;&#x5B9A;&#x5F15;&#x5165;&#x7EBF;&#x7A0B;&#x53BB;&#x5904;&#x7406;&#xFF0C;&#x5C3D;&#x53EF;&#x80FD;&#x4F7F;CPU&#x90FD;&#x5F97;&#x5230;&#x5145;&#x5206;&#x7684;&#x5229;&#x7528;&#x3002;&#x4E8E;&#x662F;&#x5C31;&#x6709;&#x4E86;&#x7B2C;&#x4E8C;&#x4E2A;&#x7248;&#x672C;&#x7684;&#x4EE3;&#x7801;</p>
+<h1 id="&#x7EBF;&#x7A0B;&#x7248;"><a href="#&#x7EBF;&#x7A0B;&#x7248;" class="headerlink" title="&#x7EBF;&#x7A0B;&#x7248;"></a>&#x7EBF;&#x7A0B;&#x7248;</h1><p>&#x5BF9;&#x4E8E;&#x7EBF;&#x7A0B;&#x7684;&#x4F7F;&#x7528;&#xFF0C;&#x4EA4;&#x7ED9;jdk&#x7684;Executor&#x6846;&#x67B6;&#x6765;&#x63A7;&#x5236;&#x5904;&#x7406;&#x3002;</p>
+<p>&#x8FD9;&#x91CC;&#x7684;&#x7EBF;&#x7A0B;&#x7248;&#x672C;&#xFF0C;&#x5F00;&#x59CB;&#x60F3;&#x4E86;&#x4E24;&#x79CD;&#x65B9;&#x6848;</p>
+<ol class="ui list">
+<li>&#x4E0A;&#x9762;&#x5B9E;&#x73B0;&#x6D41;&#x7A0B;&#x7684; &#x6B65;&#x9AA4;1&#x81F3;&#x6B65;&#x9AA4;4&#x90FD;&#x653E;&#x5728;&#x5904;&#x7406;&#x7EBF;&#x7A0B;&#x4E2D;&#x3002;&#x8FD9;&#x6837;&#x4E3B;&#x7EBF;&#x7A0B;&#x53EA;&#x8D1F;&#x8D23;&#x9875;&#x6570;&#x7684;&#x63A7;&#x5236;&#xFF0C;&#x7136;&#x540E;&#x5904;&#x7406;&#x7EBF;&#x7A0B;&#x8D1F;&#x8D23;&#x722C;&#x53D6;&#x4E3B;&#x7EBF;&#x7A0B;&#x63D0;&#x4F9B;&#x8FC7;&#x6765;&#x7684;&#x67D0;&#x4E00;&#x9875;&#x7684;&#x6570;&#x636E;&#x5E76;&#x4FDD;&#x5B58;</li>
+<li>&#x6B65;&#x9AA4;1,2 &#x5728;&#x4E3B;&#x7EBF;&#x7A0B;&#xFF0C; &#x6B65;&#x9AA4;3,4&#x5728;&#x5904;&#x7406;&#x7EBF;&#x7A0B;&#x3002;&#x8FD9;&#x6837;&#x5C31;&#x662F;&#x4E3B;&#x7EBF;&#x7A0B;&#x8D1F;&#x8D23;&#x722C;&#x53D6;&#x6BCF;&#x4E00;&#x9875;&#x7684;&#x6570;&#x636E;&#xFF0C;&#x7136;&#x540E;&#x6570;&#x636E;&#x89E3;&#x6790;&#x4EE5;&#x53CA;&#x4FDD;&#x5B58;&#x4EA4;&#x7ED9;&#x5904;&#x7406;&#x7EBF;&#x7A0B;&#x3002;</li>
 </ol>
-<p>对于方案1，难点在于，主线程不知道数据总共有多少页，因此不知道何时才能结束。这就需要主线程和处理线程之间的通信或者说是合作，才能控制好整个流程。</p>
-<p>相比之下，方法2就不存在这个问题了，处理起来简单一些。所以最后我采取了方法2的做法。</p>
-<p>核心代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">fetchAttitudeListAsynProcess</span><span class="params">(String id, String accessToken, <span class="keyword">int</span> page, <span class="keyword">int</span> count)</span> </span>&#123;</span><br><span class="line">    Attitudes attitudes = <span class="keyword">new</span> Attitudes();</span><br><span class="line">    JSONObject jsonObject;</span><br><span class="line">    <span class="comment">//定义一个有10个线程的线程池</span></span><br><span class="line">    ExecutorService executor = Executors.newFixedThreadPool(<span class="number">10</span>);</span><br><span class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 调用api获取点赞列表</span></span><br><span class="line">            jsonObject = attitudes.getAttitudes(accessToken, id, page, count);</span><br><span class="line">            JSONArray jsonArray = jsonObject.getJSONArray(<span class="string">"attitudes"</span>);</span><br><span class="line">            <span class="keyword">if</span> (jsonArray.length() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="comment">//定义一个runnable</span></span><br><span class="line">                RunnableProcessData runnableProcessData = <span class="keyword">new</span> RunnableProcessData(id, jsonObject, page);</span><br><span class="line">                <span class="comment">//把数据处理的过程交给线程池异步处理</span></span><br><span class="line">                executor.execute(runnableProcessData);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            page++;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (WeiboException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (JSONException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RunnableProcessData</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String id;</span><br><span class="line">    <span class="keyword">private</span> JSONObject jsonObject;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> page;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RunnableProcessData</span><span class="params">(String id, JSONObject jsonObject, <span class="keyword">int</span> page)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">        <span class="keyword">this</span>.jsonObject = jsonObject;</span><br><span class="line">        <span class="keyword">this</span>.page = page;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        JSONArray jsonArray;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            jsonArray = jsonObject.getJSONArray(<span class="string">"attitudes"</span>);</span><br><span class="line">            JSONObject attitudeJsonObject;</span><br><span class="line">            List&lt;User&gt; users = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">            List&lt;AttitudesMapping&gt; attitudesMappings = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; jsonArray.length(); i++) &#123;</span><br><span class="line">                attitudeJsonObject = jsonArray.getJSONObject(i);</span><br><span class="line">                <span class="keyword">if</span> (attitudeJsonObject.has(<span class="string">"user"</span>)) &#123;</span><br><span class="line">                    <span class="comment">// 构造 wbUser</span></span><br><span class="line">                    User user = <span class="keyword">new</span> User(attitudeJsonObject.getJSONObject(<span class="string">"user"</span>));</span><br><span class="line">                    users.add(user);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            dataService.saveWbUsers(users);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (JSONException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (WeiboException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (ParseException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>换成了方案2之后，时间快了好几倍，由于之前没有记录下具体的耗时，之前11w+的数据大概是90mins完成的，现在只需大概20mins左右就搞掂了，快了将近75%。</p>
-<p>再选取一条<a href="http://weibo.com/1563926367/D6ypd9KJw" target="_blank" rel="external">微博</a>测试,结果两种方法的耗时输出分别是：</p>
-<p>方案1： ===&gt; 129803。 方案2： ===&gt; 35306</p>
-<p>快了 <strong>72%</strong>， 用线程的优势体现的淋漓尽致</p>
-<h1 id="后续">后续</h1><p>其实对于上述两种线程池的解决方案，如果要爬取的页数事先已经确定好(例如我只要爬前10页的数据)，这样方案1就不需要和子线程进行通信，只需要在主线程中的循环控制设置好条件  <code>while(page&lt;=10)</code>,然后每次循环体的执行都交给子线程处理即可。</p>
-<p>经过测试两种方案的耗时分别是：</p>
-<p>方案1：===&gt; 3778<br>方案2：===&gt; 12684</p>
-<p>方案1比方案2快了 <strong>70%</strong></p>
-<h1 id="总结">总结</h1><ol>
-<li>对于耗时长且不需要等待有结果返回才能进行下一步的任务，考虑用线程，尽可能利用CPU资源</li>
-<li>对于线程的使用，尽量用jdk的Executor框架，里面提供各种丰富线程池实现可供调用</li>
-<li>以上代码仅仅是示例代码，如果要用在生产上还需要有好多地方细究下去，例如应该使用哪种Executor的具体实现好；线程池大小应该设置成多少才会达到效率最高；executor应该交给spring管理等等</li>
+<p>&#x5BF9;&#x4E8E;&#x65B9;&#x6848;1&#xFF0C;&#x96BE;&#x70B9;&#x5728;&#x4E8E;&#xFF0C;&#x4E3B;&#x7EBF;&#x7A0B;&#x4E0D;&#x77E5;&#x9053;&#x6570;&#x636E;&#x603B;&#x5171;&#x6709;&#x591A;&#x5C11;&#x9875;&#xFF0C;&#x56E0;&#x6B64;&#x4E0D;&#x77E5;&#x9053;&#x4F55;&#x65F6;&#x624D;&#x80FD;&#x7ED3;&#x675F;&#x3002;&#x8FD9;&#x5C31;&#x9700;&#x8981;&#x4E3B;&#x7EBF;&#x7A0B;&#x548C;&#x5904;&#x7406;&#x7EBF;&#x7A0B;&#x4E4B;&#x95F4;&#x7684;&#x901A;&#x4FE1;&#x6216;&#x8005;&#x8BF4;&#x662F;&#x5408;&#x4F5C;&#xFF0C;&#x624D;&#x80FD;&#x63A7;&#x5236;&#x597D;&#x6574;&#x4E2A;&#x6D41;&#x7A0B;&#x3002;</p>
+<p>&#x76F8;&#x6BD4;&#x4E4B;&#x4E0B;&#xFF0C;&#x65B9;&#x6CD5;2&#x5C31;&#x4E0D;&#x5B58;&#x5728;&#x8FD9;&#x4E2A;&#x95EE;&#x9898;&#x4E86;&#xFF0C;&#x5904;&#x7406;&#x8D77;&#x6765;&#x7B80;&#x5355;&#x4E00;&#x4E9B;&#x3002;&#x6240;&#x4EE5;&#x6700;&#x540E;&#x6211;&#x91C7;&#x53D6;&#x4E86;&#x65B9;&#x6CD5;2&#x7684;&#x505A;&#x6CD5;&#x3002;</p>
+<p>&#x6838;&#x5FC3;&#x4EE3;&#x7801;&#xFF1A;</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">fetchAttitudeListAsynProcess</span><span class="params">(String id, String accessToken, <span class="keyword">int</span> page, <span class="keyword">int</span> count)</span> </span>{</div><div class="line">    Attitudes attitudes = <span class="keyword">new</span> Attitudes();</div><div class="line">    JSONObject jsonObject;</div><div class="line">    <span class="comment">//&#x5B9A;&#x4E49;&#x4E00;&#x4E2A;&#x6709;10&#x4E2A;&#x7EBF;&#x7A0B;&#x7684;&#x7EBF;&#x7A0B;&#x6C60;</span></div><div class="line">    ExecutorService executor = Executors.newFixedThreadPool(<span class="number">10</span>);</div><div class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>) {</div><div class="line">        <span class="keyword">try</span> {</div><div class="line">            <span class="comment">// &#x8C03;&#x7528;api&#x83B7;&#x53D6;&#x70B9;&#x8D5E;&#x5217;&#x8868;</span></div><div class="line">            jsonObject = attitudes.getAttitudes(accessToken, id, page, count);</div><div class="line">            JSONArray jsonArray = jsonObject.getJSONArray(<span class="string">&quot;attitudes&quot;</span>);</div><div class="line">            <span class="keyword">if</span> (jsonArray.length() &gt; <span class="number">0</span>) {</div><div class="line">                <span class="comment">//&#x5B9A;&#x4E49;&#x4E00;&#x4E2A;runnable</span></div><div class="line">                RunnableProcessData runnableProcessData = <span class="keyword">new</span> RunnableProcessData(id, jsonObject, page);</div><div class="line">                <span class="comment">//&#x628A;&#x6570;&#x636E;&#x5904;&#x7406;&#x7684;&#x8FC7;&#x7A0B;&#x4EA4;&#x7ED9;&#x7EBF;&#x7A0B;&#x6C60;&#x5F02;&#x6B65;&#x5904;&#x7406;</span></div><div class="line">                executor.execute(runnableProcessData);</div><div class="line">            } <span class="keyword">else</span> {</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            }</div><div class="line">            page++;</div><div class="line">        } <span class="keyword">catch</span> (WeiboException e) {</div><div class="line">            e.printStackTrace();</div><div class="line">        } <span class="keyword">catch</span> (JSONException e) {</div><div class="line">            e.printStackTrace();</div><div class="line">        }</div><div class="line">    }</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RunnableProcessData</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>{</div><div class="line">    <span class="keyword">private</span> String id;</div><div class="line">    <span class="keyword">private</span> JSONObject jsonObject;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> page;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RunnableProcessData</span><span class="params">(String id, JSONObject jsonObject, <span class="keyword">int</span> page)</span></span>{</div><div class="line">        <span class="keyword">this</span>.id = id;</div><div class="line">        <span class="keyword">this</span>.jsonObject = jsonObject;</div><div class="line">        <span class="keyword">this</span>.page = page;</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>{</div><div class="line">        JSONArray jsonArray;</div><div class="line">        <span class="keyword">try</span> {</div><div class="line">            jsonArray = jsonObject.getJSONArray(<span class="string">&quot;attitudes&quot;</span>);</div><div class="line">            JSONObject attitudeJsonObject;</div><div class="line">            List&lt;User&gt; users = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">            List&lt;AttitudesMapping&gt; attitudesMappings = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; jsonArray.length(); i++) {</div><div class="line">                attitudeJsonObject = jsonArray.getJSONObject(i);</div><div class="line">                <span class="keyword">if</span> (attitudeJsonObject.has(<span class="string">&quot;user&quot;</span>)) {</div><div class="line">                    <span class="comment">// &#x6784;&#x9020; wbUser</span></div><div class="line">                    User user = <span class="keyword">new</span> User(attitudeJsonObject.getJSONObject(<span class="string">&quot;user&quot;</span>));</div><div class="line">                    users.add(user);</div><div class="line">                }</div><div class="line">            }</div><div class="line">            dataService.saveWbUsers(users);</div><div class="line">        } <span class="keyword">catch</span> (JSONException e) {</div><div class="line">            e.printStackTrace();</div><div class="line">        } <span class="keyword">catch</span> (WeiboException e) {</div><div class="line">            e.printStackTrace();</div><div class="line">        } <span class="keyword">catch</span> (ParseException e) {</div><div class="line">            e.printStackTrace();</div><div class="line">        }</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
+<p>&#x6362;&#x6210;&#x4E86;&#x65B9;&#x6848;2&#x4E4B;&#x540E;&#xFF0C;&#x65F6;&#x95F4;&#x5FEB;&#x4E86;&#x597D;&#x51E0;&#x500D;&#xFF0C;&#x7531;&#x4E8E;&#x4E4B;&#x524D;&#x6CA1;&#x6709;&#x8BB0;&#x5F55;&#x4E0B;&#x5177;&#x4F53;&#x7684;&#x8017;&#x65F6;&#xFF0C;&#x4E4B;&#x524D;11w+&#x7684;&#x6570;&#x636E;&#x5927;&#x6982;&#x662F;90mins&#x5B8C;&#x6210;&#x7684;&#xFF0C;&#x73B0;&#x5728;&#x53EA;&#x9700;&#x5927;&#x6982;20mins&#x5DE6;&#x53F3;&#x5C31;&#x641E;&#x6382;&#x4E86;&#xFF0C;&#x5FEB;&#x4E86;&#x5C06;&#x8FD1;75%&#x3002;</p>
+<p>&#x518D;&#x9009;&#x53D6;&#x4E00;&#x6761;<a href="http://weibo.com/1563926367/D6ypd9KJw" target="_blank" rel="external">&#x5FAE;&#x535A;</a>&#x6D4B;&#x8BD5;,&#x7ED3;&#x679C;&#x4E24;&#x79CD;&#x65B9;&#x6CD5;&#x7684;&#x8017;&#x65F6;&#x8F93;&#x51FA;&#x5206;&#x522B;&#x662F;&#xFF1A;</p>
+<p>&#x65B9;&#x6848;1&#xFF1A; ===&gt; 129803&#x3002; &#x65B9;&#x6848;2&#xFF1A; ===&gt; 35306</p>
+<p>&#x5FEB;&#x4E86; <strong>72%</strong>&#xFF0C; &#x7528;&#x7EBF;&#x7A0B;&#x7684;&#x4F18;&#x52BF;&#x4F53;&#x73B0;&#x7684;&#x6DCB;&#x6F13;&#x5C3D;&#x81F4;</p>
+<h1 id="&#x540E;&#x7EED;"><a href="#&#x540E;&#x7EED;" class="headerlink" title="&#x540E;&#x7EED;"></a>&#x540E;&#x7EED;</h1><p>&#x5176;&#x5B9E;&#x5BF9;&#x4E8E;&#x4E0A;&#x8FF0;&#x4E24;&#x79CD;&#x7EBF;&#x7A0B;&#x6C60;&#x7684;&#x89E3;&#x51B3;&#x65B9;&#x6848;&#xFF0C;&#x5982;&#x679C;&#x8981;&#x722C;&#x53D6;&#x7684;&#x9875;&#x6570;&#x4E8B;&#x5148;&#x5DF2;&#x7ECF;&#x786E;&#x5B9A;&#x597D;(&#x4F8B;&#x5982;&#x6211;&#x53EA;&#x8981;&#x722C;&#x524D;10&#x9875;&#x7684;&#x6570;&#x636E;)&#xFF0C;&#x8FD9;&#x6837;&#x65B9;&#x6848;1&#x5C31;&#x4E0D;&#x9700;&#x8981;&#x548C;&#x5B50;&#x7EBF;&#x7A0B;&#x8FDB;&#x884C;&#x901A;&#x4FE1;&#xFF0C;&#x53EA;&#x9700;&#x8981;&#x5728;&#x4E3B;&#x7EBF;&#x7A0B;&#x4E2D;&#x7684;&#x5FAA;&#x73AF;&#x63A7;&#x5236;&#x8BBE;&#x7F6E;&#x597D;&#x6761;&#x4EF6;  <code>while(page&lt;=10)</code>,&#x7136;&#x540E;&#x6BCF;&#x6B21;&#x5FAA;&#x73AF;&#x4F53;&#x7684;&#x6267;&#x884C;&#x90FD;&#x4EA4;&#x7ED9;&#x5B50;&#x7EBF;&#x7A0B;&#x5904;&#x7406;&#x5373;&#x53EF;&#x3002;</p>
+<p>&#x7ECF;&#x8FC7;&#x6D4B;&#x8BD5;&#x4E24;&#x79CD;&#x65B9;&#x6848;&#x7684;&#x8017;&#x65F6;&#x5206;&#x522B;&#x662F;&#xFF1A;</p>
+<p>&#x65B9;&#x6848;1&#xFF1A;===&gt; 3778<br>&#x65B9;&#x6848;2&#xFF1A;===&gt; 12684</p>
+<p>&#x65B9;&#x6848;1&#x6BD4;&#x65B9;&#x6848;2&#x5FEB;&#x4E86; <strong>70%</strong></p>
+<h1 id="&#x603B;&#x7ED3;"><a href="#&#x603B;&#x7ED3;" class="headerlink" title="&#x603B;&#x7ED3;"></a>&#x603B;&#x7ED3;</h1><ol class="ui list">
+<li>&#x5BF9;&#x4E8E;&#x8017;&#x65F6;&#x957F;&#x4E14;&#x4E0D;&#x9700;&#x8981;&#x7B49;&#x5F85;&#x6709;&#x7ED3;&#x679C;&#x8FD4;&#x56DE;&#x624D;&#x80FD;&#x8FDB;&#x884C;&#x4E0B;&#x4E00;&#x6B65;&#x7684;&#x4EFB;&#x52A1;&#xFF0C;&#x8003;&#x8651;&#x7528;&#x7EBF;&#x7A0B;&#xFF0C;&#x5C3D;&#x53EF;&#x80FD;&#x5229;&#x7528;CPU&#x8D44;&#x6E90;</li>
+<li>&#x5BF9;&#x4E8E;&#x7EBF;&#x7A0B;&#x7684;&#x4F7F;&#x7528;&#xFF0C;&#x5C3D;&#x91CF;&#x7528;jdk&#x7684;Executor&#x6846;&#x67B6;&#xFF0C;&#x91CC;&#x9762;&#x63D0;&#x4F9B;&#x5404;&#x79CD;&#x4E30;&#x5BCC;&#x7EBF;&#x7A0B;&#x6C60;&#x5B9E;&#x73B0;&#x53EF;&#x4F9B;&#x8C03;&#x7528;</li>
+<li>&#x4EE5;&#x4E0A;&#x4EE3;&#x7801;&#x4EC5;&#x4EC5;&#x662F;&#x793A;&#x4F8B;&#x4EE3;&#x7801;&#xFF0C;&#x5982;&#x679C;&#x8981;&#x7528;&#x5728;&#x751F;&#x4EA7;&#x4E0A;&#x8FD8;&#x9700;&#x8981;&#x6709;&#x597D;&#x591A;&#x5730;&#x65B9;&#x7EC6;&#x7A76;&#x4E0B;&#x53BB;&#xFF0C;&#x4F8B;&#x5982;&#x5E94;&#x8BE5;&#x4F7F;&#x7528;&#x54EA;&#x79CD;Executor&#x7684;&#x5177;&#x4F53;&#x5B9E;&#x73B0;&#x597D;&#xFF1B;&#x7EBF;&#x7A0B;&#x6C60;&#x5927;&#x5C0F;&#x5E94;&#x8BE5;&#x8BBE;&#x7F6E;&#x6210;&#x591A;&#x5C11;&#x624D;&#x4F1A;&#x8FBE;&#x5230;&#x6548;&#x7387;&#x6700;&#x9AD8;&#xFF1B;executor&#x5E94;&#x8BE5;&#x4EA4;&#x7ED9;spring&#x7BA1;&#x7406;&#x7B49;&#x7B49;</li>
 </ol>
-<p>完.</p>
+<p>&#x5B8C;.</p>
 
-      
-    </div>
+                        
+                    </div>
 
-    <div>
-      
+                    
+                    
+                    
+
+                    <div class="description post-description">
+    <span class="post-description-item">
+        <time datetime="2016-01-05T09:23:25.000Z" itemprop="datePublished">2016-01-05</time>
+
+    </span>
+    <span class="post-description-item">
         
 
-      
-    </div>
+    <span>
+        <i class="tags icon"></i>
+    </span>
 
-    <div>
-      
-        
-
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/多线程/" rel="tag"># 多线程</a>
-          
-        </div>
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2015/12/14/hexo部署在vps上/" rel="next" title="hexo部署在vps上">
-                <i class="fa fa-chevron-left"></i> hexo部署在vps上
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/02/02/linux核心命令/" rel="prev" title="linux核心命令">
-                linux核心命令 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </article>
-
-
-
-    <div class="post-spread">
-      
-        <div class="ds-share flat" data-thread-key="2016/01/05/一次使用新浪微博api抓取数据的优化/"
-     data-title="一次使用新浪微博api抓取数据的优化"
-     data-content=""
-     data-url="http://zclau.com/2016/01/05/一次使用新浪微博api抓取数据的优化/">
-  <div class="ds-share-inline">
-    <ul  class="ds-share-icons-16">
-
-      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
-      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
-      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
-      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
-      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
-
-    </ul>
-    <div class="ds-share-icons-more">
-    </div>
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-
-          </div>
-          
-
-  <p>热评文章</p>
-  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
-
-
-          
-  <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/01/05/一次使用新浪微博api抓取数据的优化/"
-           data-title="一次使用新浪微博api抓取数据的优化" data-url="http://zclau.com/2016/01/05/一次使用新浪微博api抓取数据的优化/">
-      </div>
+    <span class="ui tiny label">
+        <a href="/tags/多线程/">多线程</a>
+    </span>
+
     
-  </div>
 
+    </span>
+</div>
 
-        </div>
-        
-          
-  
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
-  </div>
+                </div>
+                
+                <div id="pagination" class="nav-web ui text container pagination">
 
-  <aside id="sidebar" class="sidebar">
-    <div class="sidebar-inner">
+    <div class="ui stackable two column divided grid container">
+        <div class="row">
+            <div class="column nav-left">
+                
 
-      
+                <a href="/2016/02/02/linux核心命令/" class="ui tiny button">
 
-      
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
+                    <i class="angle left icon"></i>
+                    
+                    linux核心命令
+                    
 
-      <section class="site-overview sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-          <img class="site-author-image" itemprop="image"
-               src="/images/avatar.png"
-               alt="zclau" />
-          <p class="site-author-name" itemprop="name">zclau</p>
-          <p class="site-description motion-element" itemprop="description">Just Do IT</p>
-        </div>
-        <nav class="site-state motion-element">
-          <div class="site-state-item site-state-posts">
-            <a href="/archives">
-              <span class="site-state-item-count">13</span>
-              <span class="site-state-item-name">日志</span>
-            </a>
-          </div>
-
-          
-            <div class="site-state-item site-state-categories">
-              <a href="/categories">
-                <span class="site-state-item-count">7</span>
-                <span class="site-state-item-name">分类</span>
-              </a>
-            </div>
-          
-
-          
-            <div class="site-state-item site-state-tags">
-              
-                <span class="site-state-item-count">11</span>
-                <span class="site-state-item-name">标签</span>
-              
-            </div>
-          
-
-        </nav>
-
-        
-          <div class="feed-link motion-element">
-            <a href="/atom.xml" rel="alternate">
-              <i class="fa fa-rss"></i>
-              RSS
-            </a>
-          </div>
-        
-
-        <div class="links-of-author motion-element">
-          
-            
-              <span class="links-of-author-item">
-                <a href="https://github.com/cleverutd" target="_blank" title="GitHub">
-                  
-                    <i class="fa fa-fw fa-github"></i>
-                  
-                  GitHub
                 </a>
-              </span>
-            
-              <span class="links-of-author-item">
-                <a href="http://weibo.com/515074234" target="_blank" title="Weibo">
-                  
-                    <i class="fa fa-fw fa-weibo"></i>
-                  
-                  Weibo
-                </a>
-              </span>
-            
-          
+
+                
+            </div>
+            <div class="column nav-right">
+                
+
+                <a href="/2015/12/14/hexo部署在vps上/" class="ui tiny button">
+                    
+                    hexo部署在vps上
+                    
+                    <i class="angle right icon"></i></a>
+                
+            </div>
         </div>
-
-        
-        
-
-        
-        
-
-        
-
-
-      </section>
-
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#场景"><span class="nav-number">1.</span> <span class="nav-text">场景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实现流程"><span class="nav-number">2.</span> <span class="nav-text">实现流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#通用版"><span class="nav-number">3.</span> <span class="nav-text">通用版</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#线程版"><span class="nav-number">4.</span> <span class="nav-text">线程版</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#后续"><span class="nav-number">5.</span> <span class="nav-text">后续</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
-      
-
     </div>
-  </aside>
 
-
-        
-      </div>
-    </main>
-
-    <footer id="footer" class="footer">
-      <div class="footer-inner">
-        <div class="copyright" >
-  
-  &copy;  2015 - 
-  <span itemprop="copyrightYear">2017</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">zclau</span>
 </div>
+                
+            </div>
 
+            
+            <div class="three wide computer three wide tablet column">
 
-<div class="powered-by">
-  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
-</div>
+                <div class="ui sticky article-toc" id="article-toc">
+                    <!-- toc -->
+                    <ol class="ui ordered list"><li><a href="#场景"><span>场景</span></a></li><li><a href="#实现流程"><span>实现流程</span></a></li><li><a href="#通用版"><span>通用版</span></a></li><li><a href="#线程版"><span>线程版</span></a></li><li><a href="#后续"><span>后续</span></a></li><li><a href="#总结"><span>总结</span></a></li></ol>
+                </div>
 
-<div class="theme-info">
-  主题 -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT.Pisces
-  </a>
-</div>
+            </div>
+            
 
-
-        
-
-<div class="busuanzi-count">
-
-  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-  
-    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
-  
-
-  
-    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
-  
-  
-</div>
-
-
-
-        
-      </div>
-    </footer>
-
-    <div class="back-to-top">
-      <i class="fa fa-arrow-up"></i>
+        </div>
     </div>
-  </div>
+</div>
 
-  
 
+<!-- duoshuo start -->
+<div class="ds-thread" data-thread-key="2016/01/05/一次使用新浪微博api抓取数据的优化/" data-title="一次使用新浪微博api抓取数据的优化 | 刘梓" data-url="http://zclau.com/2016/01/05/一次使用新浪微博api抓取数据的优化/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
-  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
-    window.Promise = null;
-  }
-</script>
-
-
-
-
-
-
-
-
-
-  
-
-
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/jquery/2.1.3/jquery.min.js"></script>
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/fastclick/1.0.6/fastclick.min.js"></script>
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/jquery.lazyload/1.9.3/jquery.lazyload.min.js"></script>
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/velocity/1.2.3/velocity.min.js"></script>
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/velocity/1.2.3/velocity.ui.min.js"></script>
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.pack.js"></script>
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
-
-  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
-
-
-
-  
-  
-
-
-  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
-
-  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
-
-
-
-  
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
-
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
-
-
-
-  
-
-  
-    
-  
-
-  <script type="text/javascript">
     var duoshuoQuery = {short_name:"zclau"};
     (function() {
-      var ds = document.createElement('script');
-      ds.type = 'text/javascript';ds.async = true;
-      ds.id = 'duoshuo-script';
-      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-      ds.charset = 'UTF-8';
-      (document.getElementsByTagName('head')[0]
-      || document.getElementsByTagName('body')[0]).appendChild(ds);
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+        || document.getElementsByTagName('body')[0]).appendChild(ds);
     })();
-  </script>
+</script>
+<!-- duoshuo end -->
 
-  
-    
-    
-    <script src="//cdn.jsdelivr.net/ua-parser.js/0.7.10/ua-parser.min.js"></script>
-    <script src="/js/src/hook-duoshuo.js"></script>
-  
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+        <div class="ui vertical footer segment">
+    <div class="ui center aligned container">
+        <div class="ui inverted section divider"></div>
+        &copy; 2017 <a href="/">zclau</a>,
+        Powered by <a href="https://github.com/henryhuang/hexo-theme-aloha" target="_blank">Aloha</a> and <a
+                href="http://hexo.io/" target="_blank">Hexo</a>.
+    </div>
+</div>
+
+    </div>
 
 
 
 
+<!-- scripts list from theme config.yml -->
 
+<script src="//cdn.bootcss.com/jquery/3.1.0/jquery.min.js"></script>
 
+<script src="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.js"></script>
 
+<script src="//cdn.bootcss.com/algoliasearch/3.18.1/algoliasearch.min.js"></script>
 
-  
-  
+<script src="//cdn.bootcss.com/algoliasearch-helper-js/2.13.0/algoliasearch.helper.min.js"></script>
 
-  
+<script src="/js/semantic-ui-algolia.js"></script>
 
-  
+<script src="/js/aloha-events.js"></script>
 
-  
-
-  
 
 
 </body>

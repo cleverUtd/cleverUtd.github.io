@@ -1,786 +1,341 @@
-<!doctype html>
 
 
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head prefix="og: http://ogp.me/ns#">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <meta name="description" content="Keep Calm And Coding">
+    <title>Java基础：初始化 | 刘梓</title>
 
-
-<html class="theme-next pisces" lang="zh-Hans">
-<head>
-  <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-
-
-
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
-
-
-
-  <meta name="google-site-verification" content="WpUzmCbPHTwSIrecMhBOVSvuOi8CiNrJNabR2s1RV8I" />
-
-
-
-
-
-
-
-
-
-
-  
-  
-    
-  
-  <link href="//cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet" type="text/css" />
-
-
-
-
-
-
-
-  
-
-<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
-
-<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
-
-
-  <meta name="keywords" content="Core Java," />
-
-
-
-
-
-  <link rel="alternate" href="/atom.xml" title="zclau" type="application/atom+xml" />
-
-
-
-
-  <link rel="shortcut icon" type="image/x-icon" href="/images/avatar.png?v=5.1.0" />
-
-
-
-
-
-
-<meta name="description" content="Java里有局部变量、实例变量、静态变量，它们的初始化表现也不尽相同。下面来总结一下。
-局部变量1234void f() &amp;#123;    int i;    i++; // Error -- i not initialized&amp;#125;
-局部变量应该是最简单的情景，在一个方法内定义一个变量，如果不为它赋予初始值，编译器则会报错。所以声明局部变量时必须同时赋予其初始值。
-实例变量每一个实例变量">
+    <!-- Open Graph -->
+    <meta name="description" content="Java&amp;#x91CC;&amp;#x6709;&amp;#x5C40;&amp;#x90E8;&amp;#x53D8;&amp;#x91CF;&amp;#x3001;&amp;#x5B9E;&amp;#x4F8B;&amp;#x53D8;&amp;#x91CF;&amp;#x3001;&amp;#x9759;&amp;#x6001;&amp;#x53D8;&amp;#x91CF;&amp;#xFF0C;&amp;#x5B83;&amp;#x4EEC;&amp;#x7684;&amp;#x521D;&amp;#x59CB;&amp;#x5316;&amp;#x8868;&amp;#x7">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java基础：初始化">
 <meta property="og:url" content="http://zclau.com/2016/11/22/Java里的各种初始化/index.html">
-<meta property="og:site_name" content="zclau">
-<meta property="og:description" content="Java里有局部变量、实例变量、静态变量，它们的初始化表现也不尽相同。下面来总结一下。
-局部变量1234void f() &amp;#123;    int i;    i++; // Error -- i not initialized&amp;#125;
-局部变量应该是最简单的情景，在一个方法内定义一个变量，如果不为它赋予初始值，编译器则会报错。所以声明局部变量时必须同时赋予其初始值。
-实例变量每一个实例变量">
+<meta property="og:site_name" content="刘梓">
+<meta property="og:description" content="Java&amp;#x91CC;&amp;#x6709;&amp;#x5C40;&amp;#x90E8;&amp;#x53D8;&amp;#x91CF;&amp;#x3001;&amp;#x5B9E;&amp;#x4F8B;&amp;#x53D8;&amp;#x91CF;&amp;#x3001;&amp;#x9759;&amp;#x6001;&amp;#x53D8;&amp;#x91CF;&amp;#xFF0C;&amp;#x5B83;&amp;#x4EEC;&amp;#x7684;&amp;#x521D;&amp;#x59CB;&amp;#x5316;&amp;#x8868;&amp;#x7">
 <meta property="og:updated_time" content="2016-12-16T08:57:49.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java基础：初始化">
-<meta name="twitter:description" content="Java里有局部变量、实例变量、静态变量，它们的初始化表现也不尽相同。下面来总结一下。
-局部变量1234void f() &amp;#123;    int i;    i++; // Error -- i not initialized&amp;#125;
-局部变量应该是最简单的情景，在一个方法内定义一个变量，如果不为它赋予初始值，编译器则会报错。所以声明局部变量时必须同时赋予其初始值。
-实例变量每一个实例变量">
+<meta name="twitter:description" content="Java&amp;#x91CC;&amp;#x6709;&amp;#x5C40;&amp;#x90E8;&amp;#x53D8;&amp;#x91CF;&amp;#x3001;&amp;#x5B9E;&amp;#x4F8B;&amp;#x53D8;&amp;#x91CF;&amp;#x3001;&amp;#x9759;&amp;#x6001;&amp;#x53D8;&amp;#x91CF;&amp;#xFF0C;&amp;#x5B83;&amp;#x4EEC;&amp;#x7684;&amp;#x521D;&amp;#x59CB;&amp;#x5316;&amp;#x8868;&amp;#x7">
 
-
-
-<script type="text/javascript" id="hexo.configurations">
-  var NexT = window.NexT || {};
-  var CONFIG = {
-    root: '/',
-    scheme: 'Pisces',
-    sidebar: {"position":"left","display":"always"},
-    fancybox: true,
-    motion: false,
-    duoshuo: {
-      userId: '3589189',
-      author: 'Uni聰_Lau'
-    },
-    algolia: {
-      applicationID: '',
-      apiKey: '',
-      indexName: '',
-      hits: {"per_page":10},
-      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
-    }
-  };
+    <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Person",
+  "email": "mailto:cleverutd@gmail.com",
+  "image": "undefined",
+  "name": "zclau",
+  "url": "http://zclau.com"
+}
+</script>
+    <script>
+    var algoliaEnabled = false;
+    
 </script>
 
+    
 
+    
+    
+        <link href="https://fonts.gmirror.org/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+    
+    
+    
+        <!-- stylesheets list from config.yml -->
+        
+        <link rel="stylesheet" href="/css/aloha.css">
+        
+        <link rel="stylesheet" href="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.css">
+        
+        <link rel="stylesheet" href="//cdn.bootcss.com/magnific-popup.js/1.1.0/magnific-popup.min.css">
+        
+    
 
-  <link rel="canonical" href="http://zclau.com/2016/11/22/Java里的各种初始化/"/>
-
-
-
-
-
-
-
-  <title> Java基础：初始化 | zclau </title>
 </head>
+<body id="body" style="margin-bottom: 0;" class="pushable">
 
-<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+    <div class="ui top fixed menu">
+        <a class="item" id="menu-icon"><i class="sidebar icon"></i></a>
+    </div>
 
-  
+    <div id="menu-sidebar" class="ui left vertical sidebar menu">
 
-
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-  ga('create', 'UA-49937545-1', 'auto');
-  ga('send', 'pageview');
-</script>
-
-
-
-
-
-
-
-
-
-  
-  
-    
-  
-
-  <div class="container one-collumn sidebar-position-left page-post-detail ">
-    <div class="headband"></div>
-
-    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-meta ">
-  
-
-  <div class="custom-logo-site-title">
-    <a href="/"  class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <span class="site-title">zclau</span>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-  </div>
-  <p class="site-subtitle">Keep Calm And Coding</p>
-</div>
-
-<div class="site-nav-toggle">
-  <button>
-    <span class="btn-bar"></span>
-    <span class="btn-bar"></span>
-    <span class="btn-bar"></span>
-  </button>
-</div>
-
-<nav class="site-nav">
-  
-
-  
-    <ul id="menu" class="menu">
-      
-        
-        <li class="menu-item menu-item-home">
-          <a href="/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
-            
-            首页
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-categories">
-          <a href="/categories" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
-            
-            分类
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-archives">
-          <a href="/archives" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
-            
-            归档
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-booklist">
-          <a href="/booklist" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-book"></i> <br />
-            
-            书单
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-commonweal">
-          <a href="/404.html" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
-            
-            公益404
-          </a>
-        </li>
-      
-
-      
-    </ul>
-  
-
-  
-</nav>
-
-
-
- </div>
-    </header>
-
-    <main id="main" class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          <div id="content" class="content">
-            
-
-  <div id="posts" class="posts-expand">
-    
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://zclau.com/2016/11/22/Java里的各种初始化/">
-
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="zclau">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/avatar.png">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="zclau">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="zclau" src="">
-    </span>
-  </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                Java基础：初始化
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time title="Дата создания записи" itemprop="dateCreated datePublished" datetime="2016-11-22T23:45:09+08:00">
-              2016-11-22
-            </time>
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/11/22/Java里的各种初始化/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/22/Java里的各种初始化/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-              &nbsp; | &nbsp;
-              <span class="page-pv"><i class="fa fa-file-o"></i>
-              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
-              </span>
-          
-          
-          
-
+    <div id="sidebar-top">
+        <div class="content">
+            <h3>刘梓</h3>
         </div>
-      </header>
+    </div>
+    <div class="ui container sidebar-card">
+    <div class="ui people shape content">
+        <div class="active side">
+            <div class="ui card">
+                <div class="image">
+                    <img class="ui medium bordered image" src="/images/avatar.jpg">
+                </div>
+                <div class="content">
+                    <a class="header">zclau</a>
+                    
+                </div>
+                <div class="extra content">
+                    <div class="ui list">
+                        
+                        
+                        <div class="item">
+                            <i class="mail icon" style="float: left"></i>
+                            <div class="content">
+                                <a href="mailto:cleverutd@gmail.com">cleverutd@gmail.com</a>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                </div>
+                <div class="extra content">
+                    <div class="ui list">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+    
     
 
+    
 
-    <div class="post-body" itemprop="articleBody">
+    
+    <a href="/index.html" class="item" >
+        <i class="home icon"></i>
+        首页
+    </a>
 
-      
-      
+    
+    
 
-      
-        <p>Java里有局部变量、实例变量、静态变量，它们的初始化表现也不尽相同。下面来总结一下。</p>
-<h1 id="局部变量">局部变量</h1><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    i++; <span class="comment">// Error -- i not initialized</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>局部变量应该是最简单的情景，在一个方法内定义一个变量，如果不为它赋予初始值，编译器则会报错。所以声明局部变量时必须同时赋予其初始值。</p>
-<h1 id="实例变量">实例变量</h1><p>每一个实例变量都会保证有一个初始值。</p>
-<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">InitialiValues</span> &#123;</span><br><span class="line"></span><br><span class="line">    boolean t;</span><br><span class="line">    <span class="keyword">char</span> c;</span><br><span class="line">    <span class="keyword">byte</span> b;</span><br><span class="line">    <span class="keyword">short</span> s;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">long</span> l;</span><br><span class="line">    <span class="keyword">float</span> f;</span><br><span class="line">    <span class="keyword">double</span> d;</span><br><span class="line"></span><br><span class="line">    InitialiValues initialization;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">printInitialValues</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        System.<span class="keyword">out</span>.println(<span class="string">"boolean    "</span> + t);</span><br><span class="line">        System.<span class="keyword">out</span>.println(<span class="string">"char    "</span> + c + <span class="string">""</span>);</span><br><span class="line">        System.<span class="keyword">out</span>.println(<span class="string">"byte    "</span> + b);</span><br><span class="line">        System.<span class="keyword">out</span>.println(<span class="string">"short    "</span> + s);</span><br><span class="line">        System.<span class="keyword">out</span>.println(<span class="string">"int    "</span> + i);</span><br><span class="line">        System.<span class="keyword">out</span>.println(<span class="string">"long    "</span> + l);</span><br><span class="line">        System.<span class="keyword">out</span>.println(<span class="string">"float    "</span> + f);</span><br><span class="line">        System.<span class="keyword">out</span>.println(<span class="string">"double    "</span> + d);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(<span class="params">String[] args</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> InitialiValues().printInitialValues();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* Output */</span></span><br><span class="line"></span><br><span class="line">boolean    <span class="keyword">false</span></span><br><span class="line"><span class="keyword">char</span>     </span><br><span class="line"><span class="keyword">byte</span>    <span class="number">0</span></span><br><span class="line"><span class="keyword">short</span>    <span class="number">0</span></span><br><span class="line"><span class="keyword">int</span>    <span class="number">0</span></span><br><span class="line"><span class="keyword">long</span>    <span class="number">0</span></span><br><span class="line"><span class="keyword">float</span>    <span class="number">0.0</span></span><br><span class="line"><span class="keyword">double</span>    <span class="number">0.0</span></span><br><span class="line">reference    <span class="keyword">null</span></span><br></pre></td></tr></table></figure>
-<p>即使不指定初始值，实例变量会自动拥有一个默认初始值</p>
-<h1 id="构造器初始化">构造器初始化</h1><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> Counter &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Counter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"before: "</span> +  i);</span><br><span class="line">        i = <span class="number">7</span>;</span><br><span class="line">        System.out.println(<span class="string">"after: "</span> + i);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> Counter();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Output:</span></span><br><span class="line">before: <span class="number">0</span></span><br><span class="line">after: <span class="number">7</span></span><br></pre></td></tr></table></figure>
-<p>我们可以利用构造器来进行初始化，但是在构造器进行初始化之前，counter已经自动初始化了一次。</p>
-<h1 id="初始化顺序">初始化顺序</h1><p>在一个类中，成员变量的初始化顺序是由变量在类中定义的顺序决定的，而且总会在类中的任何方法被调用前就已经初始化好了。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> Window &#123;</span><br><span class="line"></span><br><span class="line">    Window(<span class="keyword">int</span> marker) &#123;</span><br><span class="line">        System.out.println(<span class="string">"Window("</span> + marker + <span class="string">")"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> House &#123;</span><br><span class="line"></span><br><span class="line">    Window w1 = <span class="keyword">new</span> Window(<span class="number">1</span>);</span><br><span class="line">    House() &#123;</span><br><span class="line">        System.out.println(<span class="string">"House()"</span>);</span><br><span class="line">        w3 = <span class="keyword">new</span> Window(<span class="number">33</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    Window w2 = <span class="keyword">new</span> Window(<span class="number">2</span>);</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"f()"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    Window w3 = <span class="keyword">new</span> Window(<span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        House h = <span class="keyword">new</span> House();</span><br><span class="line">        h.f();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Output:</span></span><br><span class="line"></span><br><span class="line">Window(<span class="number">1</span>)</span><br><span class="line">Window(<span class="number">2</span>)</span><br><span class="line">Window(<span class="number">3</span>)</span><br><span class="line">House()</span><br><span class="line">Window(<span class="number">33</span>)</span><br><span class="line">f()</span><br></pre></td></tr></table></figure>
-<p>可以看到，虽然Window对象的定义被打散了，但确实是等到所有的Windown变量初始化完成后，才执行构造器。</p>
-<h1 id="继承关系下的初始化顺序">继承关系下的初始化顺序</h1><p>在上面的基础上加上一个子类继承关系后，情况又会怎样？</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> SonHouse extends House&#123;</span><br><span class="line"></span><br><span class="line">    Window sonWindow = <span class="keyword">new</span> Window(<span class="number">4</span>);</span><br><span class="line"></span><br><span class="line">    SonHouse() &#123;</span><br><span class="line">        sonWindow = <span class="keyword">new</span> Window(<span class="number">44</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        House h = <span class="keyword">new</span> SonHouse();</span><br><span class="line">        h.f();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Output:</span></span><br><span class="line"></span><br><span class="line">Window(<span class="number">1</span>)</span><br><span class="line">Window(<span class="number">2</span>)</span><br><span class="line">Window(<span class="number">3</span>)</span><br><span class="line">House()</span><br><span class="line">Window(<span class="number">33</span>)</span><br><span class="line">Window(<span class="number">4</span>)</span><br><span class="line">Window(<span class="number">44</span>)</span><br><span class="line">f()</span><br></pre></td></tr></table></figure>
-<p>事实证明，孝顺是一种优良品质，先让父类初始化完成后，再轮到子类</p>
-<h1 id="static变量的初始化时机">static变量的初始化时机</h1><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> Bowl &#123;</span><br><span class="line"></span><br><span class="line">    Bowl(<span class="keyword">int</span> marker) &#123;</span><br><span class="line">        System.out.println(<span class="string">"Bowl("</span> + marker + <span class="string">")"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">f1</span><span class="params">(<span class="keyword">int</span> marker)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"f1("</span> + marker + <span class="string">")"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> Table &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> Bowl bowl1 = <span class="keyword">new</span> Bowl(<span class="number">1</span>);</span><br><span class="line">    Table() &#123;</span><br><span class="line">        System.out.println(<span class="string">"Table()"</span>);</span><br><span class="line">        bowl2.f1(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">f2</span><span class="params">(<span class="keyword">int</span> marker)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"f2("</span> + marker + <span class="string">")"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">static</span> Bowl bowl2 = <span class="keyword">new</span> Bowl(<span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> Cupboard &#123;</span><br><span class="line"></span><br><span class="line">    Bowl bowl3 = <span class="keyword">new</span> Bowl(<span class="number">3</span>);</span><br><span class="line">    <span class="keyword">static</span> Bowl bowl4 = <span class="keyword">new</span> Bowl(<span class="number">4</span>);</span><br><span class="line"></span><br><span class="line">    Cupboard() &#123;</span><br><span class="line">        System.out.println(<span class="string">"Cupboard"</span>);</span><br><span class="line">        bowl4.f1(<span class="number">2</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">f3</span><span class="params">(<span class="keyword">int</span> marker)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"f3("</span> + marker + <span class="string">")"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">static</span> Bowl bowl5 = <span class="keyword">new</span> Bowl(<span class="number">5</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> StaticInitialization &#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Creating new Cupboard() in main"</span>);</span><br><span class="line">        <span class="keyword">new</span> Cupboard();</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">"Creating new Cupboard() in main"</span>);</span><br><span class="line">        <span class="keyword">new</span> Cupboard();</span><br><span class="line"></span><br><span class="line">        table.f2(<span class="number">1</span>);</span><br><span class="line">        cupboard.f3(<span class="number">2</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> Table table = <span class="keyword">new</span> Table();</span><br><span class="line">    <span class="keyword">static</span> Cupboard cupboard = <span class="keyword">new</span> Cupboard();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Output:</span></span><br><span class="line"></span><br><span class="line">Bowl(<span class="number">1</span>)</span><br><span class="line">Bowl(<span class="number">2</span>)</span><br><span class="line">Table()</span><br><span class="line">f1(<span class="number">1</span>)</span><br><span class="line">Bowl(<span class="number">4</span>)</span><br><span class="line">Bowl(<span class="number">5</span>)</span><br><span class="line">Bowl(<span class="number">3</span>)</span><br><span class="line"><span class="function">Cupboard</span><br><span class="line"><span class="title">f1</span><span class="params">(<span class="number">2</span>)</span></span><br><span class="line">Creating new <span class="title">Cupboard</span><span class="params">()</span> in main</span><br><span class="line"><span class="title">Bowl</span><span class="params">(<span class="number">3</span>)</span></span><br><span class="line">Cupboard</span><br><span class="line"><span class="title">f1</span><span class="params">(<span class="number">2</span>)</span></span><br><span class="line">Creating new <span class="title">Cupboard</span><span class="params">()</span> in main</span><br><span class="line"><span class="title">Bowl</span><span class="params">(<span class="number">3</span>)</span></span><br><span class="line">Cupboard</span><br><span class="line"><span class="title">f1</span><span class="params">(<span class="number">2</span>)</span></span><br><span class="line"><span class="title">f2</span><span class="params">(<span class="number">1</span>)</span></span><br><span class="line"><span class="title">f3</span><span class="params">(<span class="number">2</span>)</span></span></span><br></pre></td></tr></table></figure>
-<p>可以看出，static变量总是最先初始化。要注意的是，static变量只会初始化一次，而且只会在第一次需要用到的时候才进行<br>初始化。然后才到 non-static变量初始化</p>
-<p>就像上述示例，要执行main(),StaticInitialization类就需要被加载，然后其static变量 table和cupboad这个时候<br>同样需要被加载上，又因为它们都有static Bowl 变量，所以这是Bowl类也同时被加载。所以这些类在执行main方法前都已经<br>加载好了。</p>
-<p>其实，学习过JVM话就会知道，一个class只有在第一次需要引用的时候才会被加载，以后需要用到这个class就直接从classloader<br>获取不需要加载了。而 static变量的初始化就是在class第一次被加载到classloader的时候发生的。所以不难理解为什么static变量<br>只会初始化一次。</p>
-<h1 id="总结">总结</h1><ol>
-<li><p>对于实例变量，按照声明的顺序逐个初始化，先父类，后子类</p>
+    
+
+    
+    <a href="/atom.xml" class="item" >
+        <i class="rss icon"></i>
+        RSS
+    </a>
+
+    
+    
+
+    
+
+    
+    <a href="/archives/index.html" class="item" >
+        <i class="archive icon"></i>
+        归档
+    </a>
+
+    
+    
+
+    
+
+    
+    <a href="/booklist/index.html" class="item" >
+        <i class="book icon"></i>
+        书单
+    </a>
+
+    
+
+    
+</div>
+
+    <div class="pusher body-content">
+        <div id="content" class="ui main container">
+            <!--<div class="ui one column grid">-->
+                <!--<div class="column">-->
+                    <!--<div class="ui main container">-->
+                        <div id="post-Java里的各种初始化" class="ui main container article-type-post">
+
+    
+
+    <div class="ui divided grid">
+
+        <div class="two column row" id="article-content">
+
+            <div class="thirteen wide computer thirteen wide tablet sixteen wide mobile column">
+                
+
+<h1 class="ui header">
+    
+    Java基础：初始化
+</h1>
+
+
+
+                <div class="article-inner">
+
+                    <div class="article-entry" itemprop="articleBody">
+                        
+                        <p>Java&#x91CC;&#x6709;&#x5C40;&#x90E8;&#x53D8;&#x91CF;&#x3001;&#x5B9E;&#x4F8B;&#x53D8;&#x91CF;&#x3001;&#x9759;&#x6001;&#x53D8;&#x91CF;&#xFF0C;&#x5B83;&#x4EEC;&#x7684;&#x521D;&#x59CB;&#x5316;&#x8868;&#x73B0;&#x4E5F;&#x4E0D;&#x5C3D;&#x76F8;&#x540C;&#x3002;&#x4E0B;&#x9762;&#x6765;&#x603B;&#x7ED3;&#x4E00;&#x4E0B;&#x3002;</p>
+<h1 id="&#x5C40;&#x90E8;&#x53D8;&#x91CF;"><a href="#&#x5C40;&#x90E8;&#x53D8;&#x91CF;" class="headerlink" title="&#x5C40;&#x90E8;&#x53D8;&#x91CF;"></a>&#x5C40;&#x90E8;&#x53D8;&#x91CF;</h1><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">()</span> </span>{</div><div class="line">    <span class="keyword">int</span> i;</div><div class="line">    i++; <span class="comment">// Error -- i not initialized</span></div><div class="line">}</div></pre></td></tr></table></figure>
+<p>&#x5C40;&#x90E8;&#x53D8;&#x91CF;&#x5E94;&#x8BE5;&#x662F;&#x6700;&#x7B80;&#x5355;&#x7684;&#x60C5;&#x666F;&#xFF0C;&#x5728;&#x4E00;&#x4E2A;&#x65B9;&#x6CD5;&#x5185;&#x5B9A;&#x4E49;&#x4E00;&#x4E2A;&#x53D8;&#x91CF;&#xFF0C;&#x5982;&#x679C;&#x4E0D;&#x4E3A;&#x5B83;&#x8D4B;&#x4E88;&#x521D;&#x59CB;&#x503C;&#xFF0C;&#x7F16;&#x8BD1;&#x5668;&#x5219;&#x4F1A;&#x62A5;&#x9519;&#x3002;&#x6240;&#x4EE5;&#x58F0;&#x660E;&#x5C40;&#x90E8;&#x53D8;&#x91CF;&#x65F6;&#x5FC5;&#x987B;&#x540C;&#x65F6;&#x8D4B;&#x4E88;&#x5176;&#x521D;&#x59CB;&#x503C;&#x3002;</p>
+<h1 id="&#x5B9E;&#x4F8B;&#x53D8;&#x91CF;"><a href="#&#x5B9E;&#x4F8B;&#x53D8;&#x91CF;" class="headerlink" title="&#x5B9E;&#x4F8B;&#x53D8;&#x91CF;"></a>&#x5B9E;&#x4F8B;&#x53D8;&#x91CF;</h1><p>&#x6BCF;&#x4E00;&#x4E2A;&#x5B9E;&#x4F8B;&#x53D8;&#x91CF;&#x90FD;&#x4F1A;&#x4FDD;&#x8BC1;&#x6709;&#x4E00;&#x4E2A;&#x521D;&#x59CB;&#x503C;&#x3002;</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">InitialiValues</span> {</div><div class="line"></div><div class="line">    boolean t;</div><div class="line">    <span class="keyword">char</span> c;</div><div class="line">    <span class="keyword">byte</span> b;</div><div class="line">    <span class="keyword">short</span> s;</div><div class="line">    <span class="keyword">int</span> i;</div><div class="line">    <span class="keyword">long</span> l;</div><div class="line">    <span class="keyword">float</span> f;</div><div class="line">    <span class="keyword">double</span> d;</div><div class="line"></div><div class="line">    InitialiValues initialization;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">printInitialValues</span>(<span class="params"></span>) </span>{</div><div class="line">        System.<span class="keyword">out</span>.println(<span class="string">&quot;boolean    &quot;</span> + t);</div><div class="line">        System.<span class="keyword">out</span>.println(<span class="string">&quot;char    &quot;</span> + c + <span class="string">&quot;&quot;</span>);</div><div class="line">        System.<span class="keyword">out</span>.println(<span class="string">&quot;byte    &quot;</span> + b);</div><div class="line">        System.<span class="keyword">out</span>.println(<span class="string">&quot;short    &quot;</span> + s);</div><div class="line">        System.<span class="keyword">out</span>.println(<span class="string">&quot;int    &quot;</span> + i);</div><div class="line">        System.<span class="keyword">out</span>.println(<span class="string">&quot;long    &quot;</span> + l);</div><div class="line">        System.<span class="keyword">out</span>.println(<span class="string">&quot;float    &quot;</span> + f);</div><div class="line">        System.<span class="keyword">out</span>.println(<span class="string">&quot;double    &quot;</span> + d);</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(<span class="params">String[] args</span>) </span>{</div><div class="line">        <span class="keyword">new</span> InitialiValues().printInitialValues();</div><div class="line">    }</div><div class="line">}</div><div class="line"></div><div class="line"><span class="comment">/* Output */</span></div><div class="line"></div><div class="line">boolean    <span class="literal">false</span></div><div class="line"><span class="keyword">char</span>     </div><div class="line"><span class="keyword">byte</span>    <span class="number">0</span></div><div class="line"><span class="keyword">short</span>    <span class="number">0</span></div><div class="line"><span class="keyword">int</span>    <span class="number">0</span></div><div class="line"><span class="keyword">long</span>    <span class="number">0</span></div><div class="line"><span class="keyword">float</span>    <span class="number">0.0</span></div><div class="line"><span class="keyword">double</span>    <span class="number">0.0</span></div><div class="line">reference    <span class="literal">null</span></div></pre></td></tr></table></figure>
+<p>&#x5373;&#x4F7F;&#x4E0D;&#x6307;&#x5B9A;&#x521D;&#x59CB;&#x503C;&#xFF0C;&#x5B9E;&#x4F8B;&#x53D8;&#x91CF;&#x4F1A;&#x81EA;&#x52A8;&#x62E5;&#x6709;&#x4E00;&#x4E2A;&#x9ED8;&#x8BA4;&#x521D;&#x59CB;&#x503C;</p>
+<h1 id="&#x6784;&#x9020;&#x5668;&#x521D;&#x59CB;&#x5316;"><a href="#&#x6784;&#x9020;&#x5668;&#x521D;&#x59CB;&#x5316;" class="headerlink" title="&#x6784;&#x9020;&#x5668;&#x521D;&#x59CB;&#x5316;"></a>&#x6784;&#x9020;&#x5668;&#x521D;&#x59CB;&#x5316;</h1><figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Counter</span> {</div><div class="line"></div><div class="line">    <span class="keyword">int</span> i;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Counter</span>(<span class="params"></span>) </span>{</div><div class="line">        System.<span class="keyword">out</span>.println(<span class="string">&quot;before: &quot;</span> +  i);</div><div class="line">        i = <span class="number">7</span>;</div><div class="line">        System.<span class="keyword">out</span>.println(<span class="string">&quot;after: &quot;</span> + i);</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(<span class="params">String[] args</span>) </span>{</div><div class="line">        <span class="keyword">new</span> Counter();</div><div class="line">    }</div><div class="line">}</div><div class="line"></div><div class="line"><span class="comment">//Output:</span></div><div class="line">before: <span class="number">0</span></div><div class="line">after: <span class="number">7</span></div></pre></td></tr></table></figure>
+<p>&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x5229;&#x7528;&#x6784;&#x9020;&#x5668;&#x6765;&#x8FDB;&#x884C;&#x521D;&#x59CB;&#x5316;&#xFF0C;&#x4F46;&#x662F;&#x5728;&#x6784;&#x9020;&#x5668;&#x8FDB;&#x884C;&#x521D;&#x59CB;&#x5316;&#x4E4B;&#x524D;&#xFF0C;counter&#x5DF2;&#x7ECF;&#x81EA;&#x52A8;&#x521D;&#x59CB;&#x5316;&#x4E86;&#x4E00;&#x6B21;&#x3002;</p>
+<h1 id="&#x521D;&#x59CB;&#x5316;&#x987A;&#x5E8F;"><a href="#&#x521D;&#x59CB;&#x5316;&#x987A;&#x5E8F;" class="headerlink" title="&#x521D;&#x59CB;&#x5316;&#x987A;&#x5E8F;"></a>&#x521D;&#x59CB;&#x5316;&#x987A;&#x5E8F;</h1><p>&#x5728;&#x4E00;&#x4E2A;&#x7C7B;&#x4E2D;&#xFF0C;&#x6210;&#x5458;&#x53D8;&#x91CF;&#x7684;&#x521D;&#x59CB;&#x5316;&#x987A;&#x5E8F;&#x662F;&#x7531;&#x53D8;&#x91CF;&#x5728;&#x7C7B;&#x4E2D;&#x5B9A;&#x4E49;&#x7684;&#x987A;&#x5E8F;&#x51B3;&#x5B9A;&#x7684;&#xFF0C;&#x800C;&#x4E14;&#x603B;&#x4F1A;&#x5728;&#x7C7B;&#x4E2D;&#x7684;&#x4EFB;&#x4F55;&#x65B9;&#x6CD5;&#x88AB;&#x8C03;&#x7528;&#x524D;&#x5C31;&#x5DF2;&#x7ECF;&#x521D;&#x59CB;&#x5316;&#x597D;&#x4E86;&#x3002;</p>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">public class <span class="built_in">Window</span> {</div><div class="line"></div><div class="line">    <span class="built_in">Window</span>(int marker) {</div><div class="line">        <span class="keyword">System</span>.out.println(<span class="string">&quot;Window(&quot;</span> + marker + <span class="string">&quot;)&quot;</span>);</div><div class="line">    }</div><div class="line"></div><div class="line">}</div><div class="line"></div><div class="line">public class House {</div><div class="line"></div><div class="line">    <span class="built_in">Window</span> w1 = <span class="keyword">new</span> <span class="built_in">Window</span>(<span class="number">1</span>);</div><div class="line">    House() {</div><div class="line">        <span class="keyword">System</span>.out.println(<span class="string">&quot;House()&quot;</span>);</div><div class="line">        w3 = <span class="keyword">new</span> <span class="built_in">Window</span>(<span class="number">33</span>);</div><div class="line">    }</div><div class="line">    <span class="built_in">Window</span> w2 = <span class="keyword">new</span> <span class="built_in">Window</span>(<span class="number">2</span>);</div><div class="line">    void f() {</div><div class="line">        <span class="keyword">System</span>.out.println(<span class="string">&quot;f()&quot;</span>);</div><div class="line">    }</div><div class="line">    <span class="built_in">Window</span> w3 = <span class="keyword">new</span> <span class="built_in">Window</span>(<span class="number">3</span>);</div><div class="line"></div><div class="line">}</div><div class="line"></div><div class="line">public static void main(<span class="keyword">String</span>[] args) {</div><div class="line">        House h = <span class="keyword">new</span> House();</div><div class="line">        h.f();</div><div class="line">}</div><div class="line"></div><div class="line"><span class="comment">//Output:</span></div><div class="line"></div><div class="line"><span class="built_in">Window</span>(<span class="number">1</span>)</div><div class="line"><span class="built_in">Window</span>(<span class="number">2</span>)</div><div class="line"><span class="built_in">Window</span>(<span class="number">3</span>)</div><div class="line">House()</div><div class="line"><span class="built_in">Window</span>(<span class="number">33</span>)</div><div class="line">f()</div></pre></td></tr></table></figure>
+<p>&#x53EF;&#x4EE5;&#x770B;&#x5230;&#xFF0C;&#x867D;&#x7136;Window&#x5BF9;&#x8C61;&#x7684;&#x5B9A;&#x4E49;&#x88AB;&#x6253;&#x6563;&#x4E86;&#xFF0C;&#x4F46;&#x786E;&#x5B9E;&#x662F;&#x7B49;&#x5230;&#x6240;&#x6709;&#x7684;Windown&#x53D8;&#x91CF;&#x521D;&#x59CB;&#x5316;&#x5B8C;&#x6210;&#x540E;&#xFF0C;&#x624D;&#x6267;&#x884C;&#x6784;&#x9020;&#x5668;&#x3002;</p>
+<h1 id="&#x7EE7;&#x627F;&#x5173;&#x7CFB;&#x4E0B;&#x7684;&#x521D;&#x59CB;&#x5316;&#x987A;&#x5E8F;"><a href="#&#x7EE7;&#x627F;&#x5173;&#x7CFB;&#x4E0B;&#x7684;&#x521D;&#x59CB;&#x5316;&#x987A;&#x5E8F;" class="headerlink" title="&#x7EE7;&#x627F;&#x5173;&#x7CFB;&#x4E0B;&#x7684;&#x521D;&#x59CB;&#x5316;&#x987A;&#x5E8F;"></a>&#x7EE7;&#x627F;&#x5173;&#x7CFB;&#x4E0B;&#x7684;&#x521D;&#x59CB;&#x5316;&#x987A;&#x5E8F;</h1><p>&#x5728;&#x4E0A;&#x9762;&#x7684;&#x57FA;&#x7840;&#x4E0A;&#x52A0;&#x4E0A;&#x4E00;&#x4E2A;&#x5B50;&#x7C7B;&#x7EE7;&#x627F;&#x5173;&#x7CFB;&#x540E;&#xFF0C;&#x60C5;&#x51B5;&#x53C8;&#x4F1A;&#x600E;&#x6837;&#xFF1F;</p>
+<figure class="highlight pony"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">public <span class="class"><span class="keyword">class</span> <span class="title">SonHouse</span> <span class="title">extends</span> <span class="title">House</span>{</span></div><div class="line"></div><div class="line">    <span class="type">Window</span> sonWindow = <span class="function"><span class="keyword">new</span> <span class="title">Window</span>(<span class="number">4</span>);</span></div><div class="line"></div><div class="line">    <span class="title">SonHouse</span>() {</div><div class="line">        <span class="title">sonWindow</span> = <span class="title">new</span> <span class="title">Window</span>(<span class="number">44</span>);</div><div class="line">        }</div><div class="line">    }</div><div class="line">}</div><div class="line"></div><div class="line"><span class="title">public</span> <span class="title">static</span> <span class="title">void</span> <span class="title">main</span>(<span class="type">String</span>[] args) {</div><div class="line">        <span class="title">House</span> <span class="title">h</span> = <span class="title">new</span> <span class="title">SonHouse</span>();</div><div class="line">        <span class="title">h</span>.<span class="title">f</span>();</div><div class="line">}</div><div class="line"></div><div class="line"><span class="comment">//Output:</span></div><div class="line"></div><div class="line"><span class="title">Window</span>(<span class="number">1</span>)</div><div class="line"><span class="title">Window</span>(<span class="number">2</span>)</div><div class="line"><span class="title">Window</span>(<span class="number">3</span>)</div><div class="line"><span class="title">House</span>()</div><div class="line"><span class="title">Window</span>(<span class="number">33</span>)</div><div class="line"><span class="title">Window</span>(<span class="number">4</span>)</div><div class="line"><span class="title">Window</span>(<span class="number">44</span>)</div><div class="line"><span class="title">f</span>()</div></pre></td></tr></table></figure>
+<p>&#x4E8B;&#x5B9E;&#x8BC1;&#x660E;&#xFF0C;&#x5B5D;&#x987A;&#x662F;&#x4E00;&#x79CD;&#x4F18;&#x826F;&#x54C1;&#x8D28;&#xFF0C;&#x5148;&#x8BA9;&#x7236;&#x7C7B;&#x521D;&#x59CB;&#x5316;&#x5B8C;&#x6210;&#x540E;&#xFF0C;&#x518D;&#x8F6E;&#x5230;&#x5B50;&#x7C7B;</p>
+<h1 id="static&#x53D8;&#x91CF;&#x7684;&#x521D;&#x59CB;&#x5316;&#x65F6;&#x673A;"><a href="#static&#x53D8;&#x91CF;&#x7684;&#x521D;&#x59CB;&#x5316;&#x65F6;&#x673A;" class="headerlink" title="static&#x53D8;&#x91CF;&#x7684;&#x521D;&#x59CB;&#x5316;&#x65F6;&#x673A;"></a>static&#x53D8;&#x91CF;&#x7684;&#x521D;&#x59CB;&#x5316;&#x65F6;&#x673A;</h1><figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Bowl</span> {</div><div class="line"></div><div class="line">    Bowl(<span class="keyword">int</span> marker) {</div><div class="line">        System.<span class="keyword">out</span>.println(<span class="string">&quot;Bowl(&quot;</span> + marker + <span class="string">&quot;)&quot;</span>);</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">f1</span>(<span class="params"><span class="keyword">int</span> marker</span>) </span>{</div><div class="line">        System.<span class="keyword">out</span>.println(<span class="string">&quot;f1(&quot;</span> + marker + <span class="string">&quot;)&quot;</span>);</div><div class="line">    }</div><div class="line">}</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Table</span> {</div><div class="line"></div><div class="line">    <span class="keyword">static</span> Bowl bowl1 = <span class="keyword">new</span> Bowl(<span class="number">1</span>);</div><div class="line">    Table() {</div><div class="line">        System.<span class="keyword">out</span>.println(<span class="string">&quot;Table()&quot;</span>);</div><div class="line">        bowl2.f1(<span class="number">1</span>);</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">f2</span>(<span class="params"><span class="keyword">int</span> marker</span>) </span>{</div><div class="line">        System.<span class="keyword">out</span>.println(<span class="string">&quot;f2(&quot;</span> + marker + <span class="string">&quot;)&quot;</span>);</div><div class="line">    }</div><div class="line">    <span class="keyword">static</span> Bowl bowl2 = <span class="keyword">new</span> Bowl(<span class="number">2</span>);</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Cupboard</span> {</div><div class="line"></div><div class="line">    Bowl bowl3 = <span class="keyword">new</span> Bowl(<span class="number">3</span>);</div><div class="line">    <span class="keyword">static</span> Bowl bowl4 = <span class="keyword">new</span> Bowl(<span class="number">4</span>);</div><div class="line"></div><div class="line">    Cupboard() {</div><div class="line">        System.<span class="keyword">out</span>.println(<span class="string">&quot;Cupboard&quot;</span>);</div><div class="line">        bowl4.f1(<span class="number">2</span>);</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">f3</span>(<span class="params"><span class="keyword">int</span> marker</span>) </span>{</div><div class="line">        System.<span class="keyword">out</span>.println(<span class="string">&quot;f3(&quot;</span> + marker + <span class="string">&quot;)&quot;</span>);</div><div class="line">    }</div><div class="line">    <span class="keyword">static</span> Bowl bowl5 = <span class="keyword">new</span> Bowl(<span class="number">5</span>);</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">StaticInitialization</span> {</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(<span class="params">String[] args</span>) </span>{</div><div class="line">        System.<span class="keyword">out</span>.println(<span class="string">&quot;Creating new Cupboard() in main&quot;</span>);</div><div class="line">        <span class="keyword">new</span> Cupboard();</div><div class="line"></div><div class="line">        System.<span class="keyword">out</span>.println(<span class="string">&quot;Creating new Cupboard() in main&quot;</span>);</div><div class="line">        <span class="keyword">new</span> Cupboard();</div><div class="line"></div><div class="line">        table.f2(<span class="number">1</span>);</div><div class="line">        cupboard.f3(<span class="number">2</span>);</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="keyword">static</span> Table table = <span class="keyword">new</span> Table();</div><div class="line">    <span class="keyword">static</span> Cupboard cupboard = <span class="keyword">new</span> Cupboard();</div><div class="line">}</div><div class="line"></div><div class="line"><span class="comment">//Output:</span></div><div class="line"></div><div class="line">Bowl(<span class="number">1</span>)</div><div class="line">Bowl(<span class="number">2</span>)</div><div class="line">Table()</div><div class="line">f1(<span class="number">1</span>)</div><div class="line">Bowl(<span class="number">4</span>)</div><div class="line">Bowl(<span class="number">5</span>)</div><div class="line">Bowl(<span class="number">3</span>)</div><div class="line"><span class="function">Cupboard</span></div><div class="line"><span class="title">f1</span>(<span class="params"><span class="number">2</span></span>)</div><div class="line">Creating new <span class="title">Cupboard</span>(<span class="params"></span>) <span class="keyword">in</span> main</div><div class="line"><span class="title">Bowl</span>(<span class="params"><span class="number">3</span></span>)</div><div class="line">Cupboard</div><div class="line"><span class="title">f1</span>(<span class="params"><span class="number">2</span></span>)</div><div class="line">Creating new <span class="title">Cupboard</span>(<span class="params"></span>) <span class="keyword">in</span> main</div><div class="line"><span class="title">Bowl</span>(<span class="params"><span class="number">3</span></span>)</div><div class="line">Cupboard</div><div class="line"><span class="title">f1</span>(<span class="params"><span class="number">2</span></span>)</div><div class="line"><span class="title">f2</span>(<span class="params"><span class="number">1</span></span>)</div><div class="line"><span class="title">f3</span>(<span class="params"><span class="number">2</span></span>)</div></pre></td></tr></table></figure>
+<p>&#x53EF;&#x4EE5;&#x770B;&#x51FA;&#xFF0C;static&#x53D8;&#x91CF;&#x603B;&#x662F;&#x6700;&#x5148;&#x521D;&#x59CB;&#x5316;&#x3002;&#x8981;&#x6CE8;&#x610F;&#x7684;&#x662F;&#xFF0C;static&#x53D8;&#x91CF;&#x53EA;&#x4F1A;&#x521D;&#x59CB;&#x5316;&#x4E00;&#x6B21;&#xFF0C;&#x800C;&#x4E14;&#x53EA;&#x4F1A;&#x5728;&#x7B2C;&#x4E00;&#x6B21;&#x9700;&#x8981;&#x7528;&#x5230;&#x7684;&#x65F6;&#x5019;&#x624D;&#x8FDB;&#x884C;<br>&#x521D;&#x59CB;&#x5316;&#x3002;&#x7136;&#x540E;&#x624D;&#x5230; non-static&#x53D8;&#x91CF;&#x521D;&#x59CB;&#x5316;</p>
+<p>&#x5C31;&#x50CF;&#x4E0A;&#x8FF0;&#x793A;&#x4F8B;&#xFF0C;&#x8981;&#x6267;&#x884C;main(),StaticInitialization&#x7C7B;&#x5C31;&#x9700;&#x8981;&#x88AB;&#x52A0;&#x8F7D;&#xFF0C;&#x7136;&#x540E;&#x5176;static&#x53D8;&#x91CF; table&#x548C;cupboad&#x8FD9;&#x4E2A;&#x65F6;&#x5019;<br>&#x540C;&#x6837;&#x9700;&#x8981;&#x88AB;&#x52A0;&#x8F7D;&#x4E0A;&#xFF0C;&#x53C8;&#x56E0;&#x4E3A;&#x5B83;&#x4EEC;&#x90FD;&#x6709;static Bowl &#x53D8;&#x91CF;&#xFF0C;&#x6240;&#x4EE5;&#x8FD9;&#x662F;Bowl&#x7C7B;&#x4E5F;&#x540C;&#x65F6;&#x88AB;&#x52A0;&#x8F7D;&#x3002;&#x6240;&#x4EE5;&#x8FD9;&#x4E9B;&#x7C7B;&#x5728;&#x6267;&#x884C;main&#x65B9;&#x6CD5;&#x524D;&#x90FD;&#x5DF2;&#x7ECF;<br>&#x52A0;&#x8F7D;&#x597D;&#x4E86;&#x3002;</p>
+<p>&#x5176;&#x5B9E;&#xFF0C;&#x5B66;&#x4E60;&#x8FC7;JVM&#x8BDD;&#x5C31;&#x4F1A;&#x77E5;&#x9053;&#xFF0C;&#x4E00;&#x4E2A;class&#x53EA;&#x6709;&#x5728;&#x7B2C;&#x4E00;&#x6B21;&#x9700;&#x8981;&#x5F15;&#x7528;&#x7684;&#x65F6;&#x5019;&#x624D;&#x4F1A;&#x88AB;&#x52A0;&#x8F7D;&#xFF0C;&#x4EE5;&#x540E;&#x9700;&#x8981;&#x7528;&#x5230;&#x8FD9;&#x4E2A;class&#x5C31;&#x76F4;&#x63A5;&#x4ECE;classloader<br>&#x83B7;&#x53D6;&#x4E0D;&#x9700;&#x8981;&#x52A0;&#x8F7D;&#x4E86;&#x3002;&#x800C; static&#x53D8;&#x91CF;&#x7684;&#x521D;&#x59CB;&#x5316;&#x5C31;&#x662F;&#x5728;class&#x7B2C;&#x4E00;&#x6B21;&#x88AB;&#x52A0;&#x8F7D;&#x5230;classloader&#x7684;&#x65F6;&#x5019;&#x53D1;&#x751F;&#x7684;&#x3002;&#x6240;&#x4EE5;&#x4E0D;&#x96BE;&#x7406;&#x89E3;&#x4E3A;&#x4EC0;&#x4E48;static&#x53D8;&#x91CF;<br>&#x53EA;&#x4F1A;&#x521D;&#x59CB;&#x5316;&#x4E00;&#x6B21;&#x3002;</p>
+<h1 id="&#x603B;&#x7ED3;"><a href="#&#x603B;&#x7ED3;" class="headerlink" title="&#x603B;&#x7ED3;"></a>&#x603B;&#x7ED3;</h1><ol class="ui list">
+<li><p>&#x5BF9;&#x4E8E;&#x5B9E;&#x4F8B;&#x53D8;&#x91CF;&#xFF0C;&#x6309;&#x7167;&#x58F0;&#x660E;&#x7684;&#x987A;&#x5E8F;&#x9010;&#x4E2A;&#x521D;&#x59CB;&#x5316;&#xFF0C;&#x5148;&#x7236;&#x7C7B;&#xFF0C;&#x540E;&#x5B50;&#x7C7B;</p>
 </li>
-<li><p>static 成员在类第一次被加载时进行初始化，并且只初始化这么一次</p>
+<li><p>static &#x6210;&#x5458;&#x5728;&#x7C7B;&#x7B2C;&#x4E00;&#x6B21;&#x88AB;&#x52A0;&#x8F7D;&#x65F6;&#x8FDB;&#x884C;&#x521D;&#x59CB;&#x5316;&#xFF0C;&#x5E76;&#x4E14;&#x53EA;&#x521D;&#x59CB;&#x5316;&#x8FD9;&#x4E48;&#x4E00;&#x6B21;</p>
 </li>
 </ol>
 
-      
-    </div>
+                        
+                    </div>
 
-    <div>
-      
+                    
+                    
+                    
+
+                    <div class="description post-description">
+    <span class="post-description-item">
+        <time datetime="2016-11-22T15:45:09.000Z" itemprop="datePublished">2016-11-22</time>
+
+    </span>
+    <span class="post-description-item">
         
 
-      
-    </div>
+    <span>
+        <i class="tags icon"></i>
+    </span>
 
-    <div>
-      
-        
-
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/Core-Java/" rel="tag"># Core Java</a>
-          
-        </div>
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2016/09/15/RabbitMQ的Qos-prefetch/" rel="next" title="RabbitMQ之Qos prefetch">
-                <i class="fa fa-chevron-left"></i> RabbitMQ之Qos prefetch
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/12/01/Java里的String/" rel="prev" title="Java基础：String使用">
-                Java基础：String使用 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </article>
-
-
-
-    <div class="post-spread">
-      
-        <div class="ds-share flat" data-thread-key="2016/11/22/Java里的各种初始化/"
-     data-title="Java基础：初始化"
-     data-content=""
-     data-url="http://zclau.com/2016/11/22/Java里的各种初始化/">
-  <div class="ds-share-inline">
-    <ul  class="ds-share-icons-16">
-
-      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
-      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
-      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
-      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
-      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
-
-    </ul>
-    <div class="ds-share-icons-more">
-    </div>
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-
-          </div>
-          
-
-  <p>热评文章</p>
-  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
-
-
-          
-  <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/11/22/Java里的各种初始化/"
-           data-title="Java基础：初始化" data-url="http://zclau.com/2016/11/22/Java里的各种初始化/">
-      </div>
+    <span class="ui tiny label">
+        <a href="/tags/Core-Java/">Core Java</a>
+    </span>
+
     
-  </div>
 
+    </span>
+</div>
 
-        </div>
-        
-          
-  
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
-  </div>
+                </div>
+                
+                <div id="pagination" class="nav-web ui text container pagination">
 
-  <aside id="sidebar" class="sidebar">
-    <div class="sidebar-inner">
+    <div class="ui stackable two column divided grid container">
+        <div class="row">
+            <div class="column nav-left">
+                
 
-      
+                <a href="/2016/12/01/Java里的String/" class="ui tiny button">
 
-      
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
+                    <i class="angle left icon"></i>
+                    
+                    Java基础：String使用
+                    
 
-      <section class="site-overview sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-          <img class="site-author-image" itemprop="image"
-               src="/images/avatar.png"
-               alt="zclau" />
-          <p class="site-author-name" itemprop="name">zclau</p>
-          <p class="site-description motion-element" itemprop="description">Just Do IT</p>
-        </div>
-        <nav class="site-state motion-element">
-          <div class="site-state-item site-state-posts">
-            <a href="/archives">
-              <span class="site-state-item-count">13</span>
-              <span class="site-state-item-name">日志</span>
-            </a>
-          </div>
-
-          
-            <div class="site-state-item site-state-categories">
-              <a href="/categories">
-                <span class="site-state-item-count">7</span>
-                <span class="site-state-item-name">分类</span>
-              </a>
-            </div>
-          
-
-          
-            <div class="site-state-item site-state-tags">
-              
-                <span class="site-state-item-count">11</span>
-                <span class="site-state-item-name">标签</span>
-              
-            </div>
-          
-
-        </nav>
-
-        
-          <div class="feed-link motion-element">
-            <a href="/atom.xml" rel="alternate">
-              <i class="fa fa-rss"></i>
-              RSS
-            </a>
-          </div>
-        
-
-        <div class="links-of-author motion-element">
-          
-            
-              <span class="links-of-author-item">
-                <a href="https://github.com/cleverutd" target="_blank" title="GitHub">
-                  
-                    <i class="fa fa-fw fa-github"></i>
-                  
-                  GitHub
                 </a>
-              </span>
-            
-              <span class="links-of-author-item">
-                <a href="http://weibo.com/515074234" target="_blank" title="Weibo">
-                  
-                    <i class="fa fa-fw fa-weibo"></i>
-                  
-                  Weibo
-                </a>
-              </span>
-            
-          
+
+                
+            </div>
+            <div class="column nav-right">
+                
+
+                <a href="/2016/09/15/RabbitMQ的Qos-prefetch/" class="ui tiny button">
+                    
+                    RabbitMQ之Qos prefetch
+                    
+                    <i class="angle right icon"></i></a>
+                
+            </div>
         </div>
-
-        
-        
-
-        
-        
-
-        
-
-
-      </section>
-
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#局部变量"><span class="nav-number">1.</span> <span class="nav-text">局部变量</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实例变量"><span class="nav-number">2.</span> <span class="nav-text">实例变量</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#构造器初始化"><span class="nav-number">3.</span> <span class="nav-text">构造器初始化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#初始化顺序"><span class="nav-number">4.</span> <span class="nav-text">初始化顺序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#继承关系下的初始化顺序"><span class="nav-number">5.</span> <span class="nav-text">继承关系下的初始化顺序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#static变量的初始化时机"><span class="nav-number">6.</span> <span class="nav-text">static变量的初始化时机</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
-      
-
     </div>
-  </aside>
 
-
-        
-      </div>
-    </main>
-
-    <footer id="footer" class="footer">
-      <div class="footer-inner">
-        <div class="copyright" >
-  
-  &copy;  2015 - 
-  <span itemprop="copyrightYear">2017</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">zclau</span>
 </div>
+                
+            </div>
 
+            
+            <div class="three wide computer three wide tablet column">
 
-<div class="powered-by">
-  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
-</div>
+                <div class="ui sticky article-toc" id="article-toc">
+                    <!-- toc -->
+                    <ol class="ui ordered list"><li><a href="#局部变量"><span>局部变量</span></a></li><li><a href="#实例变量"><span>实例变量</span></a></li><li><a href="#构造器初始化"><span>构造器初始化</span></a></li><li><a href="#初始化顺序"><span>初始化顺序</span></a></li><li><a href="#继承关系下的初始化顺序"><span>继承关系下的初始化顺序</span></a></li><li><a href="#static变量的初始化时机"><span>static变量的初始化时机</span></a></li><li><a href="#总结"><span>总结</span></a></li></ol>
+                </div>
 
-<div class="theme-info">
-  主题 -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT.Pisces
-  </a>
-</div>
+            </div>
+            
 
-
-        
-
-<div class="busuanzi-count">
-
-  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-  
-    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
-  
-
-  
-    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
-  
-  
-</div>
-
-
-
-        
-      </div>
-    </footer>
-
-    <div class="back-to-top">
-      <i class="fa fa-arrow-up"></i>
+        </div>
     </div>
-  </div>
+</div>
 
-  
 
+<!-- duoshuo start -->
+<div class="ds-thread" data-thread-key="2016/11/22/Java里的各种初始化/" data-title="Java基础：初始化 | 刘梓" data-url="http://zclau.com/2016/11/22/Java里的各种初始化/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
-  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
-    window.Promise = null;
-  }
-</script>
-
-
-
-
-
-
-
-
-
-  
-
-
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/jquery/2.1.3/jquery.min.js"></script>
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/fastclick/1.0.6/fastclick.min.js"></script>
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/jquery.lazyload/1.9.3/jquery.lazyload.min.js"></script>
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/velocity/1.2.3/velocity.min.js"></script>
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/velocity/1.2.3/velocity.ui.min.js"></script>
-
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.pack.js"></script>
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
-
-  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
-
-
-
-  
-  
-
-
-  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
-
-  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
-
-
-
-  
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
-
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
-
-
-
-  
-
-  
-    
-  
-
-  <script type="text/javascript">
     var duoshuoQuery = {short_name:"zclau"};
     (function() {
-      var ds = document.createElement('script');
-      ds.type = 'text/javascript';ds.async = true;
-      ds.id = 'duoshuo-script';
-      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-      ds.charset = 'UTF-8';
-      (document.getElementsByTagName('head')[0]
-      || document.getElementsByTagName('body')[0]).appendChild(ds);
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+        || document.getElementsByTagName('body')[0]).appendChild(ds);
     })();
-  </script>
+</script>
+<!-- duoshuo end -->
 
-  
-    
-    
-    <script src="//cdn.jsdelivr.net/ua-parser.js/0.7.10/ua-parser.min.js"></script>
-    <script src="/js/src/hook-duoshuo.js"></script>
-  
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+        <div class="ui vertical footer segment">
+    <div class="ui center aligned container">
+        <div class="ui inverted section divider"></div>
+        &copy; 2017 <a href="/">zclau</a>,
+        Powered by <a href="https://github.com/henryhuang/hexo-theme-aloha" target="_blank">Aloha</a> and <a
+                href="http://hexo.io/" target="_blank">Hexo</a>.
+    </div>
+</div>
+
+    </div>
 
 
 
 
+<!-- scripts list from theme config.yml -->
 
+<script src="//cdn.bootcss.com/jquery/3.1.0/jquery.min.js"></script>
 
+<script src="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.js"></script>
 
+<script src="//cdn.bootcss.com/algoliasearch/3.18.1/algoliasearch.min.js"></script>
 
-  
-  
+<script src="//cdn.bootcss.com/algoliasearch-helper-js/2.13.0/algoliasearch.helper.min.js"></script>
 
-  
+<script src="/js/semantic-ui-algolia.js"></script>
 
-  
+<script src="/js/aloha-events.js"></script>
 
-  
-
-  
 
 
 </body>
