@@ -1,7 +1,7 @@
 title: Java基础：注解
 date: 2016-04-03 21:35:41
 categories: Java
-tags: Java基础
+tags: Core Java
 ---
 
 # 概念

@@ -3,7 +3,7 @@ date: 2016-09-04 11:55:59
 categories: 
 - Java
 tags: 
-- Jvm
+- JVM
 ---
 
 最近在把一个重构完的项目放到beta环境测试时，
