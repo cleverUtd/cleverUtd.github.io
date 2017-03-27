@@ -1,0 +1,364 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head prefix="og: http://ogp.me/ns#">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <meta name="description" content="Keep Calm And Coding">
+    <title>TCP连接的建立和终止 | 刘梓</title>
+
+    <!-- Open Graph -->
+    <meta name="description" content="&amp;#x4E09;&amp;#x8DEF;&amp;#x63E1;&amp;#x624B;&amp;#x5EFA;&amp;#x7ACB;&amp;#x4E00;&amp;#x4E2A;TCP&amp;#x8FDE;&amp;#x63A5;&amp;#x65F6;&amp;#xFF0C;&amp;#x4F1A;&amp;#x53D1;&amp;#x751F;&amp;#x4E0B;&amp;#x8FF0;&amp;#x60C5;&amp;#x5F62;&amp;#xFF1A;
+
+&amp;#x670D;&amp;#x52A1;&amp;#x5668;&amp;#x901A;&amp;#x">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TCP连接的建立和终止">
+<meta property="og:url" content="http://zclau.com/2017/03/27/TCP连接的建立和终止/index.html">
+<meta property="og:site_name" content="刘梓">
+<meta property="og:description" content="&amp;#x4E09;&amp;#x8DEF;&amp;#x63E1;&amp;#x624B;&amp;#x5EFA;&amp;#x7ACB;&amp;#x4E00;&amp;#x4E2A;TCP&amp;#x8FDE;&amp;#x63A5;&amp;#x65F6;&amp;#xFF0C;&amp;#x4F1A;&amp;#x53D1;&amp;#x751F;&amp;#x4E0B;&amp;#x8FF0;&amp;#x60C5;&amp;#x5F62;&amp;#xFF1A;
+
+&amp;#x670D;&amp;#x52A1;&amp;#x5668;&amp;#x901A;&amp;#x">
+<meta property="og:image" content="http://7xp2k4.com1.z0.glb.clouddn.com/three-way%20handshake.png">
+<meta property="og:image" content="http://7xp2k4.com1.z0.glb.clouddn.com/tcp%E8%BF%9E%E6%8E%A5%E5%85%B3%E9%97%AD%E6%97%B6%E7%9A%84%E5%88%86%E7%BB%84%E4%BA%A4%E6%8D%A2.jpg">
+<meta property="og:image" content="http://7xp2k4.com1.z0.glb.clouddn.com/tcp%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2%E5%9B%BE.jpg">
+<meta property="og:updated_time" content="2017-03-27T09:30:52.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TCP连接的建立和终止">
+<meta name="twitter:description" content="&amp;#x4E09;&amp;#x8DEF;&amp;#x63E1;&amp;#x624B;&amp;#x5EFA;&amp;#x7ACB;&amp;#x4E00;&amp;#x4E2A;TCP&amp;#x8FDE;&amp;#x63A5;&amp;#x65F6;&amp;#xFF0C;&amp;#x4F1A;&amp;#x53D1;&amp;#x751F;&amp;#x4E0B;&amp;#x8FF0;&amp;#x60C5;&amp;#x5F62;&amp;#xFF1A;
+
+&amp;#x670D;&amp;#x52A1;&amp;#x5668;&amp;#x901A;&amp;#x">
+<meta name="twitter:image" content="http://7xp2k4.com1.z0.glb.clouddn.com/three-way%20handshake.png">
+
+    <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Person",
+  "email": "mailto:cleverutd@gmail.com",
+  "image": "undefined",
+  "name": "zclau",
+  "url": "http://zclau.com"
+}
+</script>
+    <script>
+    var algoliaEnabled = false;
+    
+</script>
+
+    
+
+    
+
+    
+    
+        <!-- stylesheets list from config.yml -->
+        
+        <link rel="stylesheet" href="/css/aloha.css">
+        
+        <link rel="stylesheet" href="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.css">
+        
+        <link rel="stylesheet" href="//cdn.bootcss.com/magnific-popup.js/1.1.0/magnific-popup.min.css">
+        
+    
+
+</head>
+<body id="body" style="margin-bottom: 0;" class="pushable">
+
+    <div class="ui top fixed menu">
+        <a class="item" id="menu-icon"><i class="sidebar icon"></i></a>
+    </div>
+
+    <div id="menu-sidebar" class="ui left vertical sidebar menu">
+
+    <div id="sidebar-top">
+        <div class="content">
+            <h3>刘梓</h3>
+        </div>
+    </div>
+    <div class="ui container sidebar-card">
+    <div class="ui people shape content">
+        <div class="active side">
+            <div class="ui card">
+                <div class="image">
+                    <a href="/index.html">
+                    <img class="ui medium bordered image" src="/images/avatar.jpg">
+                    </a>
+                </div>
+                <div class="content">
+                    <a href="/index.html" class="header">zclau</a>
+                    
+                        <div class="meta">
+                            Java / C / Linux
+                        </div>
+                    
+                </div>
+                <div class="extra content">
+                    <div class="ui list">
+                        
+                        <div class="item">
+                            <i class="marker icon" style="float: left"></i>
+                            <div class="content">GuangZhou</div>
+                        </div>
+                        
+                        
+                        <div class="item">
+                            <i class="mail icon" style="float: left"></i>
+                            <div class="content">
+                                <a href="mailto:cleverutd@gmail.com">cleverutd@gmail.com</a>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                </div>
+                <div class="extra content">
+                    <div class="ui list">
+                        
+
+                                <a href="https://github.com/cleverutd"><i class="large github icon" style="float: left"></i></a>
+
+                            
+
+                                <a href="http://weibo.com/515074234"><i class="large weibo icon" style="float: left"></i></a>
+
+                            
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+    
+    
+
+    
+
+    
+    <a href="/index.html" class="item" >
+        <i class="home icon"></i>
+        首页
+    </a>
+
+    
+    
+
+    
+
+    
+    <a href="/archives/index.html" class="item" >
+        <i class="archive icon"></i>
+        归档
+    </a>
+
+    
+    
+
+    
+
+    
+    <a href="/booklist/index.html" class="item" >
+        <i class="book icon"></i>
+        书单
+    </a>
+
+    
+
+    
+</div>
+
+    <div class="pusher body-content">
+        <div id="content" class="ui main container">
+            <!--<div class="ui one column grid">-->
+                <!--<div class="column">-->
+                    <!--<div class="ui main container">-->
+                        <div id="post-TCP连接的建立和终止" class="ui main container article-type-post">
+
+    
+
+    <div class="ui divided grid">
+
+        <div class="two column row" id="article-content">
+
+            <div class="thirteen wide computer thirteen wide tablet sixteen wide mobile column">
+                
+
+<h1 class="ui header">
+    
+    TCP连接的建立和终止
+</h1>
+
+
+
+                <div class="article-inner">
+
+                    <div class="article-entry" itemprop="articleBody">
+                        
+                        <h1 id="&#x4E09;&#x8DEF;&#x63E1;&#x624B;"><a href="#&#x4E09;&#x8DEF;&#x63E1;&#x624B;" class="headerlink" title="&#x4E09;&#x8DEF;&#x63E1;&#x624B;"></a>&#x4E09;&#x8DEF;&#x63E1;&#x624B;</h1><p>&#x5EFA;&#x7ACB;&#x4E00;&#x4E2A;TCP&#x8FDE;&#x63A5;&#x65F6;&#xFF0C;&#x4F1A;&#x53D1;&#x751F;&#x4E0B;&#x8FF0;&#x60C5;&#x5F62;&#xFF1A;</p>
+<ol class="ui list">
+<li><p>&#x670D;&#x52A1;&#x5668;&#x901A;&#x8FC7;&#x8C03;&#x7528; socket&#x3001;bind&#x3001;&#x548C;listen&#x51FD;&#x6570;&#x5B8C;&#x6210;&#x3002;&#x79F0;&#x4F5C;&#x88AB;&#x52A8;&#x6253;&#x5F00;&#x3002;</p>
+</li>
+<li><p>&#x5BA2;&#x6237;&#x7AEF;&#x8C03;&#x7528;connect&#x51FD;&#x6570;&#x53D1;&#x8D77;&#x4E3B;&#x52A8;&#x6253;&#x5F00;&#x3002;&#x671F;&#x95F4;&#x5BA2;&#x6237;&#x53D1;&#x9001;&#x4E00;&#x4E2A;SYN&#xFF08;&#x540C;&#x6B65;&#xFF09;&#x5206;&#x8282;&#xFF0C;&#x5B83;&#x544A;&#x8BC9;&#x670D;&#x52A1;&#x5668;&#x5BA2;&#x6237;&#x5C06;&#x5728;&#x8FDE;&#x63A5;<br>&#x4E2D;&#x53D1;&#x9001;&#x7684;&#x6570;&#x636E;&#x7684;&#x521D;&#x59CB;&#x5E8F;&#x5217;&#x53F7;</p>
+</li>
+<li><p>&#x670D;&#x52A1;&#x5668;&#x5FC5;&#x987B;&#x786E;&#x8BA4;&#xFF08;ACK&#xFF09;&#x5BA2;&#x6237;&#x7684;SYN&#xFF0C;&#x540C;&#x65F6;&#x81EA;&#x5DF1;&#x4E5F;&#x8981;&#x53D1;&#x9001;&#x4E00;&#x4E2A;SYN&#x5206;&#x8282;&#xFF0C;&#x5B83;&#x542B;&#x6709;&#x670D;&#x52A1;&#x5668;&#x5728;&#x540C;&#x4E00;&#x8FDE;&#x63A5;<br>&#x4E2D;&#x53D1;&#x9001;&#x7684;&#x6570;&#x636E;&#x7684;&#x521D;&#x59CB;&#x5E8F;&#x5217;&#x53F7;</p>
+</li>
+<li><p>&#x5BA2;&#x6237;&#x5FC5;&#x987B;&#x786E;&#x8BA4;&#x670D;&#x52A1;&#x5668;&#x7684;SYN</p>
+</li>
+</ol>
+<p>&#x5982;&#x56FE;&#xFF1A;<br><a class="magnific-img" href="http://7xp2k4.com1.z0.glb.clouddn.com/three-way%20handshake.png"><img src="http://7xp2k4.com1.z0.glb.clouddn.com/three-way%20handshake.png" alt="TCP&#x7684;&#x4E09;&#x8DEF;&#x63E1;&#x624B;" class="ui centered image"></a></p>
+<p>&#x5BA2;&#x6237;&#x7AEF;&#x7684;&#x521D;&#x59CB;&#x5E8F;&#x5217;&#x53F7;&#x4E3A;J&#xFF0C;&#x670D;&#x52A1;&#x5668;&#x7684;&#x521D;&#x59CB;&#x5E8F;&#x5217;&#x53F7;&#x4E3A;K&#x3002;</p>
+<h1 id="TCP&#x8FDE;&#x63A5;&#x7EC8;&#x6B62;"><a href="#TCP&#x8FDE;&#x63A5;&#x7EC8;&#x6B62;" class="headerlink" title="TCP&#x8FDE;&#x63A5;&#x7EC8;&#x6B62;"></a>TCP&#x8FDE;&#x63A5;&#x7EC8;&#x6B62;</h1><ol class="ui list">
+<li><p>&#x67D0;&#x4E2A;&#x5E94;&#x7528;&#x8FDB;&#x7A0B;&#x9996;&#x5148;&#x8C03;&#x7528;close&#xFF0C;&#x53D1;&#x9001;&#x4E00;&#x4E2A;FIN&#x5206;&#x8282;&#xFF0C;&#x8868;&#x793A;&#x6570;&#x636E;&#x53D1;&#x9001;&#x5B8C;&#x6BD5;&#x3002;&#xFF08;&#x4E3B;&#x52A8;&#x5173;&#x95ED;&#xFF09;</p>
+</li>
+<li><p>&#x63A5;&#x6536;&#x5230;FIN&#x7684;&#x5BF9;&#x7AEF;&#x6267;&#x884C;&#x88AB;&#x52A8;&#x5173;&#x95ED;&#x3002;&#x5B83;&#x7684;&#x63A5;&#x6536;&#x4F5C;&#x4E3A;&#x4E00;&#x4E2A;&#x6587;&#x4EF6;&#x7ED3;&#x675F;&#x7B26;&#xFF08;EOF&#xFF09;&#x4F20;&#x9012;&#x7ED9;&#x63A5;&#x6536;&#x7AEF;&#x5E94;&#x7528;&#x8FDB;</p>
+</li>
+<li><p>&#x4E00;&#x6BB5;&#x65F6;&#x95F4;&#x540E;&#xFF0C;&#x63A5;&#x6536;&#x5230;&#x8FD9;&#x4E2A;&#x7ED3;&#x675F;&#x7B26;&#x7684;&#x5E94;&#x7528;&#x8FDB;&#x7A0B;&#x8C03;&#x7528;close&#x5173;&#x95ED;&#x5957;&#x63A5;&#x5B57;&#x3002;&#x5BFC;&#x81F4;&#x5B83;&#x7684;TCP&#x4E5F;&#x53D1;&#x9001;&#x4E00;&#x4E2A;FIN&#x3002;</p>
+</li>
+<li><p>&#x63A5;&#x6536;&#x5230;&#x8FD9;&#x4E2A;&#x6700;&#x7EC8;FIN&#x7684;&#x539F;&#x53D1;&#x9001;&#x7AEF;TCP&#xFF08;&#x5373;&#x6267;&#x884C;&#x4E3B;&#x52A8;&#x5173;&#x95ED;&#x7684;&#x90A3;&#x4E00;&#x7AEF;&#xFF09;&#x786E;&#x8BA4;&#x8FD9;&#x4E2A;FIN&#x3002;</p>
+</li>
+</ol>
+<p><a class="magnific-img" href="http://7xp2k4.com1.z0.glb.clouddn.com/tcp%E8%BF%9E%E6%8E%A5%E5%85%B3%E9%97%AD%E6%97%B6%E7%9A%84%E5%88%86%E7%BB%84%E4%BA%A4%E6%8D%A2.jpg"><img src="http://7xp2k4.com1.z0.glb.clouddn.com/tcp%E8%BF%9E%E6%8E%A5%E5%85%B3%E9%97%AD%E6%97%B6%E7%9A%84%E5%88%86%E7%BB%84%E4%BA%A4%E6%8D%A2.jpg" alt="tcp&#x8FDE;&#x63A5;&#x5173;&#x95ED;&#x65F6;&#x7684;&#x5206;&#x7EC4;&#x4EA4;&#x6362;" class="ui centered image"></a></p>
+<p>&#x5957;&#x63A5;&#x5B57;&#x88AB;&#x5173;&#x95ED;&#x65F6;&#xFF0C;&#x6240;&#x5728;&#x7AEF;&#x90FD;&#x8981;&#x53D1;&#x9001;&#x4E00;&#x4E2A;FIN&#xFF0C;&#x8FD9;&#x662F;&#x7531;&#x5E94;&#x7528;&#x7A0B;&#x5E8F;&#x8C03;&#x7528;close&#x4F34;&#x968F;&#x53D1;&#x751F;&#x7684;&#x3002;</p>
+<p>&#x4E0A;&#x56FE;&#x53EA;&#x662F;&#x5C55;&#x793A;&#x5BA2;&#x6237;&#x7AEF;&#x4E3B;&#x52A8;&#x5173;&#x95ED;&#x7684;&#x60C5;&#x5F62;&#x3002;&#x4F46;&#x662F;&#xFF0C;&#xFF0C;&#xFF0C;&#x9700;&#x8981;&#x6CE8;&#x610F;&#xFF01;&#xFF01;&#xFF01;&#x65E0;&#x8BBA;&#x662F;&#x5BA2;&#x6237;&#x7AEF;&#x8FD8;&#x662F;&#x670D;&#x52A1;&#x7AEF;&#xFF0C;&#x4EFB;&#x4F55;&#x4E00;&#x7AEF;&#x90FD;&#x53EF;&#x4EE5;&#x6267;&#x884C;&#x4E3B;&#x52A8;&#x5173;&#x95ED;&#x3002;</p>
+<h1 id="TCP&#x72B6;&#x6001;&#x8F6C;&#x6362;"><a href="#TCP&#x72B6;&#x6001;&#x8F6C;&#x6362;" class="headerlink" title="TCP&#x72B6;&#x6001;&#x8F6C;&#x6362;"></a>TCP&#x72B6;&#x6001;&#x8F6C;&#x6362;</h1><p><a class="magnific-img" href="http://7xp2k4.com1.z0.glb.clouddn.com/tcp%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2%E5%9B%BE.jpg"><img src="http://7xp2k4.com1.z0.glb.clouddn.com/tcp%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2%E5%9B%BE.jpg" alt="tcp&#x72B6;&#x6001;&#x8F6C;&#x6362;&#x56FE;" class="ui centered image"></a></p>
+<p>TCP&#x4E3A;&#x4E00;&#x4E2A;&#x8FDE;&#x63A5;&#x5B9A;&#x4E49;&#x4E86;11&#x79CD;&#x72B6;&#x6001;&#xFF0C;&#x5E76;&#x4E14;&#x89C4;&#x5B9A;&#x5982;&#x4F55;&#x57FA;&#x4E8E;&#x5F53;&#x524D;&#x72B6;&#x6001;&#x53CA;&#x5728;&#x8BE5;&#x72B6;&#x6001;&#x4E0B;&#x6240;&#x63A5;&#x6536;&#x7684;&#x5206;&#x8282;&#x4ECE;&#x4E00;&#x4E2A;&#x72B6;&#x6001;&#x8F6C;&#x6362;&#x5230;&#x53E6;&#x4E00;&#x4E2A;&#x72B6;&#x6001;&#x3002;&#x5982;&#x4E0A;&#x56FE;&#x6240;&#x793A;&#xFF0C;&#x8FD9;&#x4E9B;&#x72B6;&#x6001;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;<code>netstat</code>&#x663E;&#x793A;&#x3002;</p>
+<h1 id="TIME-WAIT&#x72B6;&#x6001;"><a href="#TIME-WAIT&#x72B6;&#x6001;" class="headerlink" title="TIME_WAIT&#x72B6;&#x6001;"></a>TIME_WAIT&#x72B6;&#x6001;</h1><p>&#x6267;&#x884C;&#x4E3B;&#x52A8;&#x5173;&#x95ED;&#x7684;&#x90A3;&#x7AEF;&#x90FD;&#x4F1A;&#x7ECF;&#x5386;&#x8FD9;&#x4E2A;&#x72B6;&#x6001;&#xFF0C;&#x8BE5;&#x7AEF;&#x505C;&#x7559;&#x5728;&#x8FD9;&#x4E2A;&#x72B6;&#x6001;&#x7684;&#x6301;&#x7EED;&#x65F6;&#x95F4;&#x662F;&#x6700;&#x957F;&#x5206;&#x8282;&#x751F;&#x547D;&#x671F;MSL&#x7684;&#x4E24;&#x500D;&#x3002;&#x4E00;&#x822C;&#x6765;&#x8BF4;&#xFF0C;TIME_WAIT&#x72B6;&#x6001;&#x7684;&#x6301;&#x7EED;&#x65F6;&#x95F4;&#x5728;1&#x5206;&#x949F;&#x5230;4&#x5206;&#x949F;&#x4E4B;&#x95F4;&#x3002;</p>
+<p>TIME_WAIT&#x6709;&#x4E24;&#x4E2A;&#x5B58;&#x5728;&#x7684;&#x7406;&#x7531;&#xFF1A;</p>
+<ol class="ui list">
+<li><p>&#x53EF;&#x9760;&#x5730;&#x5B9E;&#x73B0;TCP&#x5168;&#x53CC;&#x5DE5;&#x8FDE;&#x63A5;&#x7684;&#x7EC8;&#x6B62;&#xFF0C;TIME_WAIT&#x786E;&#x4FDD;&#x6709;&#x8DB3;&#x591F;&#x7684;&#x65F6;&#x95F4;&#x8BA9;&#x5BF9;&#x7AEF;&#x6536;&#x5230;&#x4E86;ACK&#xFF0C;&#x5982;&#x679C;&#x88AB;&#x52A8;&#x5173;&#x95ED;&#x7684;&#x90A3;&#x65B9;&#x6CA1;&#x6709;&#x6536;&#x5230;Ack&#xFF0C;&#x5C31;&#x4F1A;&#x89E6;&#x53D1;&#x88AB;&#x52A8;&#x7AEF;&#x91CD;&#x53D1;Fin&#xFF0C;&#x4E00;&#x6765;&#x4E00;&#x53BB;&#x6B63;&#x597D;2&#x4E2A;MSL</p>
+</li>
+<li><p>&#x5141;&#x8BB8;&#x8001;&#x7684;&#x91CD;&#x590D;&#x5206;&#x8282;&#x5728;&#x7F51;&#x7EDC;&#x4E2D;&#x6D88;&#x901D;&#x3002;&#x6709;&#x8DB3;&#x591F;&#x7684;&#x65F6;&#x95F4;&#x8BA9;&#x8FD9;&#x4E2A;&#x8FDE;&#x63A5;&#x4E0D;&#x4F1A;&#x8DDF;&#x540E;&#x9762;&#x7684;&#x8FDE;&#x63A5;&#x6DF7;&#x5728;&#x4E00;&#x8D77;&#xFF08;&#x4F60;&#x8981;&#x77E5;&#x9053;&#xFF0C;&#x6709;&#x4E9B;&#x81EA;&#x505A;&#x4E3B;&#x5F20;&#x7684;&#x8DEF;&#x7531;&#x5668;&#x4F1A;&#x7F13;&#x5B58;IP&#x6570;&#x636E;&#x5305;&#xFF0C;&#x5982;&#x679C;&#x8FDE;&#x63A5;&#x88AB;&#x91CD;&#x7528;&#x4E86;&#xFF0C;&#x90A3;&#x4E48;&#x8FD9;&#x4E9B;&#x5EF6;&#x8FDF;&#x6536;&#x5230;&#x7684;&#x5305;&#x5C31;&#x6709;&#x53EF;&#x80FD;&#x4F1A;&#x8DDF;&#x65B0;&#x8FDE;&#x63A5;&#x6DF7;&#x5728;&#x4E00;&#x8D77;&#xFF09;</p>
+</li>
+</ol>
+<p>&#x5177;&#x4F53;&#x53EF;&#x53C2;&#x8003;&#x8FD9;&#x7BC7;&#x6587;&#x7AE0; <a href="http://www.serverframework.com/asynchronousevents/2011/01/time-wait-and-its-design-implications-for-protocols-and-scalable-servers.html" target="_blank" rel="external">TIME_WAIT and its design implications for protocols and scalable client server systems</a></p>
+
+                        
+                    </div>
+
+                    
+                    
+                    
+
+                    <div class="description post-description">
+    <span class="post-description-item">
+        <time datetime="2017-03-27T09:30:10.000Z" itemprop="datePublished">2017-03-27</time>
+
+    </span>
+    <span class="post-description-item">
+        
+
+    <span>
+        <i class="tags icon"></i>
+    </span>
+
+    
+    <span class="ui tiny label">
+        <a href="/tags/TCP-IP/">TCP/IP</a>
+    </span>
+
+    
+
+    </span>
+</div>
+
+                </div>
+                
+                <div id="pagination" class="nav-web ui text container pagination">
+
+    <div class="ui stackable two column divided grid container">
+        <div class="row">
+            <div class="column nav-left">
+                
+
+                <a class="ui tiny button disabled"><i class="angle left icon"></i>前一篇</a>
+
+                
+            </div>
+            <div class="column nav-right">
+                
+
+                <a href="/2017/01/23/记录一次内存泄露排查过程/" class="ui tiny button">
+                    
+                    记录一次内存泄露排查过程
+                    
+                    <i class="angle right icon"></i></a>
+                
+            </div>
+        </div>
+    </div>
+
+</div>
+                
+            </div>
+
+            
+            <div class="three wide computer three wide tablet column">
+
+                <div class="ui sticky article-toc" id="article-toc">
+                    <!-- toc -->
+                    <ol class="ui ordered list"><li><a href="#三路握手"><span>三路握手</span></a></li><li><a href="#TCP连接终止"><span>TCP连接终止</span></a></li><li><a href="#TCP状态转换"><span>TCP状态转换</span></a></li><li><a href="#TIME-WAIT状态"><span>TIME_WAIT状态</span></a></li></ol>
+                </div>
+
+            </div>
+            
+
+        </div>
+    </div>
+</div>
+
+
+<!-- duoshuo start -->
+<div class="ds-thread" data-thread-key="2017/03/27/TCP连接的建立和终止/" data-title="TCP连接的建立和终止 | 刘梓" data-url="http://zclau.com/2017/03/27/TCP连接的建立和终止/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    var duoshuoQuery = {short_name:"zclau"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+        || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- duoshuo end -->
+
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+        <div class="ui vertical footer segment">
+    <div class="ui center aligned container">
+        <div class="ui inverted section divider"></div>
+        &copy; 2017 <a href="/">zclau</a>,
+        Powered by <a href="https://github.com/henryhuang/hexo-theme-aloha" target="_blank">Aloha</a> and <a
+                href="http://hexo.io/" target="_blank">Hexo</a>.
+    </div>
+</div>
+
+    </div>
+
+
+
+
+<!-- scripts list from theme config.yml -->
+
+<script src="//cdn.bootcss.com/jquery/3.1.0/jquery.min.js"></script>
+
+<script src="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.js"></script>
+
+<script src="//cdn.bootcss.com/algoliasearch/3.18.1/algoliasearch.min.js"></script>
+
+<script src="//cdn.bootcss.com/algoliasearch-helper-js/2.13.0/algoliasearch.helper.min.js"></script>
+
+<script src="/js/semantic-ui-algolia.js"></script>
+
+<script src="/js/aloha-events.js"></script>
+
+
+
+</body>
+</html>
