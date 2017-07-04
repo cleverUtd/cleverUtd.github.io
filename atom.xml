@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://zclau.com/"/>
-  <updated>2017-07-04T13:44:09.000Z</updated>
+  <updated>2017-07-04T13:46:03.000Z</updated>
   <id>http://zclau.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://zclau.com/2017/07/04/maven%E4%BE%9D%E8%B5%96%E8%B0%83%E8%A7%A3/"/>
     <id>http://zclau.com/2017/07/04/maven依赖调解/</id>
     <published>2017-07-04T13:35:10.000Z</published>
-    <updated>2017-07-04T13:44:09.000Z</updated>
+    <updated>2017-07-04T13:46:03.000Z</updated>
     
     <content type="html"><![CDATA[<p>&#x9879;&#x76EE;&#x6709;&#x4EE5;&#x4E0B;&#x4F9D;&#x8D56;&#xFF1A;</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.vips.components<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>vips-common-cache<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.poi<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>poi<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.9<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
@@ -34,7 +34,7 @@
 <p>httpclient &#x2014;&gt; commons-codec(1.9)</p>
 <p>poi &#x2014;&gt; commons-codec(1.5)</p>
 <p>&#x5206;&#x6790;&#x4F9D;&#x8D56;&#x540E;&#x53D1;&#x73B0;&#xFF0C;maven&#x9009;&#x62E9;&#x4E86;commons-codec(1.9)</p>
-<p><a href="http://7xp2k4.com1.z0.glb.clouddn.com/QQ20160322-0@2x.png" target="_blank" rel="external"></a></p>
+<p><a class="magnific-img" href="http://7xp2k4.com1.z0.glb.clouddn.com/QQ20160322-0@2x.png"><img src="http://7xp2k4.com1.z0.glb.clouddn.com/QQ20160322-0@2x.png" alt="" class="ui centered image"></a></p>
 ]]></content>
     
     <summary type="html">
