@@ -1,0 +1,344 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head prefix="og: http://ogp.me/ns#">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <meta name="description" content="Keep Calm And Coding">
+    <title>线程池拒绝策略源码小析 | 刘梓</title>
+
+    <!-- Open Graph -->
+    <meta name="description" content="&amp;#x63D0;&amp;#x4EA4;&amp;#x4E00;&amp;#x4E2A;&amp;#x65B0;&amp;#x7684;task&amp;#x5230;&amp;#x7EBF;&amp;#x7A0B;&amp;#x6C60;&amp;#x540E;&amp;#xFF0C;&amp;#x6B64;&amp;#x65F6;&amp;#x5982;&amp;#x679C;ThreadPool&amp;#x5185;&amp;#x7684;&amp;#x6240;&amp;#x6709;&amp;#x5DE5;&amp;#x4F5C;&amp;#x7EBF;&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="线程池拒绝策略源码小析">
+<meta property="og:url" content="http://zclau.com/2017/11/10/线程池拒绝策略源码小析/index.html">
+<meta property="og:site_name" content="刘梓">
+<meta property="og:description" content="&amp;#x63D0;&amp;#x4EA4;&amp;#x4E00;&amp;#x4E2A;&amp;#x65B0;&amp;#x7684;task&amp;#x5230;&amp;#x7EBF;&amp;#x7A0B;&amp;#x6C60;&amp;#x540E;&amp;#xFF0C;&amp;#x6B64;&amp;#x65F6;&amp;#x5982;&amp;#x679C;ThreadPool&amp;#x5185;&amp;#x7684;&amp;#x6240;&amp;#x6709;&amp;#x5DE5;&amp;#x4F5C;&amp;#x7EBF;&amp;">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/8923118-e39226683758c31e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/8923118-08fa4589a940767c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/8923118-6d7b6ecd5323eb21.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/8923118-0f93f7ce1cedd7e9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/8923118-80005ac373773c29.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/8923118-5623a7e77443ac0d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-11-10T07:21:34.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="线程池拒绝策略源码小析">
+<meta name="twitter:description" content="&amp;#x63D0;&amp;#x4EA4;&amp;#x4E00;&amp;#x4E2A;&amp;#x65B0;&amp;#x7684;task&amp;#x5230;&amp;#x7EBF;&amp;#x7A0B;&amp;#x6C60;&amp;#x540E;&amp;#xFF0C;&amp;#x6B64;&amp;#x65F6;&amp;#x5982;&amp;#x679C;ThreadPool&amp;#x5185;&amp;#x7684;&amp;#x6240;&amp;#x6709;&amp;#x5DE5;&amp;#x4F5C;&amp;#x7EBF;&amp;">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/8923118-e39226683758c31e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+    <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Person",
+  "email": "mailto:cleverutd@gmail.com",
+  "image": "undefined",
+  "name": "zclau",
+  "url": "http://zclau.com"
+}
+</script>
+    <script>
+    var algoliaEnabled = false;
+    
+</script>
+
+    
+
+    
+
+    
+    
+        <!-- stylesheets list from config.yml -->
+        
+        <link rel="stylesheet" href="/css/aloha.css">
+        
+        <link rel="stylesheet" href="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.css">
+        
+        <link rel="stylesheet" href="//cdn.bootcss.com/magnific-popup.js/1.1.0/magnific-popup.min.css">
+        
+    
+
+</head>
+<body id="body" style="margin-bottom: 0;" class="pushable">
+
+    <div class="ui top fixed menu">
+        <a class="item" id="menu-icon"><i class="sidebar icon"></i></a>
+    </div>
+
+    <div id="menu-sidebar" class="ui left vertical sidebar menu">
+
+    <div id="sidebar-top">
+        <div class="content">
+            <h3>刘梓</h3>
+        </div>
+    </div>
+    <div class="ui container sidebar-card">
+    <div class="ui people shape content">
+        <div class="active side">
+            <div class="ui card">
+                <div class="image">
+                    <a href="/index.html">
+                    <img class="ui medium bordered image" src="/images/avatar.jpg">
+                    </a>
+                </div>
+                <div class="content">
+                    <a href="/index.html" class="header">zclau</a>
+                    
+                        <div class="meta">
+                            Java / C / Linux
+                        </div>
+                    
+                </div>
+                <div class="extra content">
+                    <div class="ui list">
+                        
+                        <div class="item">
+                            <i class="marker icon" style="float: left"></i>
+                            <div class="content">GuangZhou</div>
+                        </div>
+                        
+                        
+                        <div class="item">
+                            <i class="mail icon" style="float: left"></i>
+                            <div class="content">
+                                <a href="mailto:cleverutd@gmail.com">cleverutd@gmail.com</a>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                </div>
+                <div class="extra content">
+                    <div class="ui list">
+                        
+
+                                <a href="https://github.com/cleverutd"><i class="large github icon" style="float: left"></i></a>
+
+                            
+
+                                <a href="http://weibo.com/515074234"><i class="large weibo icon" style="float: left"></i></a>
+
+                            
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+    
+    
+
+    
+
+    
+    <a href="/index.html" class="item" >
+        <i class="home icon"></i>
+        首页
+    </a>
+
+    
+    
+
+    
+
+    
+    <a href="/archives/index.html" class="item" >
+        <i class="archive icon"></i>
+        归档
+    </a>
+
+    
+    
+
+    
+
+    
+    <a href="/booklist/index.html" class="item" >
+        <i class="book icon"></i>
+        书单
+    </a>
+
+    
+
+    
+</div>
+
+    <div class="pusher body-content">
+        <div id="content" class="ui main container">
+            <!--<div class="ui one column grid">-->
+                <!--<div class="column">-->
+                    <!--<div class="ui main container">-->
+                        <div id="post-线程池拒绝策略源码小析" class="ui main container article-type-post">
+
+    
+
+    <div class="ui divided grid">
+
+        <div class="two column row" id="article-content">
+
+            <div class="thirteen wide computer thirteen wide tablet sixteen wide mobile column">
+                
+
+<h1 class="ui header">
+    
+    线程池拒绝策略源码小析
+</h1>
+
+
+
+                <div class="article-inner">
+
+                    <div class="article-entry" itemprop="articleBody">
+                        
+                        <ul class="ui list">
+<li><p>&#x63D0;&#x4EA4;&#x4E00;&#x4E2A;&#x65B0;&#x7684;task&#x5230;&#x7EBF;&#x7A0B;&#x6C60;&#x540E;&#xFF0C;&#x6B64;&#x65F6;&#x5982;&#x679C;ThreadPool&#x5185;&#x7684;&#x6240;&#x6709;&#x5DE5;&#x4F5C;&#x7EBF;&#x7A0B;&#x90FD;&#x5728;&#x5FD9;&#x788C;&#x65F6;&#xFF08;&#x6CA1;&#x6709;&#x53EF;&#x7528;&#x7684;&#x7EBF;&#x7A0B;&#x53BB;&#x5904;&#x7406;&#x8BE5;task&#xFF09;&#xFF0C;&#x5E76;&#x4E14;&#x4EFB;&#x52A1;&#x961F;&#x5217;&#x4E5F;&#x5230;&#x8FBE;&#x754C;&#x9650;&#xFF0C;&#x8FD9;&#x65F6;&#x5019;&#x5C31;&#x9700;&#x8981;&#x7528;&#x5230;&#x62D2;&#x7EDD;&#x7B56;&#x7565;&#x3002;</p>
+</li>
+<li><p>&#x5728; java.util.concurrent&#x5305;&#x4E0B;&#x6709;&#x4E2A;RejectedExecutionHandler&#x63A5;&#x53E3;&#xFF0C;&#x8BE5;&#x63A5;&#x53E3;&#x5B9A;&#x4E49;&#x4E86;rejectedExecution&#x65B9;&#x6CD5;&#xFF0C;&#x7528;&#x6765;&#x5B9E;&#x73B0;&#x5177;&#x4F53;&#x7684;&#x62D2;&#x7EDD;&#x884C;&#x4E3A;&#x3002;</p>
+</li>
+</ul>
+<p><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-e39226683758c31e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-e39226683758c31e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<ul class="ui list">
+<li>&#x518D;&#x5F80;&#x4E0B;&#x770B;&#xFF0C;Java&#x9884;&#x5B9A;&#x4E49;&#x4E86;&#x56DB;&#x79CD;&#x62D2;&#x7EDD;&#x7B56;&#x7565;&#xFF1A;<br><img src="http://upload-images.jianshu.io/upload_images/8923118-08fa4589a940767c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></li>
+</ul>
+<p>&#x4E0B;&#x9762;&#x5C31;&#x5206;&#x6790;&#x4E00;&#x4E0B;&#x8FD9;&#x56DB;&#x79CD;&#x62D2;&#x7EDD;&#x7B56;&#x7565;&#x6709;&#x4EC0;&#x4E48;&#x4E0D;&#x4E00;&#x6837;&#xFF1A;</p>
+<h3 id="AbortPolicy"><a href="#AbortPolicy" class="headerlink" title="AbortPolicy"></a>AbortPolicy</h3><p><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-6d7b6ecd5323eb21.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-6d7b6ecd5323eb21.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<p>&#x53EF;&#x4EE5;&#x770B;&#x5230;AbortPolicy&#x5176;&#x5B9E;&#x5C31;&#x662F;&#x76F4;&#x63A5;&#x629B;&#x4E86;&#x4E2A;exception&#xFF0C;&#x5E76;&#x4E22;&#x5F03;&#x8BE5;task&#x3002;</p>
+<h3 id="DiscardPolicy"><a href="#DiscardPolicy" class="headerlink" title="DiscardPolicy"></a>DiscardPolicy</h3><p><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-0f93f7ce1cedd7e9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-0f93f7ce1cedd7e9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<p>DiscardPolicy&#x4EC0;&#x4E48;&#x90FD;&#x6CA1;&#x505A;&#xFF0C;&#x9759;&#x9759;&#x5730;&#x4E22;&#x5F03;&#x8BE5;task</p>
+<h3 id="DiscardOldestPolicy"><a href="#DiscardOldestPolicy" class="headerlink" title="DiscardOldestPolicy"></a>DiscardOldestPolicy</h3><p><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-80005ac373773c29.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-80005ac373773c29.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<p>&#x53EF;&#x4EE5;&#x770B;&#x5230;DiscardOldestPolicy&#x4F1A;&#x5148;&#x901A;&#x8FC7;poll&#x65B9;&#x6CD5;&#xFF0C;&#x5C06;&#x4EFB;&#x52A1;&#x961F;&#x5217;&#x7684;&#x961F;&#x5934;&#xFF0C;&#x4E5F;&#x5C31;&#x662F;&#x6700;&#x65E7;&#x7684;&#x90A3;&#x4E2A;&#x4EFB;&#x52A1;remove&#x6389;&#xFF0C;&#x7136;&#x540E;&#x5C06;&#x6700;&#x65B0;&#x7684;task&#x653E;&#x8FDB;&#x7EBF;&#x7A0B;&#x6C60;</p>
+<h3 id="CallerRunsPolicy"><a href="#CallerRunsPolicy" class="headerlink" title="CallerRunsPolicy"></a>CallerRunsPolicy</h3><p><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-5623a7e77443ac0d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-5623a7e77443ac0d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<p>&#x53EF;&#x4EE5;&#x770B;&#x5230;&#xFF0C;CallerRunsPolicy&#x5C31;&#x662F;&#x76F4;&#x63A5;&#x8C03;&#x7528;Runnable&#x7684;&#x5B9E;&#x4F8B;&#x65B9;&#x6CD5;run&#x53BB;&#x6267;&#x884C;&#x8BE5;task&#xFF0C;&#x8BF4;&#x767D;&#x4E86;&#x5C31;&#x662F;&#x8BE5;task&#x76F4;&#x63A5;&#x7531;&#x8C03;&#x7528;&#x8005;&#x7EBF;&#x7A0B;&#x6765;&#x6267;&#x884C;</p>
+<h3 id="&#x540E;&#x8BB0;"><a href="#&#x540E;&#x8BB0;" class="headerlink" title="&#x540E;&#x8BB0;"></a>&#x540E;&#x8BB0;</h3><p>&#x5F53;&#x7136;&#xFF0C;&#x4EE5;&#x4E0A;&#x56DB;&#x79CD;&#x62D2;&#x7EDD;&#x7B56;&#x7565;&#x53EA;&#x662F;jdk&#x9884;&#x5B9A;&#x4E49;&#x7684;&#xFF0C;&#x6211;&#x4EEC;&#x4E5F;&#x53EF;&#x4EE5;&#x6839;&#x636E;&#x5B9E;&#x9645;&#x60C5;&#x51B5;&#x81EA;&#x5B9A;&#x4E49;&#x62D2;&#x7EDD;&#x7B56;&#x7565;&#xFF0C;&#x53EA;&#x9700;&#x8981;&#x5B9E;&#x73B0;RejectedExecutionHandler&#x63A5;&#x53E3;&#x5373;&#x53EF;</p>
+
+                        
+                    </div>
+
+                    
+                    
+                    
+
+                    <div class="description post-description">
+    <span class="post-description-item">
+        <time datetime="2017-11-10T07:17:15.000Z" itemprop="datePublished">2017-11-10</time>
+
+    </span>
+    <span class="post-description-item">
+        
+
+    <span>
+        <i class="tags icon"></i>
+    </span>
+
+    
+    <span class="ui tiny label">
+        <a href="/tags/Core-Java/">Core Java</a>
+    </span>
+
+    
+
+    </span>
+</div>
+
+                </div>
+                
+                <div id="pagination" class="nav-web ui text container pagination">
+
+    <div class="ui stackable two column divided grid container">
+        <div class="row">
+            <div class="column nav-left">
+                
+
+                <a class="ui tiny button disabled"><i class="angle left icon"></i>前一篇</a>
+
+                
+            </div>
+            <div class="column nav-right">
+                
+
+                <a href="/2017/07/04/maven依赖调解/" class="ui tiny button">
+                    
+                    maven依赖调解
+                    
+                    <i class="angle right icon"></i></a>
+                
+            </div>
+        </div>
+    </div>
+
+</div>
+                
+            </div>
+
+            
+            <div class="three wide computer three wide tablet column">
+
+                <div class="ui sticky article-toc" id="article-toc">
+                    <!-- toc -->
+                    <ol class="ui ordered list"><li><a href="#AbortPolicy"><span>AbortPolicy</span></a></li><li><a href="#DiscardPolicy"><span>DiscardPolicy</span></a></li><li><a href="#DiscardOldestPolicy"><span>DiscardOldestPolicy</span></a></li><li><a href="#CallerRunsPolicy"><span>CallerRunsPolicy</span></a></li><li><a href="#后记"><span>后记</span></a></li></ol>
+                </div>
+
+            </div>
+            
+
+        </div>
+    </div>
+</div>
+
+
+<!-- duoshuo start -->
+<div class="ds-thread" data-thread-key="2017/11/10/线程池拒绝策略源码小析/" data-title="线程池拒绝策略源码小析 | 刘梓" data-url="http://zclau.com/2017/11/10/线程池拒绝策略源码小析/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    var duoshuoQuery = {short_name:"zclau"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+        || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- duoshuo end -->
+
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+        <div class="ui vertical footer segment">
+    <div class="ui center aligned container">
+        <div class="ui inverted section divider"></div>
+        &copy; 2017 <a href="/">zclau</a>,
+        Powered by <a href="https://github.com/henryhuang/hexo-theme-aloha" target="_blank">Aloha</a> and <a
+                href="http://hexo.io/" target="_blank">Hexo</a>.
+    </div>
+</div>
+
+    </div>
+
+
+
+
+<!-- scripts list from theme config.yml -->
+
+<script src="//cdn.bootcss.com/jquery/3.1.0/jquery.min.js"></script>
+
+<script src="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.js"></script>
+
+<script src="//cdn.bootcss.com/algoliasearch/3.18.1/algoliasearch.min.js"></script>
+
+<script src="//cdn.bootcss.com/algoliasearch-helper-js/2.13.0/algoliasearch.helper.min.js"></script>
+
+<script src="/js/semantic-ui-algolia.js"></script>
+
+<script src="/js/aloha-events.js"></script>
+
+
+
+</body>
+</html>
