@@ -1,0 +1,386 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head prefix="og: http://ogp.me/ns#">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <meta name="description" content="Keep Calm And Coding">
+    <title>性能测试关注的指标 | 刘梓</title>
+
+    <!-- Open Graph -->
+    <meta name="description" content="&amp;#x6027;&amp;#x80FD;&amp;#x6D4B;&amp;#x8BD5;&amp;#x65F6;&amp;#x6211;&amp;#x4EEC;&amp;#x9700;&amp;#x8981;&amp;#x5173;&amp;#x6CE8;&amp;#x7684;&amp;#x6307;&amp;#x6807;
+RT&amp;#xFF1A;&amp;#x54CD;&amp;#x5E94;&amp;#x65F6;&amp;#x95F4;
+
+TPS&amp;#xFF1A;&amp;#x6BCF;&amp;#x79D2;&amp;#x5B8C;&amp;#x6210;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="性能测试关注的指标">
+<meta property="og:url" content="http://zclau.com/2017/11/29/性能测试关注的指标/index.html">
+<meta property="og:site_name" content="刘梓">
+<meta property="og:description" content="&amp;#x6027;&amp;#x80FD;&amp;#x6D4B;&amp;#x8BD5;&amp;#x65F6;&amp;#x6211;&amp;#x4EEC;&amp;#x9700;&amp;#x8981;&amp;#x5173;&amp;#x6CE8;&amp;#x7684;&amp;#x6307;&amp;#x6807;
+RT&amp;#xFF1A;&amp;#x54CD;&amp;#x5E94;&amp;#x65F6;&amp;#x95F4;
+
+TPS&amp;#xFF1A;&amp;#x6BCF;&amp;#x79D2;&amp;#x5B8C;&amp;#x6210;">
+<meta property="og:updated_time" content="2017-11-30T03:10:21.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="性能测试关注的指标">
+<meta name="twitter:description" content="&amp;#x6027;&amp;#x80FD;&amp;#x6D4B;&amp;#x8BD5;&amp;#x65F6;&amp;#x6211;&amp;#x4EEC;&amp;#x9700;&amp;#x8981;&amp;#x5173;&amp;#x6CE8;&amp;#x7684;&amp;#x6307;&amp;#x6807;
+RT&amp;#xFF1A;&amp;#x54CD;&amp;#x5E94;&amp;#x65F6;&amp;#x95F4;
+
+TPS&amp;#xFF1A;&amp;#x6BCF;&amp;#x79D2;&amp;#x5B8C;&amp;#x6210;">
+
+    <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Person",
+  "email": "mailto:cleverutd@gmail.com",
+  "image": "undefined",
+  "name": "zclau",
+  "url": "http://zclau.com"
+}
+</script>
+    <script>
+    var algoliaEnabled = false;
+    
+</script>
+
+    
+
+    
+
+    
+    
+        <!-- stylesheets list from config.yml -->
+        
+        <link rel="stylesheet" href="/css/aloha.css">
+        
+        <link rel="stylesheet" href="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.css">
+        
+        <link rel="stylesheet" href="//cdn.bootcss.com/magnific-popup.js/1.1.0/magnific-popup.min.css">
+        
+    
+
+</head>
+<body id="body" style="margin-bottom: 0;" class="pushable">
+
+    <div class="ui top fixed menu">
+        <a class="item" id="menu-icon"><i class="sidebar icon"></i></a>
+    </div>
+
+    <div id="menu-sidebar" class="ui left vertical sidebar menu">
+
+    <div id="sidebar-top">
+        <div class="content">
+            <h3>刘梓</h3>
+        </div>
+    </div>
+    <div class="ui container sidebar-card">
+    <div class="ui people shape content">
+        <div class="active side">
+            <div class="ui card">
+                <div class="image">
+                    <a href="/index.html">
+                    <img class="ui medium bordered image" src="/images/avatar.jpg">
+                    </a>
+                </div>
+                <div class="content">
+                    <a href="/index.html" class="header">zclau</a>
+                    
+                        <div class="meta">
+                            Java / C / Linux
+                        </div>
+                    
+                </div>
+                <div class="extra content">
+                    <div class="ui list">
+                        
+                        <div class="item">
+                            <i class="marker icon" style="float: left"></i>
+                            <div class="content">GuangZhou</div>
+                        </div>
+                        
+                        
+                        <div class="item">
+                            <i class="mail icon" style="float: left"></i>
+                            <div class="content">
+                                <a href="mailto:cleverutd@gmail.com">cleverutd@gmail.com</a>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                </div>
+                <div class="extra content">
+                    <div class="ui list">
+                        
+
+                                <a href="https://github.com/cleverutd"><i class="large github icon" style="float: left"></i></a>
+
+                            
+
+                                <a href="http://weibo.com/515074234"><i class="large weibo icon" style="float: left"></i></a>
+
+                            
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+    
+    
+
+    
+
+    
+    <a href="/index.html" class="item" >
+        <i class="home icon"></i>
+        首页
+    </a>
+
+    
+    
+
+    
+
+    
+    <a href="/archives/index.html" class="item" >
+        <i class="archive icon"></i>
+        归档
+    </a>
+
+    
+    
+
+    
+
+    
+    <a href="/booklist/index.html" class="item" >
+        <i class="book icon"></i>
+        书单
+    </a>
+
+    
+
+    
+</div>
+
+    <div class="pusher body-content">
+        <div id="content" class="ui main container">
+            <!--<div class="ui one column grid">-->
+                <!--<div class="column">-->
+                    <!--<div class="ui main container">-->
+                        <div id="post-性能测试关注的指标" class="ui main container article-type-post">
+
+    
+
+    <div class="ui divided grid">
+
+        <div class="two column row" id="article-content">
+
+            <div class="thirteen wide computer thirteen wide tablet sixteen wide mobile column">
+                
+
+<h1 class="ui header">
+    
+    性能测试关注的指标
+</h1>
+
+
+
+                <div class="article-inner">
+
+                    <div class="article-entry" itemprop="articleBody">
+                        
+                        <h3 id="&#x6027;&#x80FD;&#x6D4B;&#x8BD5;&#x65F6;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x5173;&#x6CE8;&#x7684;&#x6307;&#x6807;"><a href="#&#x6027;&#x80FD;&#x6D4B;&#x8BD5;&#x65F6;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x5173;&#x6CE8;&#x7684;&#x6307;&#x6807;" class="headerlink" title="&#x6027;&#x80FD;&#x6D4B;&#x8BD5;&#x65F6;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x5173;&#x6CE8;&#x7684;&#x6307;&#x6807;"></a>&#x6027;&#x80FD;&#x6D4B;&#x8BD5;&#x65F6;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x5173;&#x6CE8;&#x7684;&#x6307;&#x6807;</h3><ul class="ui list">
+<li><p>RT&#xFF1A;&#x54CD;&#x5E94;&#x65F6;&#x95F4;</p>
+</li>
+<li><p>TPS&#xFF1A;&#x6BCF;&#x79D2;&#x5B8C;&#x6210;&#x4E8B;&#x52A1;&#x6570;</p>
+</li>
+<li><p>CPU&#x6027;&#x80FD;&#x6307;&#x6807;&#xFF1A;&#x5229;&#x7528;&#x7387;&#x3001;&#x8D1F;&#x8F7D;</p>
+</li>
+<li><p>Mem&#xFF1A;&#x5185;&#x5B58;&#x6027;&#x80FD;&#x6307;&#x6807;&#xFF0C;&#x53EF;&#x7528;&#x7269;&#x7406;&#x5185;&#x5B58;&#x3001;&#x865A;&#x62DF;&#x5185;&#x5B58;&#x4F7F;&#x7528;&#x7387;</p>
+</li>
+<li><p>Disk&#xFF1A;&#x78C1;&#x76D8;&#x6027;&#x80FD;&#x6307;&#x6807;&#xFF0C;Disk Time&#x3001;IO&#x7B49;&#x5F85;</p>
+</li>
+<li><p>NetWork&#xFF1A;&#x7F51;&#x7EDC;&#x6307;&#x6807;&#xFF0C;&#x5E26;&#x5BBD;&#x4F7F;&#x7528;&#x7387;&#x3001;&#x4EFB;&#x52A1;&#x961F;&#x5217;&#x957F;&#x5EA6;</p>
+</li>
+</ul>
+<ul class="ui list">
+<li><p>TCP&#x8FDE;&#x63A5;&#x6570;&#xFF0C;&#x53EF;&#x4EE5;&#x7528;netstat&#x547D;&#x4EE4;&#x7EDF;&#x8BA1;&#x5F97;&#x5230;</p>
+</li>
+<li><p>&#x4E2D;&#x95F4;&#x4EF6;&#x5EFA;&#x7ACB;&#x7684;&#x7EBF;&#x7A0B;&#x6C60;&#xFF0C;&#x76D1;&#x63A7;&#x7EBF;&#x7A0B;&#x72B6;&#x6001;</p>
+</li>
+<li><p>JVM&#x6027;&#x80FD;&#x6307;&#x6807;&#xFF0C;GC&#x60C5;&#x51B5;&#x3001;Heap&#x4F7F;&#x7528;&#x60C5;&#x51B5;</p>
+</li>
+<li><p>CPU&#x8D1F;&#x8F7D;&#x961F;&#x5217;&#x957F;&#x5EA6;</p>
+</li>
+<li><p>&#x670D;&#x52A1;&#x5668;&#x4E0E;&#x4E2D;&#x95F4;&#x4EF6;&#x4E4B;&#x95F4;&#x5EFA;&#x7ACB;&#x7684;&#x8FDE;&#x63A5;&#x6570;&#x53CA;&#x8FDE;&#x63A5;&#x72B6;&#x6001;</p>
+</li>
+</ul>
+<h3 id="&#x4E00;&#x822C;&#x6027;&#x80FD;&#x5206;&#x6790;&#x7684;&#x8FC7;&#x7A0B;"><a href="#&#x4E00;&#x822C;&#x6027;&#x80FD;&#x5206;&#x6790;&#x7684;&#x8FC7;&#x7A0B;" class="headerlink" title="&#x4E00;&#x822C;&#x6027;&#x80FD;&#x5206;&#x6790;&#x7684;&#x8FC7;&#x7A0B;"></a>&#x4E00;&#x822C;&#x6027;&#x80FD;&#x5206;&#x6790;&#x7684;&#x8FC7;&#x7A0B;</h3><table>
+<thead>
+<tr>
+<th>&#x5E8F;&#x53F7;</th>
+<th>&#x6B65;&#x9AA4;&#x540D;&#x79F0;</th>
+<th>&#x8BF4;&#x660E;</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>&#x68C0;&#x67E5;RT</td>
+<td>&#x5BA2;&#x6237;&#x7AEF;&#x54CD;&#x5E94;&#x65F6;&#x95F4;</td>
+</tr>
+<tr>
+<td>2</td>
+<td>&#x68C0;&#x67E5;TPS</td>
+<td>TPS&#x5927;&#x65F6;RT&#x5C0F;&#xFF0C; &#x8BF4;&#x660E;&#x6027;&#x80FD;&#x826F;&#x597D;</td>
+</tr>
+<tr>
+<td>3</td>
+<td>&#x68C0;&#x67E5;&#x8D1F;&#x8F7D;&#x673A;&#x8D44;&#x6E90;&#x6D88;&#x8017;</td>
+<td>&#x68C0;&#x67E5;CPU&#x4F7F;&#x7528;&#x7387;</td>
+</tr>
+<tr>
+<td>4</td>
+<td>&#x68C0;&#x67E5;&#x88AB;&#x538B;&#x670D;&#x52A1;&#x5668;&#x7684;&#x8D44;&#x6E90;&#x6D88;&#x8017;</td>
+<td>CPU &#x3001; &#x5185;&#x5B58;&#x3001;&#x78C1;&#x76D8;IO&#x3001;&#x5E26;&#x5BBD;&#x3001;&#x54CD;&#x5E94;&#x65F6;&#x95F4;</td>
+</tr>
+<tr>
+<td>5</td>
+<td>&#x68C0;&#x67E5;&#x4E2D;&#x95F4;&#x4EF6;&#x914D;&#x7F6E;</td>
+<td>&#x786E;&#x5B9A;&#x662F;&#x5426;&#x6709;&#x914D;&#x7F6E;&#x53C2;&#x6570;&#x95EE;&#x9898;</td>
+</tr>
+<tr>
+<td>6</td>
+<td>&#x6570;&#x636E;&#x5E93;&#x670D;&#x52A1;&#x5668;</td>
+<td>CPU&#x3001;&#x5185;&#x5B58;&#x3001;IO&#x7E41;&#x5FD9;&#x7A0B;&#x5EA6;&#x3001;&#x6570;&#x636E;&#x5E93;&#x76D1;&#x63A7;</td>
+</tr>
+</tbody>
+</table>
+<h3 id="&#x76F8;&#x5173;&#x53C2;&#x8003;"><a href="#&#x76F8;&#x5173;&#x53C2;&#x8003;" class="headerlink" title="&#x76F8;&#x5173;&#x53C2;&#x8003;"></a>&#x76F8;&#x5173;&#x53C2;&#x8003;</h3><ul class="ui list">
+<li>&#x5DE6;&#x8033;&#x6735;&#x5927;&#x795E;&#x5199;&#x8FC7;&#x4E00;&#x7BC7;&#x535A;&#x5BA2;&#xFF0C;&#x9610;&#x8FF0;&#x4ED6;&#x5BF9;&#x6027;&#x80FD;&#x6D4B;&#x8BD5;&#x7684;&#x4E00;&#x4E9B;&#x770B;&#x6CD5; <a href="https://coolshell.cn/articles/17381.html" target="_blank" rel="external">&#x6027;&#x80FD;&#x6D4B;&#x8BD5;&#x5E94;&#x8BE5;&#x600E;&#x4E48;&#x505A;?</a></li>
+<li>&#x5173;&#x4E8E;GC&#x5206;&#x6790;&#xFF0C;&#x53EF;&#x4EE5;&#x53C2;&#x770B;<a href="http://www.jianshu.com/p/5ace2a0cafa4" target="_blank" rel="external">&#x521D;&#x6B65;&#x8BCA;&#x65AD;&#x4F60;&#x7684;GC</a></li>
+</ul>
+<p>&#x5F85;&#x7EED;&#x2026;&#x2026;</p>
+
+                        
+                    </div>
+
+                    
+                    
+                    
+
+                    <div class="description post-description">
+    <span class="post-description-item">
+        <time datetime="2017-11-29T14:32:02.000Z" itemprop="datePublished">2017-11-29</time>
+
+    </span>
+    <span class="post-description-item">
+        
+    </span>
+</div>
+
+                </div>
+                
+                <div id="pagination" class="nav-web ui text container pagination">
+
+    <div class="ui stackable two column divided grid container">
+        <div class="row">
+            <div class="column nav-left">
+                
+
+                <a class="ui tiny button disabled"><i class="angle left icon"></i>前一篇</a>
+
+                
+            </div>
+            <div class="column nav-right">
+                
+
+                <a href="/2017/11/10/线程池拒绝策略源码小析/" class="ui tiny button">
+                    
+                    线程池拒绝策略源码小析
+                    
+                    <i class="angle right icon"></i></a>
+                
+            </div>
+        </div>
+    </div>
+
+</div>
+                
+            </div>
+
+            
+            <div class="three wide computer three wide tablet column">
+
+                <div class="ui sticky article-toc" id="article-toc">
+                    <!-- toc -->
+                    <ol class="ui ordered list"><li><a href="#性能测试时我们需要关注的指标"><span>性能测试时我们需要关注的指标</span></a></li><li><a href="#一般性能分析的过程"><span>一般性能分析的过程</span></a></li><li><a href="#相关参考"><span>相关参考</span></a></li></ol>
+                </div>
+
+            </div>
+            
+
+        </div>
+    </div>
+</div>
+
+
+<!-- duoshuo start -->
+<div class="ds-thread" data-thread-key="2017/11/29/性能测试关注的指标/" data-title="性能测试关注的指标 | 刘梓" data-url="http://zclau.com/2017/11/29/性能测试关注的指标/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    var duoshuoQuery = {short_name:"zclau"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+        || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- duoshuo end -->
+
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+        <div class="ui vertical footer segment">
+    <div class="ui center aligned container">
+        <div class="ui inverted section divider"></div>
+        &copy; 2017 <a href="/">zclau</a>,
+        Powered by <a href="https://github.com/henryhuang/hexo-theme-aloha" target="_blank">Aloha</a> and <a
+                href="http://hexo.io/" target="_blank">Hexo</a>.
+    </div>
+</div>
+
+    </div>
+
+
+
+
+<!-- scripts list from theme config.yml -->
+
+<script src="//cdn.bootcss.com/jquery/3.1.0/jquery.min.js"></script>
+
+<script src="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.js"></script>
+
+<script src="//cdn.bootcss.com/algoliasearch/3.18.1/algoliasearch.min.js"></script>
+
+<script src="//cdn.bootcss.com/algoliasearch-helper-js/2.13.0/algoliasearch.helper.min.js"></script>
+
+<script src="/js/semantic-ui-algolia.js"></script>
+
+<script src="/js/aloha-events.js"></script>
+
+
+
+</body>
+</html>
