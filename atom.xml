@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://zclau.com/"/>
-  <updated>2017-11-30T03:27:36.000Z</updated>
+  <updated>2017-12-08T06:44:49.000Z</updated>
   <id>http://zclau.com/</id>
   
   <author>
@@ -14,6 +14,48 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Jmeter分布式压测</title>
+    <link href="http://zclau.com/2017/12/08/Jmeter%E5%88%86%E5%B8%83%E5%BC%8F%E5%8E%8B%E6%B5%8B/"/>
+    <id>http://zclau.com/2017/12/08/Jmeter分布式压测/</id>
+    <published>2017-12-08T06:43:43.000Z</published>
+    <updated>2017-12-08T06:44:49.000Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote>
+<p>&#x8FDB;&#x884C;&#x6027;&#x80FD;&#x6D4B;&#x8BD5;&#x65F6;&#xFF0C;&#x7531;&#x4E8E;&#x5355;&#x53F0;&#x673A;&#x5668;&#x6A21;&#x62DF;&#x5E76;&#x53D1;&#x7528;&#x6237;&#x6570;&#x91CF;&#x6709;&#x9650;&#xFF0C;&#x5E0C;&#x671B;&#x7528;&#x591A;&#x53F0;&#x8D1F;&#x8F7D;&#x673A;&#x8FDB;&#x884C;&#x8D1F;&#x8F7D;&#x6A21;&#x62DF;&#x3002;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x5728;&#x591A;&#x53F0;&#x673A;&#x5668;&#x4E0A;&#x5206;&#x522B;&#x90E8;&#x7F72;Jmeter&#xFF0C;&#x7136;&#x540E;&#x7528;&#x5176;&#x4E2D;&#x4E00;&#x53F0;&#x505A;master&#xFF0C;&#x63A7;&#x5236;&#x5176;&#x4ED6;slave&#x5B9E;&#x4F8B;&#x4EA7;&#x751F;&#x8D1F;&#x8F7D;&#x3002;</p>
+</blockquote>
+<h1 id="step-one"><a href="#step-one" class="headerlink" title="step one"></a>step one</h1><p>&#x90E8;&#x7F72;&#x8282;&#x70B9;&#xFF1A;&#x5047;&#x8BBE;&#x6211;&#x90E8;&#x7F72;&#x4E86;&#x4E09;&#x53F0;&#xFF0C;&#x5206;&#x522B;10.199.206.76&#x3001;10.199.147.249&#x3001;10.199.205.113<br>&#x9996;&#x5148;&#x786E;&#x4FDD;&#x6240;&#x6709;&#x8282;&#x70B9;&#xFF1A;<br>&#x8FD0;&#x884C;&#x76F8;&#x540C;&#x7248;&#x672C;&#x7684;Jmeter<br>&#x8FD0;&#x884C;&#x76F8;&#x540C;&#x7248;&#x672C;&#x7684;jdk<br>&#x5982;&#x679C;&#x9700;&#x8981;&#x7528;&#x5230;&#x989D;&#x5916;&#x7684;&#x6570;&#x636E;&#x6587;&#x4EF6;&#xFF0C;&#x4F8B;&#x5982;&#x6211;&#x7684;&#x4F8B;&#x5B50;&#x9700;&#x8981;&#x7528;&#x5230;&#x81EA;&#x5B9A;&#x4E49;Java Sampler&#x4EE5;&#x53CA;&#x5916;&#x90E8;properties&#xFF0C;&#x6BCF;&#x4E2A;&#x5B9E;&#x4F8B;&#x9700;&#x8981;&#x5404;&#x6765;&#x4E00;&#x4EFD;&#x3002;<br>master&#x8FD8;&#x9700;&#x8981;&#x4FDD;&#x5B58;&#x4E00;&#x4EFD;xxx.jmx&#x6D4B;&#x8BD5;&#x811A;&#x672C;</p>
+<p>&#x5982;&#x4F55;&#x7F16;&#x5199;&#x81EA;&#x5B9A;&#x4E49;Java Sampler&#x53EF;&#x53C2;&#x770B; </p>
+<p><a href="http://www.jianshu.com/p/f18b69c68459" target="_blank" rel="external">Jmeter&#x4F7F;&#x7528;&#x81EA;&#x5B9A;&#x4E49;Java&#x4EE3;&#x7801;&#x538B;&#x6D4B;</a></p>
+<h1 id="step-two-&#xFF08;optional&#xFF09;"><a href="#step-two-&#xFF08;optional&#xFF09;" class="headerlink" title="step two &#xFF08;optional&#xFF09;"></a>step two &#xFF08;optional&#xFF09;</h1><p>&#x914D;&#x7F6E;&#x8282;&#x70B9;&#xFF1A;<br>&#x8FD9;&#x91CC;&#x6211;&#x9009;&#x62E9;10.199.206.76&#x505A;master&#xFF0C;10.199.147.249&#x3001;10.199.205.113&#x4F5C;&#x4E3A;slave<br>&#x5728;master&#x7684;$JMETER_HOME/bin/jmeter.properties&#x7684; remote_hosts&#x5C5E;&#x6027;&#x540E;&#x914D;&#x7F6E;<br><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-676cce21bd7aa0ef.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-676cce21bd7aa0ef.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<p>#step three<br>&#x542F;&#x52A8;slave<br><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-66db6dbcecbee800.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-66db6dbcecbee800.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<p>&#x7136;&#x540E;&#x68C0;&#x67E5;&#x4E00;&#x4E0B;&#x63A7;&#x5236;&#x53F0;&#x8F93;&#x51FA;&#xFF1A;<br><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-ffc8094fd02629f8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-ffc8094fd02629f8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<p>&#x68C0;&#x67E5;&#x65E5;&#x5FD7;&#xFF0C;&#x9ED8;&#x8BA4;&#x4F1A;&#x5728;&#x5F53;&#x524D;&#x76EE;&#x5F55;&#x5199;&#x65E5;&#x5FD7;<br><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-097cb5e688f46bc1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-097cb5e688f46bc1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<p>&#x6709;&#x4EE5;&#x4E0A;&#x8F93;&#x51FA;&#xFF0C;&#x6CA1;&#x6709;&#x62A5;&#x9519;&#xFF0C;&#x8BC1;&#x660E;slave&#x542F;&#x52A8;&#x6210;&#x529F;</p>
+<h1 id="step-four"><a href="#step-four" class="headerlink" title="step four"></a>step four</h1><p>&#x542F;&#x52A8;master&#x8FDB;&#x884C;&#x538B;&#x6D4B;&#xFF0C;&#x6709;&#x4E24;&#x79CD;&#x542F;&#x52A8;&#x65B9;&#x5F0F;<br><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-33250028bec43497.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-33250028bec43497.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<p>&#x6216;</p>
+<p><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-6ad1757cdba3b445.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-6ad1757cdba3b445.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<p>&#x6CE8;&#x610F;&#xFF1A;&#x5982;&#x679C;step two &#x6CA1;&#x6709;&#x914D;&#x7F6E; remote_hosts&#xFF0C;&#x5C31;&#x5FC5;&#x987B;&#x7528;&#x7B2C;&#x4E00;&#x6761;&#x547D;&#x4EE4;&#xFF0C;&#x901A;&#x8FC7;-R &#x6307;&#x5B9A;slave</p>
+<p>&#x7136;&#x540E;master&#x5C31;&#x4F1A;&#x53D1;&#x9001;&#x6307;&#x4EE4;&#x7ED9;slave&#x6267;&#x884C;&#x5B9E;&#x9645;&#x7684;&#x538B;&#x6D4B;&#xFF0C;&#x7136;&#x540E;&#x4F1A;&#x7B49;&#x5F85;&#x63A5;&#x6536;slave&#x538B;&#x6D4B;&#x7684;&#x7ED3;&#x679C;<br><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-68bffc4c5f7cd527.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-68bffc4c5f7cd527.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<h1 id="&#x7ED3;&#x679C;&#x89E3;&#x8BFB;"><a href="#&#x7ED3;&#x679C;&#x89E3;&#x8BFB;" class="headerlink" title="&#x7ED3;&#x679C;&#x89E3;&#x8BFB;"></a>&#x7ED3;&#x679C;&#x89E3;&#x8BFB;</h1><p>46303 in 00:00:15 = 3134.7/s &#x8868;&#x793A; &#x5728;15&#x79D2;&#x5185;&#x53D1;&#x9001;46303&#x6761;&#x8BF7;&#x6C42;&#xFF0C;&#x5E73;&#x5747;&#x6BCF;&#x79D2;&#x5904;&#x7406;3134&#x6761;<br>Avg&#xFF1A;504 &#x8868;&#x793A;&#x5E73;&#x5747;&#x54CD;&#x5E94;&#x65F6;&#x95F4; 504ms<br>Min&#xFF1A;3  &#x8868;&#x793A;&#x6700;&#x5C0F;&#x54CD;&#x5E94;&#x65F6;&#x95F4;3ms<br>Max&#xFF1A;14524 &#x8868;&#x793A;&#x6700;&#x957F;&#x54CD;&#x5E94;&#x65F6;&#x95F4;14524ms</p>
+<h1 id="&#x53C2;&#x8003;"><a href="#&#x53C2;&#x8003;" class="headerlink" title="&#x53C2;&#x8003;"></a>&#x53C2;&#x8003;</h1><p><a href="http://jmeter.apache.org/usermanual/remote-test.html" target="_blank" rel="external">http://jmeter.apache.org/usermanual/remote-test.html</a></p>
+<p><a href="https://jmeter.apache.org/usermanual/jmeter_distributed_testing_step_by_step.pdf" target="_blank" rel="external">https://jmeter.apache.org/usermanual/jmeter_distributed_testing_step_by_step.pdf</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;&amp;#x8FDB;&amp;#x884C;&amp;#x6027;&amp;#x80FD;&amp;#x6D4B;&amp;#x8BD5;&amp;#x65F6;&amp;#xFF0C;&amp;#x7531;&amp;#x4E8E;&amp;#x5355;&amp;#x53F0;&amp;#x673A;&amp;#x5668;&amp;#x6A21;&amp;#x6
+    
+    </summary>
+    
+      <category term="性能测试" scheme="http://zclau.com/categories/%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95/"/>
+    
+    
+      <category term="Jmeter" scheme="http://zclau.com/tags/Jmeter/"/>
+    
+  </entry>
   
   <entry>
     <title>Jmeter使用自定义Java代码压测</title>
@@ -485,59 +527,6 @@
     
     
       <category term="Core Java" scheme="http://zclau.com/tags/Core-Java/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>RabbitMQ之Qos prefetch</title>
-    <link href="http://zclau.com/2016/09/15/RabbitMQ%E7%9A%84Qos-prefetch/"/>
-    <id>http://zclau.com/2016/09/15/RabbitMQ的Qos-prefetch/</id>
-    <published>2016-09-15T10:19:11.000Z</published>
-    <updated>2016-11-13T12:39:57.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>&#x5B9E;&#x9645;&#x4F7F;&#x7528;RabbitMQ&#x8FC7;&#x7A0B;&#x4E2D;&#xFF0C;&#x5982;&#x679C;&#x5B8C;&#x5168;&#x4E0D;&#x914D;&#x7F6E;QoS&#xFF0C;&#x8FD9;&#x6837;Rabbit&#x4F1A;&#x5C3D;&#x53EF;&#x80FD;&#x5FEB;&#x901F;&#x5730;<br>&#x53D1;&#x9001;&#x961F;&#x5217;&#x4E2D;&#x7684;&#x6240;&#x6709;&#x6D88;&#x606F;&#x5230;client&#x7AEF;&#x3002;&#x56E0;&#x4E3A;consumer&#x5728;&#x672C;&#x5730;&#x7F13;&#x5B58;&#x6240;&#x6709;&#x7684;message&#xFF0C;<br>&#x4ECE;&#x800C;&#x6781;&#x6709;&#x53EF;&#x80FD;&#x5BFC;&#x81F4;OOM&#x6216;&#x8005;&#x5BFC;&#x81F4;&#x670D;&#x52A1;&#x5668;&#x5185;&#x5B58;&#x4E0D;&#x8DB3;&#x5F71;&#x54CD;&#x5176;&#x5B83;&#x8FDB;&#x7A0B;&#x7684;&#x6B63;&#x5E38;&#x8FD0;&#x884C;&#x3002;&#x6240;&#x4EE5;&#x6211;&#x4EEC;<br>&#x9700;&#x8981;&#x901A;&#x8FC7;&#x8BBE;&#x7F6E;Qos&#x7684;prefetch count&#x6765;&#x63A7;&#x5236;consumer&#x7684;&#x6D41;&#x91CF;&#x3002;&#x540C;&#x65F6;&#x8BBE;&#x7F6E;&#x5F97;&#x5F53;&#x4E5F;&#x4F1A;&#x63D0;&#x9AD8;consumer&#x7684;&#x541E;&#x5410;&#x91CF;&#x3002;</p>
-<a id="more"></a>
-<h2 id="prefetch&#x4E0E;&#x6D88;&#x606F;&#x6295;&#x9012;"><a href="#prefetch&#x4E0E;&#x6D88;&#x606F;&#x6295;&#x9012;" class="headerlink" title="prefetch&#x4E0E;&#x6D88;&#x606F;&#x6295;&#x9012;"></a>prefetch&#x4E0E;&#x6D88;&#x606F;&#x6295;&#x9012;</h2><p>prefetch&#x5141;&#x8BB8;&#x4E3A;&#x6BCF;&#x4E2A;consumer&#x6307;&#x5B9A;&#x6700;&#x5927;&#x7684;unacked messages&#x6570;&#x76EE;&#x3002;&#x7B80;&#x5355;&#x6765;&#x8BF4;&#x5C31;&#x662F;&#x7528;&#x6765;&#x6307;&#x5B9A;&#x4E00;&#x4E2A;consumer&#x4E00;&#x6B21;&#x53EF;&#x4EE5;&#x4ECE;Rabbit&#x4E2D;&#x83B7;&#x53D6;&#x591A;&#x5C11;&#x6761;message&#x5E76;&#x7F13;&#x5B58;&#x5728;client&#x4E2D;(RabbitMQ&#x63D0;&#x4F9B;&#x7684;&#x5404;&#x79CD;&#x8BED;&#x8A00;&#x7684;client library)&#x3002;&#x4E00;&#x65E6;&#x7F13;&#x51B2;&#x533A;&#x6EE1;&#x4E86;&#xFF0C;Rabbit&#x5C06;&#x4F1A;&#x505C;&#x6B62;&#x6295;&#x9012;&#x65B0;&#x7684;message&#x5230;&#x8BE5;consumer&#x4E2D;&#x76F4;&#x5230;&#x5B83;&#x53D1;&#x51FA;ack&#x3002;</p>
-<p>&#x5047;&#x8BBE;prefetch&#x503C;&#x8BBE;&#x4E3A;10&#xFF0C;&#x5171;&#x6709;&#x4E24;&#x4E2A;consumer&#x3002;&#x610F;&#x5473;&#x7740;&#x6BCF;&#x4E2A;consumer&#x6BCF;&#x6B21;&#x4F1A;&#x4ECE;queue&#x4E2D;&#x9884;&#x6293;&#x53D6; 10 &#x6761;&#x6D88;&#x606F;&#x5230;&#x672C;&#x5730;&#x7F13;&#x5B58;&#x7740;&#x7B49;&#x5F85;&#x6D88;&#x8D39;&#x3002;&#x540C;&#x65F6;&#x8BE5;channel&#x7684;unacked&#x6570;&#x53D8;&#x4E3A;20&#x3002;&#x800C;Rabbit&#x6295;&#x9012;&#x7684;&#x987A;&#x5E8F;&#x662F;&#xFF0C;&#x5148;&#x4E3A;consumer1&#x6295;&#x9012;&#x6EE1;10&#x4E2A;message&#xFF0C;&#x518D;&#x5F80;consumer2&#x6295;&#x9012;10&#x4E2A;message&#x3002;&#x5982;&#x679C;&#x8FD9;&#x65F6;&#x6709;&#x65B0;message&#x9700;&#x8981;&#x6295;&#x9012;&#xFF0C;&#x5148;&#x5224;&#x65AD;channel&#x7684;unacked&#x6570;&#x662F;&#x5426;&#x7B49;&#x4E8E;20&#xFF0C;&#x5982;&#x679C;&#x662F;&#x5219;&#x4E0D;&#x4F1A;&#x5C06;&#x6D88;&#x606F;&#x6295;&#x9012;&#x5230;consumer&#x4E2D;&#xFF0C;message&#x7EE7;&#x7EED;&#x5446;&#x5728;queue&#x4E2D;&#x3002;&#x4E4B;&#x540E;&#x5176;&#x4E2D;consumer&#x5BF9;&#x4E00;&#x6761;&#x6D88;&#x606F;&#x8FDB;&#x884C;ack&#xFF0C;unacked&#x6B64;&#x65F6;&#x7B49;&#x4E8E;19&#xFF0C;Rabbit&#x5C31;&#x5224;&#x65AD;&#x54EA;&#x4E2A;consumer&#x7684;unacked&#x5C11;&#x4E8E;10&#xFF0C;&#x5C31;&#x6295;&#x9012;&#x5230;&#x54EA;&#x4E2A;consumer&#x4E2D;&#x3002;</p>
-<p>&#x603B;&#x7684;&#x6765;&#x8BF4;&#xFF0C;consumer&#x8D1F;&#x8D23;&#x4E0D;&#x65AD;&#x5904;&#x7406;&#x6D88;&#x606F;&#xFF0C;&#x4E0D;&#x65AD;ack&#xFF0C;&#x7136;&#x540E;&#x53EA;&#x8981;unacked&#x6570;&#x5C11;&#x4E8E;prefetch * consumer&#x6570;&#x76EE;&#xFF0C;broker&#x5C31;&#x4E0D;&#x65AD;&#x5C06;&#x6D88;&#x606F;&#x6295;&#x9012;&#x8FC7;&#x53BB;&#x3002;</p>
-<h2 id="&#x5982;&#x4F55;&#x8BBE;&#x7F6E;"><a href="#&#x5982;&#x4F55;&#x8BBE;&#x7F6E;" class="headerlink" title="&#x5982;&#x4F55;&#x8BBE;&#x7F6E;"></a>&#x5982;&#x4F55;&#x8BBE;&#x7F6E;</h2><p>&#x5B98;&#x65B9;&#x63D0;&#x4F9B;&#x7684;java client&#x53EF;&#x4EE5;&#x901A;&#x8FC7;channel&#x6765;&#x8BBE;&#x7F6E;&#xFF1A;<br><figure class="highlight abnf"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">channel</span> = connection.createChannel()<span class="comment">;</span></div><div class="line">channel.basicQos(prefetch)<span class="comment">;</span></div></pre></td></tr></table></figure></p>
-<p>spring-amqp&#x7684;&#x8BDD;&#x53EF;&#x901A;&#x8FC7;&#x914D;&#x7F6E;&#x6587;&#x4EF6;&#x6765;&#x914D;&#x7F6E;<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">rabbit:listener-container</span> <span class="attr">connection-factory</span>=<span class="string">&quot;connectionFactory&quot;</span> <span class="attr">concurrency</span>=<span class="string">&quot;2&quot;</span> <span class="attr">prefetch</span>=<span class="string">&quot;3&quot;</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">rabbit:listener</span> <span class="attr">ref</span>=<span class="string">&quot;listener&quot;</span> <span class="attr">queue-names</span>=<span class="string">&quot;remoting.queue&quot;</span> /&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">rabbit:listener-container</span>&gt;</span></div></pre></td></tr></table></figure></p>
-<p>&#x8FD9;&#x91CC;&#x9700;&#x8981;&#x6CE8;&#x610F;&#x7684;&#x662F;&#xFF0C;spring-amqp&#x4E2D;&#x7684;prefetch&#x9ED8;&#x8BA4;&#x503C;&#x662F;1&#x3002;</p>
-<h2 id="&#x5BA2;&#x6237;&#x7AEF;&#x6E90;&#x7801;&#x5256;&#x6790;"><a href="#&#x5BA2;&#x6237;&#x7AEF;&#x6E90;&#x7801;&#x5256;&#x6790;" class="headerlink" title="&#x5BA2;&#x6237;&#x7AEF;&#x6E90;&#x7801;&#x5256;&#x6790;"></a>&#x5BA2;&#x6237;&#x7AEF;&#x6E90;&#x7801;&#x5256;&#x6790;</h2><p>&#x5B98;&#x65B9;Java&#x5BA2;&#x6237;&#x7AEF;&#x63D0;&#x4F9B;&#x4E86;DefaultConsumer&#x548C;QueueingConsumer&#x4E24;&#x79CD;&#x7C7B;&#x6765;&#x4ECE;queue&#x4E2D;&#x83B7;&#x53D6;&#x6D88;&#x606F;&#x3002; &#x5176;&#x4E2D;QueueingConsumer&#x5185;&#x90E8;&#x7EF4;&#x62A4;&#x4E86;&#x4E00;&#x4E2A;&#x963B;&#x585E;&#x961F;&#x5217;BlockingQueue&#xFF0C;&#x6B64;&#x961F;&#x5217;&#x5C31;&#x662F;&#x7528;&#x6765;&#x7F13;&#x5B58;&#x4ECE;queue&#x83B7;&#x53D6;&#x7684;message&#x3002;&#x5F53;&#x8C03;&#x7528; <code>channel.basicConsume</code>&#x540E;&#xFF0C;broker&#x5C31;&#x4F1A;&#x4E0D;&#x65AD;&#x5F80;consumer&#x6295;&#x9012;message&#xFF0C;&#x76F4;&#x5230;prefetch&#x6761;&#x3002;</p>
-<p>&#x521D;&#x59CB;&#x5316;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x5982;&#x679C;&#x4E0D;&#x6307;&#x5B9A;BlockingQueue&#x7684;&#x957F;&#x5EA6;&#xFF0C;&#x9ED8;&#x8BA4;&#x503C;&#x4F1A;&#x8BBE;&#x4E3A;Integer.MAX_VALUE&#xFF0C;&#x6240;&#x4EE5;&#x8FD9;&#x5C31;&#x89E3;&#x91CA;&#x4E86;&#x6587;&#x7AE0;&#x5F00;&#x5934;&#x6240;&#x8BF4;&#x7684;&#x5982;&#x679C;&#x4E0D;&#x8BBE;&#x7F6E;Qos&#x7684;&#x8BDD;&#x4E3A;&#x4EC0;&#x4E48;&#x4F1A;&#x6709;&#x53EF;&#x80FD;&#x5BFC;&#x81F4;OOM&#xFF0C;&#x56E0;&#x4E3A;&#x6B64;&#x65F6;BlockingQueue&#x4F1A;&#x4E0D;&#x65AD;&#x81A8;&#x80C0;&#xFF0C;&#x6D88;&#x8017;&#x5185;&#x5B58;&#x3002;&#x6240;&#x4EE5;&#x8BBE;&#x7F6E;&#x4E86;prefetch&#x540E;&#xFF0C;&#x5EFA;&#x8BAE;BlockingQueue&#x7684;&#x957F;&#x5EA6;(capacity)&#x4E5F;&#x521D;&#x59CB;&#x5316;&#x4E3A;prefetch&#x3002;</p>
-<p>&#x53E6;&#x5916;&#x9700;&#x8981;&#x6CE8;&#x610F;&#x7684;&#x662F;&#xFF0C;&#x5728;&#x8C03;&#x7528;<code>channel.basicConsume</code>&#x4E4B;&#x540E;&#xFF0C;consumer&#x662F;&#x901A;&#x8FC7;&#x5F02;&#x6B65;&#x65B9;&#x5F0F;&#x6765;&#x6293;&#x53D6;message&#x7684;&#xFF0C;&#x901A;&#x8FC7;debug&#x53EF;&#x4EE5;&#x53D1;&#x73B0;BlockingQueue&#x7684;size&#x662F;&#x5728;&#x5F02;&#x6B65;&#x5730;&#x4E0D;&#x65AD;&#x589E;&#x957F;&#x76F4;&#x5230;prefetch&#x3002;&#x800C;&#x5BA2;&#x6237;&#x7AEF;&#x4EE3;&#x7801;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;consumer.nextDelivery()&#x6216;consumer.nextDelivery(long timeout)&#x65B9;&#x6CD5;&#x6765;&#x83B7;&#x53D6;message&#xFF0C;&#x5176;&#x5BF9;&#x5E94;&#x7684;&#x5C31;&#x662F;BlockingQueue&#x7684;take()&#x548C;poll(long timeout)&#x65B9;&#x6CD5;&#x3002;</p>
-<p>&#x518D;&#x6765;&#x770B;&#x770B;spring-amqp&#x7684;comsumer&#xFF0C;&#x5927;&#x81F4;&#x4E5F;&#x4E00;&#x6837;&#x3002;&#x6838;&#x5FC3;&#x7C7B;BlockingQueueConsumer</p>
-<figure class="highlight lasso"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> class BlockingQueueConsumer {</div><div class="line">    </div><div class="line">    <span class="keyword">private</span> final BlockingQueue&lt;Delivery&gt; <span class="built_in">queue</span>;</div><div class="line"></div><div class="line">    <span class="comment">//some code</span></div><div class="line">    <span class="params">...</span></div><div class="line"></div><div class="line"><span class="keyword">public</span> BlockingQueueConsumer(ConnectionFactory connectionFactory,</div><div class="line">            MessagePropertiesConverter messagePropertiesConverter,</div><div class="line">            ActiveObjectCounter&lt;BlockingQueueConsumer&gt; activeObjectCounter, AcknowledgeMode acknowledgeMode,</div><div class="line">            <span class="built_in">boolean</span> transactional, int prefetchCount, <span class="built_in">boolean</span> defaultRequeueRejected,</div><div class="line">            <span class="built_in">Map</span>&lt;<span class="built_in">String</span>, Object&gt; consumerArgs, <span class="built_in">boolean</span> exclusive, <span class="built_in">String</span><span class="params">...</span> queues) {</div><div class="line"></div><div class="line">        <span class="comment">//... some code</span></div><div class="line"></div><div class="line">        this.<span class="built_in">queue</span> = <span class="literal">new</span> LinkedBlockingQueue&lt;Delivery&gt;(prefetchCount);</div><div class="line">    }</div></pre></td></tr></table></figure>
-<p>BlockingQueueConsumer&#x7684;&#x6784;&#x9020;&#x51FD;&#x6570;&#x6E05;&#x695A;&#x8BF4;&#x660E;&#x4E86;&#x6BCF;&#x4E2A;&#x6D88;&#x8D39;&#x8005;&#x5185;&#x90E8;&#x7684;&#x961F;&#x5217;&#x5927;&#x5C0F;&#x5C31;&#x662F;prefetch&#x7684;&#x5927;&#x5C0F;&#x3002;&#x800C;spring-amqp&#x9ED8;&#x8BA4;&#x7684;prefetch&#x662F;1&#x3002;</p>
-<h2 id="&#x541E;&#x5410;&#x91CF;&#x3001;&#x5EF6;&#x8FDF;"><a href="#&#x541E;&#x5410;&#x91CF;&#x3001;&#x5EF6;&#x8FDF;" class="headerlink" title="&#x541E;&#x5410;&#x91CF;&#x3001;&#x5EF6;&#x8FDF;"></a>&#x541E;&#x5410;&#x91CF;&#x3001;&#x5EF6;&#x8FDF;</h2><p>prefetch&#x5E76;&#x4E0D;&#x662F;&#x8BF4;&#x8BBE;&#x7F6E;&#x5F97;&#x8D8A;&#x5927;&#x8D8A;&#x597D;&#x3002;&#x8FC7;&#x5927;&#x53EF;&#x80FD;&#x5BFC;&#x81F4;consumer&#x5904;&#x7406;&#x4E0D;&#x8FC7;&#x6765;&#xFF0C;&#x4E00;&#x76F4;&#x5728;&#x672C;&#x5730;&#x7F13;&#x5B58;&#x7684;BlockingQueue&#x91CC;&#x5446;&#x592A;&#x4E45;&#xFF0C;&#x8FD9;&#x6837;&#x6D88;&#x606F;&#x5728;&#x5BA2;&#x6237;&#x7AEF;&#x7684;&#x5EF6;&#x8FDF;&#x5C31;&#x5927;&#x5927;&#x589E;&#x52A0;&#xFF1B;&#x800C;&#x5BF9;&#x4E8E;&#x591A;&#x4E2A;consumer&#x7684;&#x60C5;&#x51B5;&#xFF0C;&#x5219;&#x4F1A;&#x5206;&#x914D;&#x4E0D;&#x5747;&#x5300;&#xFF0C;&#x5BFC;&#x81F4;&#x6709;&#x4E9B;consumer&#x4E00;&#x76F4;&#x5728;&#x5FD9;&#xFF0C;&#x6709;&#x4E9B;&#x5219;&#x975E;&#x5E38;&#x7A7A;&#x95F2;&#x3002;</p>
-<p>&#x7136;&#x800C;&#x8BBE;&#x7F6E;&#x7684;&#x8FC7;&#x5C0F;&#xFF0C;&#x53C8;&#x4F1A;&#x4EE4;&#x5230;consumer&#x4E0D;&#x80FD;&#x5145;&#x5206;&#x5DE5;&#x4F5C;&#xFF0C;&#x56E0;&#x4E3A;&#x6211;&#x4EEC;&#x603B;&#x60F3;&#x5B83;100&#xFF05;&#x7684;&#x65F6;&#x95F4;&#x90FD;&#x662F;&#x5904;&#x4E8E;&#x7E41;&#x5FD9;&#x72B6;&#x6001;&#xFF0C;&#x800C;&#x8FD9;&#x65F6;&#x53EF;&#x80FD;&#x4F1A;&#x5728;&#x5904;&#x7406;&#x5B8C;&#x4E00;&#x6761;&#x6D88;&#x606F;&#x540E;&#xFF0C;BlockingQueue&#x4E3A;&#x7A7A;&#xFF0C;&#x56E0;&#x4E3A;&#x65B0;&#x7684;&#x6D88;&#x606F;&#x8FD8;&#x672A;&#x6765;&#x5F97;&#x53CA;&#x5230;&#x8FBE;&#xFF0C;&#x6240;&#x4EE5;consumer&#x5C31;&#x5904;&#x4E8E;&#x7A7A;&#x95F2;&#x72B6;&#x6001;&#x4E86;&#x3002;</p>
-<p>prefetch&#x5E94;&#x8BE5;&#x8BBE;&#x7F6E;&#x591A;&#x5927;&#xFF0C;&#x5177;&#x4F53;&#x53EF;&#x53C2;&#x8003;&#x8FD9;&#x7BC7;&#x6587;&#x7AE0;</p>
-<p><a href="https://www.rabbitmq.com/blog/2012/05/11/some-queuing-theory-throughput-latency-and-bandwidth/" target="_blank" rel="external">Some queuing theory: throughput, latency and bandwidth</a></p>
-<p>&#x91CC;&#x9762;&#x8BE6;&#x7EC6;&#x8BBA;&#x8FF0;&#x541E;&#x5410;&#x91CF;&#x4E0E;prefetch&#x4E4B;&#x95F4;&#x7684;&#x5173;&#x7CFB;&#x3002;prefetch&#x7684;&#x8BBE;&#x7F6E;&#x4E0E;&#x4EE5;&#x4E0B;&#x51E0;&#x70B9;&#x6709;&#x5173;&#xFF1A;</p>
-<ol class="ui list">
-<li>&#x5BA2;&#x6237;&#x7AEF;&#x670D;&#x52A1;&#x7AEF;&#x4E4B;&#x95F4;&#x7F51;&#x7EDC;&#x4F20;&#x8F93;&#x65F6;&#x95F4;</li>
-<li>consumer&#x6D88;&#x8017;&#x4E00;&#x6761;&#x6D88;&#x606F;&#x6240;&#x6267;&#x884C;&#x7684;&#x4E1A;&#x52A1;&#x903B;&#x8F91;&#x7684;&#x8017;&#x65F6;</li>
-<li>&#x7F51;&#x7EDC;&#x72B6;&#x51B5;</li>
-</ol>
-<p>&#x3010;&#x5B8C;&#x3011;</p>
-<p>&#x5982;&#x6709;&#x7EB0;&#x6F0F;&#xFF0C;&#x6B22;&#x8FCE;&#x6307;&#x51FA;</p>
-<p>&#x53C2;&#x8003;&#x8D44;&#x6599;&#xFF1A;</p>
-<p><a href="https://insidethecpu.com/2014/11/11/rabbitmq-qos-vs-competing-consumers/" target="_blank" rel="external">RabbitMQ QOS vs. Competing Consumers</a></p>
-<p><a href="http://yuanwhy.com/2016/09/10/rabbitmq-concurrency-prefetch" target="_blank" rel="external">RabbitMQ&#x6D88;&#x8D39;&#x8005;&#x7684;&#x51E0;&#x4E2A;&#x53C2;&#x6570;</a></p>
-<p><a href="https://my.oschina.net/hncscwc/blog/195560" target="_blank" rel="external">rabbitmq&#x2014;&#x2014;prefetch count</a></p>
-<p><a href="http://stackoverflow.com/questions/21652517/amqp-acknowledgement-and-prefetching" target="_blank" rel="external">AMQP: acknowledgement and prefetching</a></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;实际使用RabbitMQ过程中，如果完全不配置QoS，这样Rabbit会尽可能快速地&lt;br&gt;发送队列中的所有消息到client端。因为consumer在本地缓存所有的message，&lt;br&gt;从而极有可能导致OOM或者导致服务器内存不足影响其它进程的正常运行。所以我们&lt;br&gt;需要通过设置Qos的prefetch count来控制consumer的流量。同时设置得当也会提高consumer的吞吐量。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="消息队列" scheme="http://zclau.com/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/"/>
-    
-    
-      <category term="RabbitMQ" scheme="http://zclau.com/tags/RabbitMQ/"/>
     
   </entry>
   

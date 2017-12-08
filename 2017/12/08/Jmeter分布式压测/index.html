@@ -1,0 +1,344 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head prefix="og: http://ogp.me/ns#">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <meta name="description" content="Keep Calm And Coding">
+    <title>Jmeter分布式压测 | 刘梓</title>
+
+    <!-- Open Graph -->
+    <meta name="description" content="&amp;#x8FDB;&amp;#x884C;&amp;#x6027;&amp;#x80FD;&amp;#x6D4B;&amp;#x8BD5;&amp;#x65F6;&amp;#xFF0C;&amp;#x7531;&amp;#x4E8E;&amp;#x5355;&amp;#x53F0;&amp;#x673A;&amp;#x5668;&amp;#x6A21;&amp;#x62DF;&amp;#x5E76;&amp;#x53D1;&amp;#x7528;&amp;#x6237;&amp;#x6570;&amp;#x91CF;&amp;#x6709;&amp;#x9650;&amp;#xFF0C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Jmeter分布式压测">
+<meta property="og:url" content="http://zclau.com/2017/12/08/Jmeter分布式压测/index.html">
+<meta property="og:site_name" content="刘梓">
+<meta property="og:description" content="&amp;#x8FDB;&amp;#x884C;&amp;#x6027;&amp;#x80FD;&amp;#x6D4B;&amp;#x8BD5;&amp;#x65F6;&amp;#xFF0C;&amp;#x7531;&amp;#x4E8E;&amp;#x5355;&amp;#x53F0;&amp;#x673A;&amp;#x5668;&amp;#x6A21;&amp;#x62DF;&amp;#x5E76;&amp;#x53D1;&amp;#x7528;&amp;#x6237;&amp;#x6570;&amp;#x91CF;&amp;#x6709;&amp;#x9650;&amp;#xFF0C">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/8923118-676cce21bd7aa0ef.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/8923118-66db6dbcecbee800.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/8923118-ffc8094fd02629f8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/8923118-097cb5e688f46bc1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/8923118-33250028bec43497.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/8923118-6ad1757cdba3b445.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/8923118-68bffc4c5f7cd527.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-12-08T06:44:49.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Jmeter分布式压测">
+<meta name="twitter:description" content="&amp;#x8FDB;&amp;#x884C;&amp;#x6027;&amp;#x80FD;&amp;#x6D4B;&amp;#x8BD5;&amp;#x65F6;&amp;#xFF0C;&amp;#x7531;&amp;#x4E8E;&amp;#x5355;&amp;#x53F0;&amp;#x673A;&amp;#x5668;&amp;#x6A21;&amp;#x62DF;&amp;#x5E76;&amp;#x53D1;&amp;#x7528;&amp;#x6237;&amp;#x6570;&amp;#x91CF;&amp;#x6709;&amp;#x9650;&amp;#xFF0C">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/8923118-676cce21bd7aa0ef.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+    <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Person",
+  "email": "mailto:cleverutd@gmail.com",
+  "image": "undefined",
+  "name": "zclau",
+  "url": "http://zclau.com"
+}
+</script>
+    <script>
+    var algoliaEnabled = false;
+    
+</script>
+
+    
+
+    
+
+    
+    
+        <!-- stylesheets list from config.yml -->
+        
+        <link rel="stylesheet" href="/css/aloha.css">
+        
+        <link rel="stylesheet" href="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.css">
+        
+        <link rel="stylesheet" href="//cdn.bootcss.com/magnific-popup.js/1.1.0/magnific-popup.min.css">
+        
+    
+
+</head>
+<body id="body" style="margin-bottom: 0;" class="pushable">
+
+    <div class="ui top fixed menu">
+        <a class="item" id="menu-icon"><i class="sidebar icon"></i></a>
+    </div>
+
+    <div id="menu-sidebar" class="ui left vertical sidebar menu">
+
+    <div id="sidebar-top">
+        <div class="content">
+            <h3>刘梓</h3>
+        </div>
+    </div>
+    <div class="ui container sidebar-card">
+    <div class="ui people shape content">
+        <div class="active side">
+            <div class="ui card">
+                <div class="image">
+                    <a href="/index.html">
+                    <img class="ui medium bordered image" src="/images/avatar.jpg">
+                    </a>
+                </div>
+                <div class="content">
+                    <a href="/index.html" class="header">zclau</a>
+                    
+                        <div class="meta">
+                            Java / C / Linux
+                        </div>
+                    
+                </div>
+                <div class="extra content">
+                    <div class="ui list">
+                        
+                        <div class="item">
+                            <i class="marker icon" style="float: left"></i>
+                            <div class="content">GuangZhou</div>
+                        </div>
+                        
+                        
+                        <div class="item">
+                            <i class="mail icon" style="float: left"></i>
+                            <div class="content">
+                                <a href="mailto:cleverutd@gmail.com">cleverutd@gmail.com</a>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                </div>
+                <div class="extra content">
+                    <div class="ui list">
+                        
+
+                                <a href="https://github.com/cleverutd"><i class="large github icon" style="float: left"></i></a>
+
+                            
+
+                                <a href="http://weibo.com/515074234"><i class="large weibo icon" style="float: left"></i></a>
+
+                            
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+    
+    
+
+    
+
+    
+    <a href="/index.html" class="item" >
+        <i class="home icon"></i>
+        首页
+    </a>
+
+    
+    
+
+    
+
+    
+    <a href="/archives/index.html" class="item" >
+        <i class="archive icon"></i>
+        归档
+    </a>
+
+    
+    
+
+    
+
+    
+    <a href="/booklist/index.html" class="item" >
+        <i class="book icon"></i>
+        书单
+    </a>
+
+    
+
+    
+</div>
+
+    <div class="pusher body-content">
+        <div id="content" class="ui main container">
+            <!--<div class="ui one column grid">-->
+                <!--<div class="column">-->
+                    <!--<div class="ui main container">-->
+                        <div id="post-Jmeter分布式压测" class="ui main container article-type-post">
+
+    
+
+    <div class="ui divided grid">
+
+        <div class="two column row" id="article-content">
+
+            <div class="thirteen wide computer thirteen wide tablet sixteen wide mobile column">
+                
+
+<h1 class="ui header">
+    
+    Jmeter分布式压测
+</h1>
+
+
+
+                <div class="article-inner">
+
+                    <div class="article-entry" itemprop="articleBody">
+                        
+                        <blockquote>
+<p>&#x8FDB;&#x884C;&#x6027;&#x80FD;&#x6D4B;&#x8BD5;&#x65F6;&#xFF0C;&#x7531;&#x4E8E;&#x5355;&#x53F0;&#x673A;&#x5668;&#x6A21;&#x62DF;&#x5E76;&#x53D1;&#x7528;&#x6237;&#x6570;&#x91CF;&#x6709;&#x9650;&#xFF0C;&#x5E0C;&#x671B;&#x7528;&#x591A;&#x53F0;&#x8D1F;&#x8F7D;&#x673A;&#x8FDB;&#x884C;&#x8D1F;&#x8F7D;&#x6A21;&#x62DF;&#x3002;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x5728;&#x591A;&#x53F0;&#x673A;&#x5668;&#x4E0A;&#x5206;&#x522B;&#x90E8;&#x7F72;Jmeter&#xFF0C;&#x7136;&#x540E;&#x7528;&#x5176;&#x4E2D;&#x4E00;&#x53F0;&#x505A;master&#xFF0C;&#x63A7;&#x5236;&#x5176;&#x4ED6;slave&#x5B9E;&#x4F8B;&#x4EA7;&#x751F;&#x8D1F;&#x8F7D;&#x3002;</p>
+</blockquote>
+<h1 id="step-one"><a href="#step-one" class="headerlink" title="step one"></a>step one</h1><p>&#x90E8;&#x7F72;&#x8282;&#x70B9;&#xFF1A;&#x5047;&#x8BBE;&#x6211;&#x90E8;&#x7F72;&#x4E86;&#x4E09;&#x53F0;&#xFF0C;&#x5206;&#x522B;10.199.206.76&#x3001;10.199.147.249&#x3001;10.199.205.113<br>&#x9996;&#x5148;&#x786E;&#x4FDD;&#x6240;&#x6709;&#x8282;&#x70B9;&#xFF1A;<br>&#x8FD0;&#x884C;&#x76F8;&#x540C;&#x7248;&#x672C;&#x7684;Jmeter<br>&#x8FD0;&#x884C;&#x76F8;&#x540C;&#x7248;&#x672C;&#x7684;jdk<br>&#x5982;&#x679C;&#x9700;&#x8981;&#x7528;&#x5230;&#x989D;&#x5916;&#x7684;&#x6570;&#x636E;&#x6587;&#x4EF6;&#xFF0C;&#x4F8B;&#x5982;&#x6211;&#x7684;&#x4F8B;&#x5B50;&#x9700;&#x8981;&#x7528;&#x5230;&#x81EA;&#x5B9A;&#x4E49;Java Sampler&#x4EE5;&#x53CA;&#x5916;&#x90E8;properties&#xFF0C;&#x6BCF;&#x4E2A;&#x5B9E;&#x4F8B;&#x9700;&#x8981;&#x5404;&#x6765;&#x4E00;&#x4EFD;&#x3002;<br>master&#x8FD8;&#x9700;&#x8981;&#x4FDD;&#x5B58;&#x4E00;&#x4EFD;xxx.jmx&#x6D4B;&#x8BD5;&#x811A;&#x672C;</p>
+<p>&#x5982;&#x4F55;&#x7F16;&#x5199;&#x81EA;&#x5B9A;&#x4E49;Java Sampler&#x53EF;&#x53C2;&#x770B; </p>
+<p><a href="http://www.jianshu.com/p/f18b69c68459" target="_blank" rel="external">Jmeter&#x4F7F;&#x7528;&#x81EA;&#x5B9A;&#x4E49;Java&#x4EE3;&#x7801;&#x538B;&#x6D4B;</a></p>
+<h1 id="step-two-&#xFF08;optional&#xFF09;"><a href="#step-two-&#xFF08;optional&#xFF09;" class="headerlink" title="step two &#xFF08;optional&#xFF09;"></a>step two &#xFF08;optional&#xFF09;</h1><p>&#x914D;&#x7F6E;&#x8282;&#x70B9;&#xFF1A;<br>&#x8FD9;&#x91CC;&#x6211;&#x9009;&#x62E9;10.199.206.76&#x505A;master&#xFF0C;10.199.147.249&#x3001;10.199.205.113&#x4F5C;&#x4E3A;slave<br>&#x5728;master&#x7684;$JMETER_HOME/bin/jmeter.properties&#x7684; remote_hosts&#x5C5E;&#x6027;&#x540E;&#x914D;&#x7F6E;<br><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-676cce21bd7aa0ef.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-676cce21bd7aa0ef.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<p>#step three<br>&#x542F;&#x52A8;slave<br><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-66db6dbcecbee800.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-66db6dbcecbee800.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<p>&#x7136;&#x540E;&#x68C0;&#x67E5;&#x4E00;&#x4E0B;&#x63A7;&#x5236;&#x53F0;&#x8F93;&#x51FA;&#xFF1A;<br><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-ffc8094fd02629f8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-ffc8094fd02629f8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<p>&#x68C0;&#x67E5;&#x65E5;&#x5FD7;&#xFF0C;&#x9ED8;&#x8BA4;&#x4F1A;&#x5728;&#x5F53;&#x524D;&#x76EE;&#x5F55;&#x5199;&#x65E5;&#x5FD7;<br><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-097cb5e688f46bc1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-097cb5e688f46bc1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<p>&#x6709;&#x4EE5;&#x4E0A;&#x8F93;&#x51FA;&#xFF0C;&#x6CA1;&#x6709;&#x62A5;&#x9519;&#xFF0C;&#x8BC1;&#x660E;slave&#x542F;&#x52A8;&#x6210;&#x529F;</p>
+<h1 id="step-four"><a href="#step-four" class="headerlink" title="step four"></a>step four</h1><p>&#x542F;&#x52A8;master&#x8FDB;&#x884C;&#x538B;&#x6D4B;&#xFF0C;&#x6709;&#x4E24;&#x79CD;&#x542F;&#x52A8;&#x65B9;&#x5F0F;<br><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-33250028bec43497.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-33250028bec43497.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<p>&#x6216;</p>
+<p><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-6ad1757cdba3b445.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-6ad1757cdba3b445.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<p>&#x6CE8;&#x610F;&#xFF1A;&#x5982;&#x679C;step two &#x6CA1;&#x6709;&#x914D;&#x7F6E; remote_hosts&#xFF0C;&#x5C31;&#x5FC5;&#x987B;&#x7528;&#x7B2C;&#x4E00;&#x6761;&#x547D;&#x4EE4;&#xFF0C;&#x901A;&#x8FC7;-R &#x6307;&#x5B9A;slave</p>
+<p>&#x7136;&#x540E;master&#x5C31;&#x4F1A;&#x53D1;&#x9001;&#x6307;&#x4EE4;&#x7ED9;slave&#x6267;&#x884C;&#x5B9E;&#x9645;&#x7684;&#x538B;&#x6D4B;&#xFF0C;&#x7136;&#x540E;&#x4F1A;&#x7B49;&#x5F85;&#x63A5;&#x6536;slave&#x538B;&#x6D4B;&#x7684;&#x7ED3;&#x679C;<br><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-68bffc4c5f7cd527.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-68bffc4c5f7cd527.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<h1 id="&#x7ED3;&#x679C;&#x89E3;&#x8BFB;"><a href="#&#x7ED3;&#x679C;&#x89E3;&#x8BFB;" class="headerlink" title="&#x7ED3;&#x679C;&#x89E3;&#x8BFB;"></a>&#x7ED3;&#x679C;&#x89E3;&#x8BFB;</h1><p>46303 in 00:00:15 = 3134.7/s &#x8868;&#x793A; &#x5728;15&#x79D2;&#x5185;&#x53D1;&#x9001;46303&#x6761;&#x8BF7;&#x6C42;&#xFF0C;&#x5E73;&#x5747;&#x6BCF;&#x79D2;&#x5904;&#x7406;3134&#x6761;<br>Avg&#xFF1A;504 &#x8868;&#x793A;&#x5E73;&#x5747;&#x54CD;&#x5E94;&#x65F6;&#x95F4; 504ms<br>Min&#xFF1A;3  &#x8868;&#x793A;&#x6700;&#x5C0F;&#x54CD;&#x5E94;&#x65F6;&#x95F4;3ms<br>Max&#xFF1A;14524 &#x8868;&#x793A;&#x6700;&#x957F;&#x54CD;&#x5E94;&#x65F6;&#x95F4;14524ms</p>
+<h1 id="&#x53C2;&#x8003;"><a href="#&#x53C2;&#x8003;" class="headerlink" title="&#x53C2;&#x8003;"></a>&#x53C2;&#x8003;</h1><p><a href="http://jmeter.apache.org/usermanual/remote-test.html" target="_blank" rel="external">http://jmeter.apache.org/usermanual/remote-test.html</a></p>
+<p><a href="https://jmeter.apache.org/usermanual/jmeter_distributed_testing_step_by_step.pdf" target="_blank" rel="external">https://jmeter.apache.org/usermanual/jmeter_distributed_testing_step_by_step.pdf</a></p>
+
+                        
+                    </div>
+
+                    
+                    
+                    
+
+                    <div class="description post-description">
+    <span class="post-description-item">
+        <time datetime="2017-12-08T06:43:43.000Z" itemprop="datePublished">2017-12-08</time>
+
+    </span>
+    <span class="post-description-item">
+        
+
+    <span>
+        <i class="tags icon"></i>
+    </span>
+
+    
+    <span class="ui tiny label">
+        <a href="/tags/Jmeter/">Jmeter</a>
+    </span>
+
+    
+
+    </span>
+</div>
+
+                </div>
+                
+                <div id="pagination" class="nav-web ui text container pagination">
+
+    <div class="ui stackable two column divided grid container">
+        <div class="row">
+            <div class="column nav-left">
+                
+
+                <a class="ui tiny button disabled"><i class="angle left icon"></i>前一篇</a>
+
+                
+            </div>
+            <div class="column nav-right">
+                
+
+                <a href="/2017/11/30/Jmeter使用自定义Java代码压测/" class="ui tiny button">
+                    
+                    Jmeter使用自定义Java代码压测
+                    
+                    <i class="angle right icon"></i></a>
+                
+            </div>
+        </div>
+    </div>
+
+</div>
+                
+            </div>
+
+            
+            <div class="three wide computer three wide tablet column">
+
+                <div class="ui sticky article-toc" id="article-toc">
+                    <!-- toc -->
+                    <ol class="ui ordered list"><li><a href="#step-one"><span>step one</span></a></li><li><a href="#step-two-（optional）"><span>step two （optional）</span></a></li><li><a href="#step-four"><span>step four</span></a></li><li><a href="#结果解读"><span>结果解读</span></a></li><li><a href="#参考"><span>参考</span></a></li></ol>
+                </div>
+
+            </div>
+            
+
+        </div>
+    </div>
+</div>
+
+
+<!-- duoshuo start -->
+<div class="ds-thread" data-thread-key="2017/12/08/Jmeter分布式压测/" data-title="Jmeter分布式压测 | 刘梓" data-url="http://zclau.com/2017/12/08/Jmeter分布式压测/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    var duoshuoQuery = {short_name:"zclau"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+        || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- duoshuo end -->
+
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+        <div class="ui vertical footer segment">
+    <div class="ui center aligned container">
+        <div class="ui inverted section divider"></div>
+        &copy; 2017 <a href="/">zclau</a>,
+        Powered by <a href="https://github.com/henryhuang/hexo-theme-aloha" target="_blank">Aloha</a> and <a
+                href="http://hexo.io/" target="_blank">Hexo</a>.
+    </div>
+</div>
+
+    </div>
+
+
+
+
+<!-- scripts list from theme config.yml -->
+
+<script src="//cdn.bootcss.com/jquery/3.1.0/jquery.min.js"></script>
+
+<script src="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.js"></script>
+
+<script src="//cdn.bootcss.com/algoliasearch/3.18.1/algoliasearch.min.js"></script>
+
+<script src="//cdn.bootcss.com/algoliasearch-helper-js/2.13.0/algoliasearch.helper.min.js"></script>
+
+<script src="/js/semantic-ui-algolia.js"></script>
+
+<script src="/js/aloha-events.js"></script>
+
+
+
+</body>
+</html>
