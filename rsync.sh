@@ -1,8 +1,12 @@
 #!/bin/sh
 
+clean_enabled=$1
+
+if [ -n "$clean_enabled" ]; then
 echo "hexo clean..."
 hexo clean 
 echo "hexo clean done."
+fi
 
 echo "hexo generate..."
 hexo g
