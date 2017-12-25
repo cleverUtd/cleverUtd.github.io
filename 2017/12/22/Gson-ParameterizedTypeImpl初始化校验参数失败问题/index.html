@@ -1,0 +1,356 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head prefix="og: http://ogp.me/ns#">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <meta name="description" content="Keep Calm And Coding">
+    <title>Gson ParameterizedTypeImpl初始化校验参数失败问题 | 刘梓</title>
+
+    <!-- Open Graph -->
+    <meta name="description" content="#&amp;#x95EE;&amp;#x9898;&amp;#x80CC;&amp;#x666F;
+&amp;#x4ECA;&amp;#x5929;&amp;#x5728;&amp;#x5BF9;&amp;#x67D0;&amp;#x4E2A;&amp;#x63A5;&amp;#x53E3;&amp;#x505A;junit&amp;#x6D4B;&amp;#x8BD5;&amp;#x65F6;&amp;#xFF0C;&amp;#x62A5;&amp;#x5982;&amp;#x4E0B;&amp;#x9519;&amp;#x8BEF;
+
+&amp;#x53D1;&amp;#x751F">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gson ParameterizedTypeImpl初始化校验参数失败问题">
+<meta property="og:url" content="http://zclau.com/2017/12/22/Gson-ParameterizedTypeImpl初始化校验参数失败问题/index.html">
+<meta property="og:site_name" content="刘梓">
+<meta property="og:description" content="#&amp;#x95EE;&amp;#x9898;&amp;#x80CC;&amp;#x666F;
+&amp;#x4ECA;&amp;#x5929;&amp;#x5728;&amp;#x5BF9;&amp;#x67D0;&amp;#x4E2A;&amp;#x63A5;&amp;#x53E3;&amp;#x505A;junit&amp;#x6D4B;&amp;#x8BD5;&amp;#x65F6;&amp;#xFF0C;&amp;#x62A5;&amp;#x5982;&amp;#x4E0B;&amp;#x9519;&amp;#x8BEF;
+
+&amp;#x53D1;&amp;#x751F">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/8923118-c33bef422e7f3680.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/8923118-5b841939f074f386.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/8923118-72b8836e2f0b8418.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/8923118-ec31e8288b975523.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-12-25T13:14:25.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Gson ParameterizedTypeImpl初始化校验参数失败问题">
+<meta name="twitter:description" content="#&amp;#x95EE;&amp;#x9898;&amp;#x80CC;&amp;#x666F;
+&amp;#x4ECA;&amp;#x5929;&amp;#x5728;&amp;#x5BF9;&amp;#x67D0;&amp;#x4E2A;&amp;#x63A5;&amp;#x53E3;&amp;#x505A;junit&amp;#x6D4B;&amp;#x8BD5;&amp;#x65F6;&amp;#xFF0C;&amp;#x62A5;&amp;#x5982;&amp;#x4E0B;&amp;#x9519;&amp;#x8BEF;
+
+&amp;#x53D1;&amp;#x751F">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/8923118-c33bef422e7f3680.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+    <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Person",
+  "email": "mailto:cleverutd@gmail.com",
+  "image": "undefined",
+  "name": "zclau",
+  "url": "http://zclau.com"
+}
+</script>
+    <script>
+    var algoliaEnabled = false;
+    
+</script>
+
+    
+
+    
+
+    
+    
+        <!-- stylesheets list from config.yml -->
+        
+        <link rel="stylesheet" href="/css/aloha.css">
+        
+        <link rel="stylesheet" href="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.css">
+        
+        <link rel="stylesheet" href="//cdn.bootcss.com/magnific-popup.js/1.1.0/magnific-popup.min.css">
+        
+    
+
+</head>
+<body id="body" style="margin-bottom: 0;" class="pushable">
+
+    <div class="ui top fixed menu">
+        <a class="item" id="menu-icon"><i class="sidebar icon"></i></a>
+    </div>
+
+    <div id="menu-sidebar" class="ui left vertical sidebar menu">
+
+    <div id="sidebar-top">
+        <div class="content">
+            <h3>刘梓</h3>
+        </div>
+    </div>
+    <div class="ui container sidebar-card">
+    <div class="ui people shape content">
+        <div class="active side">
+            <div class="ui card">
+                <div class="image">
+                    <a href="/index.html">
+                    <img class="ui medium bordered image" src="/images/avatar.jpg">
+                    </a>
+                </div>
+                <div class="content">
+                    <a href="/index.html" class="header">zclau</a>
+                    
+                        <div class="meta">
+                            Java / C / Linux
+                        </div>
+                    
+                </div>
+                <div class="extra content">
+                    <div class="ui list">
+                        
+                        <div class="item">
+                            <i class="marker icon" style="float: left"></i>
+                            <div class="content">GuangZhou</div>
+                        </div>
+                        
+                        
+                        <div class="item">
+                            <i class="mail icon" style="float: left"></i>
+                            <div class="content">
+                                <a href="mailto:cleverutd@gmail.com">cleverutd@gmail.com</a>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                </div>
+                <div class="extra content">
+                    <div class="ui list">
+                        
+
+                                <a href="https://github.com/cleverutd"><i class="large github icon" style="float: left"></i></a>
+
+                            
+
+                                <a href="http://weibo.com/515074234"><i class="large weibo icon" style="float: left"></i></a>
+
+                            
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+    
+    
+
+    
+
+    
+    <a href="/index.html" class="item" >
+        <i class="home icon"></i>
+        首页
+    </a>
+
+    
+    
+
+    
+
+    
+    <a href="/archives/index.html" class="item" >
+        <i class="archive icon"></i>
+        归档
+    </a>
+
+    
+    
+
+    
+
+    
+    <a href="/booklist/index.html" class="item" >
+        <i class="book icon"></i>
+        书单
+    </a>
+
+    
+
+    
+</div>
+
+    <div class="pusher body-content">
+        <div id="content" class="ui main container">
+            <!--<div class="ui one column grid">-->
+                <!--<div class="column">-->
+                    <!--<div class="ui main container">-->
+                        <div id="post-Gson-ParameterizedTypeImpl初始化校验参数失败问题" class="ui main container article-type-post">
+
+    
+
+    <div class="ui divided grid">
+
+        <div class="two column row" id="article-content">
+
+            <div class="thirteen wide computer thirteen wide tablet sixteen wide mobile column">
+                
+
+<h1 class="ui header">
+    
+    Gson ParameterizedTypeImpl初始化校验参数失败问题
+</h1>
+
+
+
+                <div class="article-inner">
+
+                    <div class="article-entry" itemprop="articleBody">
+                        
+                        <p>#&#x95EE;&#x9898;&#x80CC;&#x666F;</p>
+<p>&#x4ECA;&#x5929;&#x5728;&#x5BF9;&#x67D0;&#x4E2A;&#x63A5;&#x53E3;&#x505A;junit&#x6D4B;&#x8BD5;&#x65F6;&#xFF0C;&#x62A5;&#x5982;&#x4E0B;&#x9519;&#x8BEF;</p>
+<p><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-c33bef422e7f3680.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-c33bef422e7f3680.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<p>&#x53D1;&#x751F;&#x9519;&#x8BEF;&#x7684;&#x672C;&#x8D28;&#x5C31;&#x662F;&#xFF1A;&#x67D0;&#x4E2A;bean&#x5728;&#x521D;&#x59CB;&#x5316;&#x65F6;&#x4F7F;&#x7528;&#x4E86;gson&#x505A;&#x53C2;&#x6570;&#x7C7B;&#x578B;&#x6620;&#x5C04;&#xFF0C; &#x65D7;&#x4E0B;ParameterizedTypeImpl &#x89E3;&#x6790;&#x6CDB;&#x578B;&#x6570;&#x636E;&#x65F6;&#x51FA;&#x9519;&#xFF0C;&#x5BFC;&#x81F4;&#x521B;&#x5EFA;bean&#x5931;&#x8D25;&#xFF0C;&#x4ECE;&#x800C;&#x5BFC;&#x81F4;spring &#x5BB9;&#x5668;&#x542F;&#x52A8;&#x5931;&#x8D25;</p>
+<p>&#x800C;&#x5947;&#x602A;&#x7684;&#x662F;&#xFF0C;&#x901A;&#x8FC7;gradle&#x6253;&#x5305;&#x8FD0;&#x884C;&#x5374;&#x662F;&#x6B63;&#x5E38;&#x7684;&#xFF0C;&#x4F46;&#x8DD1;junit&#x6D4B;&#x8BD5;&#x5374;&#x4E00;&#x76F4;&#x62A5;&#x9519;&#x3002;</p>
+<h1 id="&#x5206;&#x6790;"><a href="#&#x5206;&#x6790;" class="headerlink" title="&#x5206;&#x6790;"></a>&#x5206;&#x6790;</h1><p>&#x4ECE;&#x5806;&#x6808;&#x9519;&#x8BEF;&#x53EF;&#x4EE5;&#x770B;&#x5230;&#xFF0C;&#x662F;&#x5728;&#x521D;&#x59CB;&#x5316;ParameterizedTypeImpl&#x65F6;&#xFF0C;&#x8C03;&#x7528;checkArgument&#x65B9;&#x6CD5;&#x65F6;&#x62A5;&#x9519;&#xFF0C; &#x8FD9;&#x65F6;&#x7528;&#x7684;gson&#x7248;&#x672C;&#x662F;2.2.2&#x3002;&#x627E;&#x5230;&#x5BF9;&#x5E94;&#x7684;&#x6E90;&#x7801;&#x4F4D;&#x7F6E;<br><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-5b841939f074f386.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-5b841939f074f386.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<p>&#x7136;&#x540E;&#x518D;&#x6765;&#x770B;&#x770B;&#x5BA2;&#x6237;&#x7AEF;&#x521D;&#x59CB;&#x5316;ParameterizedTypeImpl&#x4F20;&#x5165;&#x7684;&#x53C2;&#x6570;&#xFF1A;<br><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-72b8836e2f0b8418.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-72b8836e2f0b8418.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<ul class="ui list">
+<li>ownerType&#x662F;null</li>
+<li>rawType&#x662F;ClientService&#x7C7B;&#x4E0B;&#x7684;&#x4E00;&#x4E2A;&#x9759;&#x6001;&#x5185;&#x90E8;&#x7C7B;Response</li>
+</ul>
+<p>&#x7B2C;&#x4E00;&#x4E2A;checkArgument&#x6821;&#x9A8C;&#xFF0C;ownerType&#x4E0D;&#x4E3A;null&#x6216;&#x8005;rawType&#x4E0D;&#x662F;&#x5185;&#x90E8;&#x7C7B;&#x7684;&#x6761;&#x4EF6;&#x660E;&#x663E;&#x4E0D;&#x6EE1;&#x8DB3;&#xFF0C;&#x6240;&#x4EE5;&#x5C31;&#x662F;&#x5728;&#x8FD9;&#x91CC;&#x629B;&#x7684;illegalArgumentException&#x3002;</p>
+<p>&#x901A;&#x8FC7;gradle&#x6253;&#x5305;&#x65B9;&#x5F0F;&#x8FD0;&#x884C;&#xFF0C;&#x53D1;&#x73B0;&#x4F7F;&#x7528;&#x7684;&#x662F;gson 2.8.0&#xFF08;&#x8FD9;&#x91CC;&#x6CE8;&#x610F;&#x4E00;&#x4E0B;&#xFF0C;&#x6211;&#x4EEC;&#x7684;&#x7CFB;&#x7EDF;&#x540C;&#x65F6;&#x5B58;&#x5728;2.2.2&#xFF0C; 2.6.2&#x4EE5;&#x53CA;2.8.0&#x7248;&#x672C;&#x7684;gson&#xFF0C;gralde&#x89E3;&#x51B3;&#x7248;&#x672C;&#x51B2;&#x7A81;&#x7684;&#x7B56;&#x7565;&#x662F;&#x9009;&#x53D6;&#x6700;&#x65B0;&#x7684;&#x90A3;&#x4E2A;&#x7248;&#x672C;&#xFF09;&#xFF0C;&#x6CA1;&#x6709;&#x629B;&#x9519;&#xFF0C;&#x800C;2.8.0&#x5BF9;&#x5E94;ParameterizedTypeImpl&#x521D;&#x59CB;&#x5316;&#x7684;&#x4EE3;&#x7801;<br><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-ec31e8288b975523.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-ec31e8288b975523.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<p>&#x53EF;&#x4EE5;&#x770B;&#x5230;2.8.0&#x5BF9;&#x5E94;&#x7684;&#x6821;&#x9A8C;&#x6761;&#x4EF6;&#x53D1;&#x751F;&#x4E86;&#x53D8;&#x5316;&#xFF1A;</p>
+<ul class="ui list">
+<li>ownerType&#x4E0D;&#x4E3A;null &#x6216;</li>
+<li>rawType&#x662F;&#x9759;&#x6001;&#x7C7B;&#xFF0C;&#x6216;&#x8005;&#x4E0D;&#x662F;&#x5185;&#x90E8;&#x7C7B;</li>
+</ul>
+<p>&#x6211;&#x4EEC;&#x7684;Response&#x7C7B;&#x662F;&#x9759;&#x6001;&#x7C7B;&#xFF0C;&#x6240;&#x4EE5;&#x901A;&#x8FC7;&#x6821;&#x9A8C;&#xFF0C;&#x6CA1;&#x6709;&#x62A5;&#x9519;&#x3002;</p>
+<h1 id="&#x89E3;&#x51B3;&#x529E;&#x6CD5;"><a href="#&#x89E3;&#x51B3;&#x529E;&#x6CD5;" class="headerlink" title="&#x89E3;&#x51B3;&#x529E;&#x6CD5;"></a>&#x89E3;&#x51B3;&#x529E;&#x6CD5;</h1><ul class="ui list">
+<li>&#x5F3A;&#x5236;&#x4F7F;&#x7528;gson 2.8.0&#xFF0C;&#x5177;&#x4F53;&#x53C2;&#x8003; <a href="https://docs.gradle.org/current/dsl/org.gradle.api.artifacts.ResolutionStrategy.html" target="_blank" rel="external">Gradle ResolutionStrategy</a></li>
+</ul>
+<h1 id="&#x603B;&#x7ED3;"><a href="#&#x603B;&#x7ED3;" class="headerlink" title="&#x603B;&#x7ED3;"></a>&#x603B;&#x7ED3;</h1><ul class="ui list">
+<li>ParameterizedTypeImpl&#x521D;&#x59CB;&#x5316;&#x4ECE;2.3.0&#x7248;&#x672C;&#x5F00;&#x59CB;&#x66F4;&#x6539;&#x4E86;&#x6821;&#x9A8C;&#x53C2;&#x6570;&#x7684;&#x65B9;&#x5F0F;&#x7684;&#xFF0C;&#x5982;&#x679C;&#x4F60;&#x5728;&#x4F7F;&#x7528;&#x7684;&#x65F6;&#x5019;&#x53D1;&#x73B0;&#x51FA;&#x73B0;&#x53C2;&#x6570;&#x6821;&#x9A8C;&#x5F02;&#x5E38;&#xFF0C;&#x5E76;&#x4E14;&#x4F7F;&#x7528;&#x7684;&#x662F;2.2.2&#x53CA;&#x4E4B;&#x524D;&#x7684;&#x7248;&#x672C;&#xFF0C;&#x53EF;&#x4EE5;&#x8003;&#x8651;&#x5347;&#x7EA7;gson&#x7248;&#x672C;</li>
+</ul>
+
+                        
+                    </div>
+
+                    
+                    
+                    
+
+                    <div class="description post-description">
+    <span class="post-description-item">
+        <time datetime="2017-12-22T14:32:26.000Z" itemprop="datePublished">2017-12-22</time>
+
+    </span>
+    <span class="post-description-item">
+        
+
+    <span>
+        <i class="tags icon"></i>
+    </span>
+
+    
+    <span class="ui tiny label">
+        <a href="/tags/Gson/">Gson</a>
+    </span>
+
+    
+
+    </span>
+</div>
+
+                </div>
+                
+                <div id="pagination" class="nav-web ui text container pagination">
+
+    <div class="ui stackable two column divided grid container">
+        <div class="row">
+            <div class="column nav-left">
+                
+
+                <a class="ui tiny button disabled"><i class="angle left icon"></i>前一篇</a>
+
+                
+            </div>
+            <div class="column nav-right">
+                
+
+                <a href="/2017/12/08/Jmeter分布式压测/" class="ui tiny button">
+                    
+                    Jmeter分布式压测
+                    
+                    <i class="angle right icon"></i></a>
+                
+            </div>
+        </div>
+    </div>
+
+</div>
+                
+            </div>
+
+            
+            <div class="three wide computer three wide tablet column">
+
+                <div class="ui sticky article-toc" id="article-toc">
+                    <!-- toc -->
+                    <ol class="ui ordered list"><li><a href="#分析"><span>分析</span></a></li><li><a href="#解决办法"><span>解决办法</span></a></li><li><a href="#总结"><span>总结</span></a></li></ol>
+                </div>
+
+            </div>
+            
+
+        </div>
+    </div>
+</div>
+
+
+<!-- duoshuo start -->
+<div class="ds-thread" data-thread-key="2017/12/22/Gson-ParameterizedTypeImpl初始化校验参数失败问题/" data-title="Gson ParameterizedTypeImpl初始化校验参数失败问题 | 刘梓" data-url="http://zclau.com/2017/12/22/Gson-ParameterizedTypeImpl初始化校验参数失败问题/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    var duoshuoQuery = {short_name:"zclau"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+        || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- duoshuo end -->
+
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+        <div class="ui vertical footer segment">
+    <div class="ui center aligned container">
+        <div class="ui inverted section divider"></div>
+        &copy; 2017 <a href="/">zclau</a>,
+        Powered by <a href="https://github.com/henryhuang/hexo-theme-aloha" target="_blank">Aloha</a> and <a
+                href="http://hexo.io/" target="_blank">Hexo</a>.
+    </div>
+</div>
+
+    </div>
+
+
+
+
+<!-- scripts list from theme config.yml -->
+
+<script src="//cdn.bootcss.com/jquery/3.1.0/jquery.min.js"></script>
+
+<script src="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.js"></script>
+
+<script src="//cdn.bootcss.com/algoliasearch/3.18.1/algoliasearch.min.js"></script>
+
+<script src="//cdn.bootcss.com/algoliasearch-helper-js/2.13.0/algoliasearch.helper.min.js"></script>
+
+<script src="/js/semantic-ui-algolia.js"></script>
+
+<script src="/js/aloha-events.js"></script>
+
+
+
+</body>
+</html>
