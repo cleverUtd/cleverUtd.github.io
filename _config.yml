@@ -74,7 +74,7 @@ archive_generator:
 tag_generator:
     per_page: 20
 category_generator:
-    per_page: 10
+    per_page: 20
 
 
 # Extensions
