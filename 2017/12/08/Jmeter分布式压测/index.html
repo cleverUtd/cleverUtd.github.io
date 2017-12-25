@@ -295,23 +295,22 @@
     </div>
 </div>
 
-
-<!-- duoshuo start -->
-<div class="ds-thread" data-thread-key="2017/12/08/Jmeter分布式压测/" data-title="Jmeter分布式压测 | 刘梓" data-url="http://zclau.com/2017/12/08/Jmeter分布式压测/"></div>
-<!-- 多说评论框 end -->
-<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
-<script type="text/javascript">
-    var duoshuoQuery = {short_name:"zclau"};
-    (function() {
-        var ds = document.createElement('script');
-        ds.type = 'text/javascript';ds.async = true;
-        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-        ds.charset = 'UTF-8';
-        (document.getElementsByTagName('head')[0]
-        || document.getElementsByTagName('body')[0]).appendChild(ds);
-    })();
+<div id="container"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+        owner: 'cleverUtd',
+        repo: 'cleverUtd.github.io',
+        oauth: {
+            client_id: 'b719388930be5722b3b7',
+            client_secret: '56b2bb65d57900d525bca842d0820b29e4b3c1c3',
+        },
+    })
+    gitment.render('container')
 </script>
-<!-- duoshuo end -->
+
+
 
                     <!--</div>-->
                 <!--</div>-->
