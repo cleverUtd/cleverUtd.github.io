@@ -1,0 +1,340 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head prefix="og: http://ogp.me/ns#">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <meta name="description" content="Keep Calm And Coding">
+    <title>常用JVM Crash分析 | 刘梓</title>
+
+    <!-- Open Graph -->
+    <meta name="description" content="1. JVM &amp;#x7684;Error&amp;#x6587;&amp;#x4EF6;JDK&amp;#x5728;&amp;#x610F;&amp;#x5916;&amp;#x9000;&amp;#x51FA;&amp;#x65F6;&amp;#xFF0C;&amp;#x4F1A;&amp;#x8BE5;&amp;#x7A0B;&amp;#x5E8F;&amp;#x7684;&amp;#x8FD0;&amp;#x884C;&amp;#x76EE;&amp;#x5F55;&amp;#x751F;&amp;#x6210;&amp;#x4E00;&amp;#x4E2A;h">
+<meta property="og:type" content="article">
+<meta property="og:title" content="常用JVM Crash分析">
+<meta property="og:url" content="http://zclau.com/2017/12/29/常用JVM-Crash分析/index.html">
+<meta property="og:site_name" content="刘梓">
+<meta property="og:description" content="1. JVM &amp;#x7684;Error&amp;#x6587;&amp;#x4EF6;JDK&amp;#x5728;&amp;#x610F;&amp;#x5916;&amp;#x9000;&amp;#x51FA;&amp;#x65F6;&amp;#xFF0C;&amp;#x4F1A;&amp;#x8BE5;&amp;#x7A0B;&amp;#x5E8F;&amp;#x7684;&amp;#x8FD0;&amp;#x884C;&amp;#x76EE;&amp;#x5F55;&amp;#x751F;&amp;#x6210;&amp;#x4E00;&amp;#x4E2A;h">
+<meta property="og:updated_time" content="2017-12-29T15:25:48.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="常用JVM Crash分析">
+<meta name="twitter:description" content="1. JVM &amp;#x7684;Error&amp;#x6587;&amp;#x4EF6;JDK&amp;#x5728;&amp;#x610F;&amp;#x5916;&amp;#x9000;&amp;#x51FA;&amp;#x65F6;&amp;#xFF0C;&amp;#x4F1A;&amp;#x8BE5;&amp;#x7A0B;&amp;#x5E8F;&amp;#x7684;&amp;#x8FD0;&amp;#x884C;&amp;#x76EE;&amp;#x5F55;&amp;#x751F;&amp;#x6210;&amp;#x4E00;&amp;#x4E2A;h">
+
+    <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Person",
+  "email": "mailto:cleverutd@gmail.com",
+  "image": "undefined",
+  "name": "zclau",
+  "url": "http://zclau.com"
+}
+</script>
+    <script>
+    var algoliaEnabled = false;
+    
+</script>
+
+    
+
+    
+
+    
+    
+        <!-- stylesheets list from config.yml -->
+        
+        <link rel="stylesheet" href="/css/aloha.css">
+        
+        <link rel="stylesheet" href="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.css">
+        
+        <link rel="stylesheet" href="//cdn.bootcss.com/magnific-popup.js/1.1.0/magnific-popup.min.css">
+        
+    
+
+</head>
+<body id="body" style="margin-bottom: 0;" class="pushable">
+
+    <div class="ui top fixed menu">
+        <a class="item" id="menu-icon"><i class="sidebar icon"></i></a>
+    </div>
+
+    <div id="menu-sidebar" class="ui left vertical sidebar menu">
+
+    <div id="sidebar-top">
+        <div class="content">
+            <h3>刘梓</h3>
+        </div>
+    </div>
+    <div class="ui container sidebar-card">
+    <div class="ui people shape content">
+        <div class="active side">
+            <div class="ui card">
+                <div class="image">
+                    <a href="/index.html">
+                    <img class="ui medium bordered image" src="/images/avatar.jpg">
+                    </a>
+                </div>
+                <div class="content">
+                    <a href="/index.html" class="header">zclau</a>
+                    
+                        <div class="meta">
+                            Java / C / Linux
+                        </div>
+                    
+                </div>
+                <div class="extra content">
+                    <div class="ui list">
+                        
+                        <div class="item">
+                            <i class="marker icon" style="float: left"></i>
+                            <div class="content">GuangZhou</div>
+                        </div>
+                        
+                        
+                        <div class="item">
+                            <i class="mail icon" style="float: left"></i>
+                            <div class="content">
+                                <a href="mailto:cleverutd@gmail.com">cleverutd@gmail.com</a>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                </div>
+                <div class="extra content">
+                    <div class="ui list">
+                        
+
+                                <a href="https://github.com/cleverutd"><i class="large github icon" style="float: left"></i></a>
+
+                            
+
+                                <a href="http://weibo.com/515074234"><i class="large weibo icon" style="float: left"></i></a>
+
+                            
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+    
+    
+
+    
+
+    
+    <a href="/index.html" class="item" >
+        <i class="home icon"></i>
+        首页
+    </a>
+
+    
+    
+
+    
+
+    
+    <a href="/archives/index.html" class="item" >
+        <i class="archive icon"></i>
+        归档
+    </a>
+
+    
+    
+
+    
+
+    
+    <a href="/booklist/index.html" class="item" >
+        <i class="book icon"></i>
+        书单
+    </a>
+
+    
+
+    
+</div>
+
+    <div class="pusher body-content">
+        <div id="content" class="ui main container">
+            <!--<div class="ui one column grid">-->
+                <!--<div class="column">-->
+                    <!--<div class="ui main container">-->
+                        <div id="post-常用JVM-Crash分析" class="ui main container article-type-post">
+
+    
+
+    <div class="ui divided grid">
+
+        <div class="two column row" id="article-content">
+
+            <div class="thirteen wide computer thirteen wide tablet sixteen wide mobile column">
+                
+
+<h1 class="ui header">
+    
+    常用JVM Crash分析
+</h1>
+
+
+
+                <div class="article-inner">
+
+                    <div class="article-entry" itemprop="articleBody">
+                        
+                        <h1 id="1-JVM-&#x7684;Error&#x6587;&#x4EF6;"><a href="#1-JVM-&#x7684;Error&#x6587;&#x4EF6;" class="headerlink" title="1. JVM &#x7684;Error&#x6587;&#x4EF6;"></a>1. JVM &#x7684;Error&#x6587;&#x4EF6;</h1><p>JDK&#x5728;&#x610F;&#x5916;&#x9000;&#x51FA;&#x65F6;&#xFF0C;&#x4F1A;&#x8BE5;&#x7A0B;&#x5E8F;&#x7684;&#x8FD0;&#x884C;&#x76EE;&#x5F55;&#x751F;&#x6210;&#x4E00;&#x4E2A;hs<em>error</em>{PID}.log&#x7684;Error&#x6587;&#x4EF6;&#xFF0C;&#x63D0;&#x4F9B;&#x4E00;&#x4E9B;&#x57FA;&#x672C;&#x7684;&#x4FE1;&#x606F;&#x3002;</p>
+<figure class="highlight mel"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">-XX:ErrorFile=${LOGDIR}/hs_err_%p.<span class="keyword">log</span></div></pre></td></tr></table></figure>
+<h1 id="2-CoreDump"><a href="#2-CoreDump" class="headerlink" title="2. CoreDump"></a>2. CoreDump</h1><p>&#x5728;&#x542F;&#x52A8;&#x811A;&#x672C;&#x4E2D;&#x52A0;&#x5165;<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">ulimit</span> -c unlimited</div></pre></td></tr></table></figure></p>
+<p>&#x5728;&#x8FDB;&#x7A0B;&#x610F;&#x5916;&#x9000;&#x51FA;&#x65F6;, &#x5C06;&#x751F;&#x6210;CoreDump&#x6587;&#x4EF6;, &#x5728;&#x8BE5;&#x5E94;&#x7528;&#x7684;&#x6267;&#x884C;&#x76EE;&#x5F55;&#x4E0B;&#xFF0C;&#x6709;&#x4E00;&#x4E2A;core.{PID} &#x6587;&#x4EF6;&#x3002;</p>
+<p>&#x5982;&#x679C;&#x6CA1;&#x627E;&#x5230;&#xFF0C;&#x8FDB;&#x884C;&#x5168;&#x5C40;&#x641C;&#x7D22;&#x3002;</p>
+<figure class="highlight golo"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">find</span> / -name core.* <span class="number">2</span>&gt;/dev/<span class="literal">null</span></div></pre></td></tr></table></figure>
+<p>&#x5982;&#x679C;&#x60F3;&#x56FA;&#x5B9A;&#x76EE;&#x5F55;&#xFF0C;&#x9700;&#x8981;&#x4FEE;&#x6539;&#x5185;&#x6838;&#x53C2;&#x6570;&#xFF0C;&#x4FEE;&#x6539;/etc/sysctl.conf&#xFF0C;&#x589E;&#x52A0;</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kernel.core_pattern=<span class="regexp">/apps/</span>logs<span class="regexp">/core</span></div></pre></td></tr></table></figure>
+<p>&#x83B7;&#x5F97;coredump&#x6587;&#x4EF6;&#x540E;&#xFF0C;&#x5FC5;&#x987B;&#x5728;&#x670D;&#x52A1;&#x5668;&#x4E0A;&#xFF0C;&#x4F7F;&#x7528;&#x8FD0;&#x884C;&#x8BE5;&#x5E94;&#x7528;&#x7684;java, &#x53EF;&#x83B7;&#x5F97;&#x4E0B;&#x5217;&#x5185;&#x5BB9;</p>
+<ul class="ui list">
+<li>&#x83B7;&#x5F97;threaddump</li>
+</ul>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">jstack <span class="meta-keyword">/apps/</span>svr<span class="meta-keyword">/jdk/</span>bin/<span class="class">java </span>{coredump_file} &gt; <span class="meta-keyword">/tmp/</span>threaddump.log</div></pre></td></tr></table></figure>
+<ul class="ui list">
+<li>&#x83B7;&#x5F97;heapdump</li>
+</ul>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">jmap -<span class="keyword">dump</span>:format=b,<span class="keyword">file</span>=<span class="regexp">/tmp/</span>heap.hprof <span class="regexp">/apps/</span>svr<span class="regexp">/jdk/</span>bin<span class="regexp">/java {coredump_file}</span></div></pre></td></tr></table></figure>
+<ul class="ui list">
+<li>gdb&#x5927;&#x6CD5;&#x3002;</li>
+</ul>
+<h1 id="2-OOM-Killer"><a href="#2-OOM-Killer" class="headerlink" title="2 OOM Killer"></a>2 OOM Killer</h1><figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">dmesg | <span class="keyword">grep</span> -i <span class="keyword">kill</span></div></pre></td></tr></table></figure>
+<p>&#x53EF;&#x4EE5;&#x770B;&#x770B;&#x6709;&#x65E0;OOM Killer&#x4FE1;&#x606F;</p>
+<p>ps.dmesg&#x4E2D;&#x65F6;&#x95F4;&#x6233;&#x7684;&#x8F6C;&#x6362;</p>
+<figure class="highlight mel"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">date</span> -d <span class="string">&quot;1970-01-01 UTC `echo &quot;</span>$(<span class="keyword">date</span> +%s)-$(cat /<span class="keyword">proc</span>/uptime|cut -f <span class="number">1</span> -d<span class="string">&apos; &apos;</span>)+{&#x9700;&#x8F6C;&#x6362;&#x7684;&#x65F6;&#x95F4;&#x6233;}<span class="string">&quot;|bc ` seconds&quot;</span></div></pre></td></tr></table></figure>
+
+                        
+                    </div>
+
+                    
+                    
+                    
+
+                    <div class="description post-description">
+    <span class="post-description-item">
+        <time datetime="2017-12-29T15:25:21.000Z" itemprop="datePublished">2017-12-29</time>
+
+    </span>
+    <span class="post-description-item">
+        
+
+    <span>
+        <i class="tags icon"></i>
+    </span>
+
+    
+    <span class="ui tiny label">
+        <a href="/tags/JVM/">JVM</a>
+    </span>
+
+    
+
+    </span>
+</div>
+
+                </div>
+                
+                <div id="pagination" class="nav-web ui text container pagination">
+
+    <div class="ui stackable two column divided grid container">
+        <div class="row">
+            <div class="column nav-left">
+                
+
+                <a class="ui tiny button disabled"><i class="angle left icon"></i>前一篇</a>
+
+                
+            </div>
+            <div class="column nav-right">
+                
+
+                <a href="/2017/12/29/常用Heap分析/" class="ui tiny button">
+                    
+                    常用Heap分析
+                    
+                    <i class="angle right icon"></i></a>
+                
+            </div>
+        </div>
+    </div>
+
+</div>
+                
+            </div>
+
+            
+            <div class="three wide computer three wide tablet column">
+
+                <div class="ui sticky article-toc" id="article-toc">
+                    <!-- toc -->
+                    <ol class="ui ordered list"><li><a href="#1-JVM-的Error文件"><span>1. JVM 的Error文件</span></a></li><li><a href="#2-CoreDump"><span>2. CoreDump</span></a></li><li><a href="#2-OOM-Killer"><span>2 OOM Killer</span></a></li></ol>
+                </div>
+
+            </div>
+            
+
+        </div>
+    </div>
+</div>
+
+<div id="container"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+        owner: 'cleverUtd',
+        repo: 'cleverUtd.github.io',
+        oauth: {
+            client_id: 'b719388930be5722b3b7',
+            client_secret: '56b2bb65d57900d525bca842d0820b29e4b3c1c3',
+        },
+    })
+    gitment.render('container')
+</script>
+
+
+
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+        <div class="ui vertical footer segment">
+    <div class="ui center aligned container">
+        <div class="ui inverted section divider"></div>
+        &copy; 2017 <a href="/">zclau</a>,
+        Powered by <a href="https://github.com/henryhuang/hexo-theme-aloha" target="_blank">Aloha</a> and <a
+                href="http://hexo.io/" target="_blank">Hexo</a>.
+    </div>
+</div>
+
+    </div>
+
+
+
+
+<!-- scripts list from theme config.yml -->
+
+<script src="//cdn.bootcss.com/jquery/3.1.0/jquery.min.js"></script>
+
+<script src="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.js"></script>
+
+<script src="//cdn.bootcss.com/algoliasearch/3.18.1/algoliasearch.min.js"></script>
+
+<script src="//cdn.bootcss.com/algoliasearch-helper-js/2.13.0/algoliasearch.helper.min.js"></script>
+
+<script src="/js/semantic-ui-algolia.js"></script>
+
+<script src="/js/aloha-events.js"></script>
+
+
+
+</body>
+</html>
