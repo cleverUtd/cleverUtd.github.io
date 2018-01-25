@@ -1,0 +1,332 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head prefix="og: http://ogp.me/ns#">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <meta name="description" content="Keep Calm And Coding">
+    <title>线程池执行UncaughtExceptionHandler失效问题分析 | 刘梓</title>
+
+    <!-- Open Graph -->
+    <meta name="description" content="&amp;#x573A;&amp;#x666F;&amp;#x6211;&amp;#x4EEC;&amp;#x77E5;&amp;#x9053;&amp;#x53EF;&amp;#x4EE5;&amp;#x5BF9;&amp;#x4E00;&amp;#x4E2A;Thread&amp;#x5BF9;&amp;#x8C61;&amp;#x8BBE;&amp;#x7F6E;UncaughtExceptionHandler&amp;#x6765;&amp;#x8FDB;&amp;#x884C;&amp;#x81EA;&amp;#x5B9A;&amp;#x4E49;&amp;#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="线程池执行UncaughtExceptionHandler失效问题分析">
+<meta property="og:url" content="http://zclau.com/2018/01/26/线程池执行UncaughtExceptionHandler失效问题分析/index.html">
+<meta property="og:site_name" content="刘梓">
+<meta property="og:description" content="&amp;#x573A;&amp;#x666F;&amp;#x6211;&amp;#x4EEC;&amp;#x77E5;&amp;#x9053;&amp;#x53EF;&amp;#x4EE5;&amp;#x5BF9;&amp;#x4E00;&amp;#x4E2A;Thread&amp;#x5BF9;&amp;#x8C61;&amp;#x8BBE;&amp;#x7F6E;UncaughtExceptionHandler&amp;#x6765;&amp;#x8FDB;&amp;#x884C;&amp;#x81EA;&amp;#x5B9A;&amp;#x4E49;&amp;#">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/8923118-057f20be970597f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/8923118-be6957df6dcbe0f7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/8923118-2b2663e7710812db.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2018-01-25T16:52:30.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="线程池执行UncaughtExceptionHandler失效问题分析">
+<meta name="twitter:description" content="&amp;#x573A;&amp;#x666F;&amp;#x6211;&amp;#x4EEC;&amp;#x77E5;&amp;#x9053;&amp;#x53EF;&amp;#x4EE5;&amp;#x5BF9;&amp;#x4E00;&amp;#x4E2A;Thread&amp;#x5BF9;&amp;#x8C61;&amp;#x8BBE;&amp;#x7F6E;UncaughtExceptionHandler&amp;#x6765;&amp;#x8FDB;&amp;#x884C;&amp;#x81EA;&amp;#x5B9A;&amp;#x4E49;&amp;#">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/8923118-057f20be970597f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+    <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Person",
+  "email": "mailto:cleverutd@gmail.com",
+  "image": "undefined",
+  "name": "zclau",
+  "url": "http://zclau.com"
+}
+</script>
+    <script>
+    var algoliaEnabled = false;
+    
+</script>
+
+    
+
+    
+
+    
+    
+        <!-- stylesheets list from config.yml -->
+        
+        <link rel="stylesheet" href="/css/aloha.css">
+        
+        <link rel="stylesheet" href="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.css">
+        
+        <link rel="stylesheet" href="//cdn.bootcss.com/magnific-popup.js/1.1.0/magnific-popup.min.css">
+        
+    
+
+</head>
+<body id="body" style="margin-bottom: 0;" class="pushable">
+
+    <div class="ui top fixed menu">
+        <a class="item" id="menu-icon"><i class="sidebar icon"></i></a>
+    </div>
+
+    <div id="menu-sidebar" class="ui left vertical sidebar menu">
+
+    <div id="sidebar-top">
+        <div class="content">
+            <h3>刘梓</h3>
+        </div>
+    </div>
+    <div class="ui container sidebar-card">
+    <div class="ui people shape content">
+        <div class="active side">
+            <div class="ui card">
+                <div class="image">
+                    <a href="/index.html">
+                    <img class="ui medium bordered image" src="/images/avatar.jpg">
+                    </a>
+                </div>
+                <div class="content">
+                    <a href="/index.html" class="header">zclau</a>
+                    
+                        <div class="meta">
+                            Java / C / Linux
+                        </div>
+                    
+                </div>
+                <div class="extra content">
+                    <div class="ui list">
+                        
+                        <div class="item">
+                            <i class="marker icon" style="float: left"></i>
+                            <div class="content">GuangZhou</div>
+                        </div>
+                        
+                        
+                        <div class="item">
+                            <i class="mail icon" style="float: left"></i>
+                            <div class="content">
+                                <a href="mailto:cleverutd@gmail.com">cleverutd@gmail.com</a>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                </div>
+                <div class="extra content">
+                    <div class="ui list">
+                        
+
+                                <a href="https://github.com/cleverutd"><i class="large github icon" style="float: left"></i></a>
+
+                            
+
+                                <a href="http://weibo.com/515074234"><i class="large weibo icon" style="float: left"></i></a>
+
+                            
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+    
+    
+
+    
+
+    
+    <a href="/index.html" class="item" >
+        <i class="home icon"></i>
+        首页
+    </a>
+
+    
+    
+
+    
+
+    
+    <a href="/archives/index.html" class="item" >
+        <i class="archive icon"></i>
+        归档
+    </a>
+
+    
+    
+
+    
+
+    
+    <a href="/booklist/index.html" class="item" >
+        <i class="book icon"></i>
+        书单
+    </a>
+
+    
+
+    
+</div>
+
+    <div class="pusher body-content">
+        <div id="content" class="ui main container">
+            <!--<div class="ui one column grid">-->
+                <!--<div class="column">-->
+                    <!--<div class="ui main container">-->
+                        <div id="post-线程池执行UncaughtExceptionHandler失效问题分析" class="ui main container article-type-post">
+
+    
+
+    <div class="ui divided grid">
+
+        <div class="two column row" id="article-content">
+
+            <div class="thirteen wide computer thirteen wide tablet sixteen wide mobile column">
+                
+
+<h1 class="ui header">
+    
+    线程池执行UncaughtExceptionHandler失效问题分析
+</h1>
+
+
+
+                <div class="article-inner">
+
+                    <div class="article-entry" itemprop="articleBody">
+                        
+                        <h1 id="&#x573A;&#x666F;"><a href="#&#x573A;&#x666F;" class="headerlink" title="&#x573A;&#x666F;"></a>&#x573A;&#x666F;</h1><p>&#x6211;&#x4EEC;&#x77E5;&#x9053;&#x53EF;&#x4EE5;&#x5BF9;&#x4E00;&#x4E2A;Thread&#x5BF9;&#x8C61;&#x8BBE;&#x7F6E;UncaughtExceptionHandler&#x6765;&#x8FDB;&#x884C;&#x81EA;&#x5B9A;&#x4E49;&#x7684;&#x672A;&#x6355;&#x6349;&#x5F02;&#x5E38;&#x5904;&#x7406;&#x3002;&#x5177;&#x4F53;&#x53EF;&#x53C2;&#x8003;&#x4E0A;&#x4E00;&#x7BC7;&#x6587;&#x7AE0;<a href="https://www.jianshu.com/p/65fb5d5198e2" target="_blank" rel="external">Thread&#x81EA;&#x5B9A;&#x4E49;&#x5F02;&#x5E38;&#x5904;&#x7406;</a></p>
+<p>&#x4F46;&#x662F;&#xFF0C;&#x5982;&#x679C;&#x4EA4;&#x7531;&#x7EBF;&#x7A0B;&#x6C60;&#x6765;&#x6267;&#x884C;&#x7684;&#x8BDD;&#xFF0C;</p>
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">public static <span class="literal">void</span> main(String[] args) {</div><div class="line">        Thread task = <span class="keyword">new</span> Thread<span class="function"><span class="params">(() -&gt; {</span></span></div><div class="line">            System.out.println(<span class="string">&quot;Before...&quot;</span>);</div><div class="line">            System.out.println(<span class="number">10</span> / <span class="number">0</span>);</div><div class="line">            System.out.println(<span class="string">&quot;After...&quot;</span>);</div><div class="line">        });</div><div class="line"></div><div class="line"></div><div class="line">        <span class="title">task</span>.<span class="title">setName</span><span class="params">(<span class="string">&quot;Thread-demo&quot;</span>)</span>;</div><div class="line">        <span class="title">task</span>.<span class="title">setUncaughtExceptionHandler</span><span class="params">((t1, e) -&gt; {</span></div><div class="line">            System.out.println(<span class="string">&quot;&#x81EA;&#x5B9A;&#x4E49;&#x5F02;&#x5E38;: &quot;</span> + t1);</div><div class="line">            System.out.println(e);</div><div class="line">        });</div><div class="line"></div><div class="line"></div><div class="line">        <span class="title">ExecutorService</span> <span class="title">exec</span> = <span class="title">Executors</span>.<span class="title">newCachedThreadPool</span><span class="params">()</span>;</div><div class="line">        <span class="title">exec</span>.<span class="title">execute</span><span class="params">(task)</span>;</div><div class="line">        <span class="title">exec</span>.<span class="title">shutdown</span><span class="params">()</span>;</div><div class="line">    }</div></pre></td></tr></table></figure>
+<p>&#x4ECE;&#x4EE3;&#x7801;&#x53EF;&#x4EE5;&#x770B;&#x5230;&#xFF0C;&#x7EBF;&#x7A0B;task&#x8BBE;&#x7F6E;&#x4E86;UncaughtExceptionHandler&#xFF0C;&#x5E76;&#x4EA4;&#x7ED9;&#x7EBF;&#x7A0B;&#x6C60;&#x6765;&#x6267;&#x884C;&#xFF0C;&#x7ED3;&#x679C;&#xFF1A;<br><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-057f20be970597f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-057f20be970597f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<p>&#x53EF;&#x4EE5;&#x770B;&#x5230;&#xFF0C;&#x7ED3;&#x679C;&#x5E76;&#x4E0D;&#x50CF;&#x6211;&#x4EEC;&#x8BBE;&#x60F3;&#x7684;&#x90A3;&#x6837;&#xFF0C;&#x5C45;&#x7136;&#x6CA1;&#x6709;&#x8D70;&#x6211;&#x4EEC;&#x81EA;&#x5DF1;&#x5B9A;&#x4E49;&#x7684;&#x5F02;&#x5E38;&#x5904;&#x7406;&#x7684;&#x65B9;&#x6CD5;&#x3002;</p>
+<h1 id="&#x539F;&#x56E0;"><a href="#&#x539F;&#x56E0;" class="headerlink" title="&#x539F;&#x56E0;"></a>&#x539F;&#x56E0;</h1><p>&#x4E3A;&#x4EC0;&#x4E48;UncaughtExceptionHandler&#x4F1A;&#x5931;&#x6548;&#x5462;&#xFF0C;&#x51B7;&#x9759;&#x4E0B;&#x6765;&#x4ED4;&#x7EC6;&#x56DE;&#x60F3;&#x4E00;&#x4E0B;&#x3002;&#x4ECE;&#x4E0A;&#x4E00;&#x7BC7;&#x6587;&#x7AE0;&#x7684;&#x5206;&#x6790;&#x4E2D;&#xFF0C;&#x6211;&#x4EEC;&#x77E5;&#x9053;&#x53EA;&#x6709;&#x4E3A;&#x7EBF;&#x7A0B;&#x8BBE;&#x7F6E;&#x4E86;UncaughtExceptionHandler&#xFF0C;&#x8BE5;&#x7EBF;&#x7A0B;&#x5728;&#x53D1;&#x751F;&#x5F02;&#x5E38;&#x65F6;&#xFF0C;&#x624D;&#x4F1A;&#x6267;&#x884C;&#x5BF9;&#x5E94;&#x7684;uncaughtException&#x65B9;&#x6CD5;&#x3002;</p>
+<p>&#x5982;&#x6B64;&#x8BF4;&#x6765;&#xFF0C;&#x63D0;&#x4EA4;&#x7ED9;&#x7EBF;&#x7A0B;&#x6C60;&#x6267;&#x884C;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x6709;&#x53EF;&#x80FD;&#x5B9E;&#x9645;&#x8FD0;&#x884C;task&#x7684;&#x7EBF;&#x7A0B;&#x5E76;&#x4E0D;&#x662F;task&#x7EBF;&#x7A0B;&#x672C;&#x8EAB;&#xFF08;&#x8FD9;&#x53EF;&#x80FD;&#x6709;&#x70B9;&#x62D7;&#x53E3;&#xFF09;&#x3002;&#x5982;&#x679C;&#x4E0D;&#x662F;task&#x7EBF;&#x7A0B;&#x672C;&#x8EAB;&#xFF0C;&#x53C8;&#x662F;&#x8C01;&#x5728;&#x6267;&#x884C;task&#x5462;&#xFF1F;&#x4E8E;&#x662F;&#x51B3;&#x5B9A;&#x5BF9;&#x4E24;&#x79CD;&#x65B9;&#x5F0F;&#x8FDB;&#x884C;debug&#xFF0C;</p>
+<p>1&#x3001; &#x7EBF;&#x7A0B;&#x6C60;&#x6267;&#x884C;<br><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-be6957df6dcbe0f7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-be6957df6dcbe0f7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<p>&#x5F88;&#x660E;&#x663E;&#xFF0C;&#x5F53;&#x524D;&#x8FD0;&#x884C;task&#x7684;&#x662F;&#x7EBF;&#x7A0B;&#x6C60;&#x521B;&#x5EFA;&#x7684;&#x7EBF;&#x7A0B;&#x201D;pool-1-thread-1&#x201D;&#xFF0C;&#x800C;&#x6211;&#x4EEC;&#x53EA;&#x662F;&#x4E3A;&#x7EBF;&#x7A0B;&#x201D;Thread-demo&#x201D;&#x8BBE;&#x7F6E;&#x4E86;uncaughtExceptionHandler&#xFF0C;&#x6240;&#x4EE5;&#x5C31;&#x89E3;&#x91CA;&#x4E86;&#x4E3A;&#x4EC0;&#x4E48;&#x6CA1;&#x6709;&#x8D70;&#x81EA;&#x5B9A;&#x4E49;&#x7684;&#x5904;&#x7406;&#x4E86;&#x3002;</p>
+<p>2&#x3001;&#x5355;&#x7EBF;&#x7A0B;&#x6267;&#x884C;<br>&#x628A;&#x4E0A;&#x9762;&#x7684;&#x4F8B;&#x5B50;&#x6539;&#x4E3A;task.start()&#x6267;&#x884C;&#xFF0C;&#x518D;debug<br><a class="magnific-img" href="http://upload-images.jianshu.io/upload_images/8923118-2b2663e7710812db.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="http://upload-images.jianshu.io/upload_images/8923118-2b2663e7710812db.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" class="ui centered image"></a></p>
+<p>&#x53EF;&#x4EE5;&#x770B;&#x5230;&#xFF0C;&#x8FD9;&#x4E00;&#x6B21;&#x5C31;&#x662F;task&#x7EBF;&#x7A0B;&#x672C;&#x8EAB;&#x4E5F;&#x5C31;&#x662F;&#x201D;Thread-demo&#x201D;&#x5728;&#x6267;&#x884C;&#x4E86;&#xFF0C;&#x800C;uncaughtExceptionHandler&#x5C5E;&#x6027;&#x4E5F;&#x5C31;&#x4E0D;&#x4E3A;null&#x3002;</p>
+<h1 id="&#x7ED3;&#x8BBA;"><a href="#&#x7ED3;&#x8BBA;" class="headerlink" title="&#x7ED3;&#x8BBA;"></a>&#x7ED3;&#x8BBA;</h1><p>1&#x3001;&#x5982;&#x679C;&#x8BA9;&#x7EBF;&#x7A0B;&#x6C60;&#x6267;&#x884C;&#x7684;&#x540C;&#x65F6;&#xFF0C;&#x4E5F;&#x80FD;&#x8D70;&#x81EA;&#x5B9A;&#x4E49;uncaughtExceptionHandler&#xFF0C;&#x53EF;&#x4EE5;&#x5728;task&#x7684;&#x5F00;&#x5934;&#x52A0;&#x4E0A;<br><figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">Thread task = new Thread(() -&gt; {</div><div class="line">  Thread.currentThread(). setUncaughtExceptionHandler((<span class="name">t1</span>, e) -&gt; {</div><div class="line">          System.out.println(<span class="string">&quot;&#x81EA;&#x5B9A;&#x4E49;&#x5F02;&#x5E38;: &quot;</span> + t1)<span class="comment">;</span></div><div class="line">          System.out.println(<span class="name">e</span>)<span class="comment">;</span></div><div class="line">      })<span class="comment">;</span></div><div class="line"></div><div class="line">          System.out.println(<span class="string">&quot;Before...&quot;</span>)<span class="comment">;</span></div><div class="line">          System.out.println(<span class="number">10</span> / <span class="number">0</span>)<span class="comment">;</span></div><div class="line">          System.out.println(<span class="string">&quot;After...&quot;</span>)<span class="comment">;</span></div><div class="line">      })<span class="comment">;</span></div></pre></td></tr></table></figure></p>
+
+                        
+                    </div>
+
+                    
+                    
+                    
+
+                    <div class="description post-description">
+    <span class="post-description-item">
+        <time datetime="2018-01-25T16:51:56.000Z" itemprop="datePublished">2018-01-26</time>
+
+    </span>
+    <span class="post-description-item">
+        
+
+    <span>
+        <i class="tags icon"></i>
+    </span>
+
+    
+    <span class="ui tiny label">
+        <a href="/tags/多线程/">多线程</a>
+    </span>
+
+    
+
+    </span>
+</div>
+
+                </div>
+                
+                <div id="pagination" class="nav-web ui text container pagination">
+
+    <div class="ui stackable two column divided grid container">
+        <div class="row">
+            <div class="column nav-left">
+                
+
+                <a class="ui tiny button disabled"><i class="angle left icon"></i>前一篇</a>
+
+                
+            </div>
+            <div class="column nav-right">
+                
+
+                <a href="/2018/01/25/Thread自定义异常处理/" class="ui tiny button">
+                    
+                    Thread自定义异常处理
+                    
+                    <i class="angle right icon"></i></a>
+                
+            </div>
+        </div>
+    </div>
+
+</div>
+                
+            </div>
+
+            
+            <div class="three wide computer three wide tablet column">
+
+                <div class="ui sticky article-toc" id="article-toc">
+                    <!-- toc -->
+                    <ol class="ui ordered list"><li><a href="#场景"><span>场景</span></a></li><li><a href="#原因"><span>原因</span></a></li><li><a href="#结论"><span>结论</span></a></li></ol>
+                </div>
+
+            </div>
+            
+
+        </div>
+    </div>
+</div>
+
+<div id="container"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+    var gitment = new Gitment({
+        owner: 'cleverUtd',
+        repo: 'cleverUtd.github.io',
+        oauth: {
+            client_id: 'b719388930be5722b3b7',
+            client_secret: '56b2bb65d57900d525bca842d0820b29e4b3c1c3',
+        },
+    })
+    gitment.render('container')
+</script>
+
+
+
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+        <div class="ui vertical footer segment">
+    <div class="ui center aligned container">
+        <div class="ui inverted section divider"></div>
+        &copy; 2018 <a href="/">zclau</a>,
+        Powered by <a href="https://github.com/henryhuang/hexo-theme-aloha" target="_blank">Aloha</a> and <a
+                href="http://hexo.io/" target="_blank">Hexo</a>.
+    </div>
+</div>
+
+    </div>
+
+
+
+
+<!-- scripts list from theme config.yml -->
+
+<script src="//cdn.bootcss.com/jquery/3.1.0/jquery.min.js"></script>
+
+<script src="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.js"></script>
+
+<script src="//cdn.bootcss.com/algoliasearch/3.18.1/algoliasearch.min.js"></script>
+
+<script src="//cdn.bootcss.com/algoliasearch-helper-js/2.13.0/algoliasearch.helper.min.js"></script>
+
+<script src="/js/semantic-ui-algolia.js"></script>
+
+<script src="/js/aloha-events.js"></script>
+
+
+
+</body>
+</html>
